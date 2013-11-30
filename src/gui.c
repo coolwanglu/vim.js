@@ -37,7 +37,7 @@ static void gui_set_fg_color __ARGS((char_u *name));
 static void gui_set_bg_color __ARGS((char_u *name));
 static win_T *xy2win __ARGS((int x, int y));
 
-#if defined(UNIX) && !defined(MACOS_X) && !defined(__APPLE__)
+#if defined(UNIX) && !defined(MACOS_X) && !defined(__APPLE__) && !defined(FEAT_GUI_BROWSER)
 # define MAY_FORK
 static void gui_do_fork __ARGS((void));
 
@@ -2850,6 +2850,9 @@ gui_insert_lines(row, count)
     }
 }
 
+
+DEFINE_ASYNC_CALLBACK(gui_wait_for_chars__cb1);
+DEFINE_ASYNC_CALLBACK(gui_wait_for_chars__cb2);
 /*
  * The main GUI input routine.	Waits for a character from the keyboard.
  * wtime == -1	    Wait forever.
@@ -2859,37 +2862,42 @@ gui_insert_lines(row, count)
  * or FAIL otherwise.
  */
     int
-gui_wait_for_chars(wtime)
-    long    wtime;
+gui_wait_for_chars(long wtime DECL_ASYNC_ARG)
 {
     int	    retval;
-
+    
 #ifdef FEAT_MENU
     /*
      * If we're going to wait a bit, update the menus and mouse shape for the
      * current State.
      */
     if (wtime != 0)
-	gui_update_menus(0);
+        gui_update_menus(0);
 #endif
 
     gui_mch_update();
     if (input_available())	/* Got char, return immediately */
-	return OK;
+        ASYNC_RETURN(OK);
     if (wtime == 0)	/* Don't wait for char */
-	return FAIL;
+        ASYNC_RETURN(FAIL);
 
     /* Before waiting, flush any output to the screen. */
     gui_mch_flush();
 
     if (wtime > 0)
     {
-	/* Blink when waiting for a character.	Probably only does something
-	 * for showmatch() */
-	gui_mch_start_blink();
-	retval = gui_mch_wait_for_chars(wtime);
-	gui_mch_stop_blink();
-	return retval;
+        /* Blink when waiting for a character.	Probably only does something
+         * for showmatch() */
+        gui_mch_start_blink();
+#ifdef ASYNC
+        ASYNC_PUSH(gui_wait_for_chars__cb1);
+        gui_mch_wait_for_chars(wtime, ASYNC_ARG);
+        return OK;
+#else
+        retval = gui_mch_wait_for_chars(wtime);
+        gui_mch_stop_blink();
+        return retval;
+#endif
     }
 
     /*
@@ -2903,8 +2911,24 @@ gui_wait_for_chars(wtime)
      * 'updatetime' and if nothing is typed within that time put the
      * K_CURSORHOLD key in the input buffer.
      */
-    if (gui_mch_wait_for_chars(p_ut) == OK)
+#ifndef ASYNC
+    int retval1 = gui_mch_wait_for_chars(p_ut);
+#else
+    ASYNC_PUSH(gui_wait_for_chars__cb2);
+    gui_mch_wait_for_chars(-1L, ASYNC_ARG);
+    return OK;
+}
+DEFINE_ASYNC_CALLBACK(gui_wait_for_chars__cb2)
+{
+    int retval1 = ASYNC_RETVAL;
+    int retval = FAIL;
+    ASYNC_CHECK(gui_wait_for_chars__cb2);
+    ASYNC_POP;
+#endif
+
+    if (retval1 == OK)
 	retval = OK;
+
 #ifdef FEAT_AUTOCMD
     else if (trigger_cursorhold())
     {
@@ -2924,12 +2948,29 @@ gui_wait_for_chars(wtime)
     {
 	/* Blocking wait. */
 	before_blocking();
+#ifdef ASYNC
+        ASYNC_PUSH(gui_wait_for_chars__cb1);
+        gui_mch_wait_for_chars(-1L, ASYNC_ARG);
+        return OK;
+#else
 	retval = gui_mch_wait_for_chars(-1L);
+#endif
     }
 
     gui_mch_stop_blink();
-    return retval;
+    ASYNC_RETURN(retval);
 }
+
+#ifdef ASYNC
+DEFINE_ASYNC_CALLBACK(gui_wait_for_chars__cb1)
+{
+    int retval = ASYNC_RETVAL;
+    ASYNC_CHECK(gui_wait_for_chars__cb1);
+    ASYNC_POP;
+    gui_mch_stop_blink(); 
+    ASYNC_RETURN(retval);
+}
+#endif
 
 /*
  * Fill p[4] with mouse coordinates encoded for check_termcode().

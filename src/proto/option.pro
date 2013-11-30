@@ -22,7 +22,6 @@ void set_string_option_direct __ARGS((char_u *name, int opt_idx, char_u *val, in
 char_u *check_colorcolumn __ARGS((win_T *wp));
 char_u *check_stl_option __ARGS((char_u *s));
 int get_option_value __ARGS((char_u *name, long *numval, char_u **stringval, int opt_flags));
-int get_option_value_strict __ARGS((char_u *name, long *numval, char_u **stringval, int opt_type, void *from));
 char_u *set_option_value __ARGS((char_u *name, long number, char_u *string, int opt_flags));
 char_u *get_term_code __ARGS((char_u *tname));
 char_u *get_highlight_default __ARGS((void));
@@ -48,7 +47,6 @@ void set_imsearch_global __ARGS((void));
 void set_context_in_set_cmd __ARGS((expand_T *xp, char_u *arg, int opt_flags));
 int ExpandSettings __ARGS((expand_T *xp, regmatch_T *regmatch, int *num_file, char_u ***file));
 int ExpandOldSetting __ARGS((int *num_file, char_u ***file));
-int langmap_adjust_mb __ARGS((int c));
 int has_format_option __ARGS((int x));
 int shortmess __ARGS((int x));
 void vimrc_found __ARGS((char_u *fname, char_u *envname));

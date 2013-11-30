@@ -18,7 +18,6 @@ int mch_isFullName __ARGS((char_u *fname));
 void mch_early_init __ARGS((void));
 void mch_exit __ARGS((int r));
 void mch_settmode __ARGS((int tmode));
-void mch_setmouse __ARGS((int on));
 int mch_screenmode __ARGS((char_u *arg));
 int mch_get_shellsize __ARGS((void));
 void mch_set_shellsize __ARGS((void));

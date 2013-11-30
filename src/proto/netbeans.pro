@@ -7,7 +7,6 @@ void netbeans_end __ARGS((void));
 void ex_nbclose __ARGS((exarg_T *eap));
 void ex_nbkey __ARGS((exarg_T *eap));
 void ex_nbstart __ARGS((exarg_T *eap));
-void netbeans_beval_cb __ARGS((BalloonEval *beval, int state));
 int netbeans_active __ARGS((void));
 int netbeans_filedesc __ARGS((void));
 void netbeans_gui_register __ARGS((void));

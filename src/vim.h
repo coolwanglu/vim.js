@@ -190,6 +190,23 @@
 # endif
 #endif
 
+#ifdef ASYNC
+/*
+ * Disable some functions not supported by emscripten
+ */
+#ifdef HAVE_TGETENT
+#  undef HAVE_TGETENT
+#endif
+#ifdef HAVE_SIGALTSTACK
+#  undef HAVE_SIGALTSTACK
+#endif
+#ifdef HAVE_SIGSET
+#  undef HAVE_SIGSET
+#endif
+#endif // ASYNC
+
+#include "async.h"
+
 
 #include "feature.h"	/* #defines for optionals and features */
 
