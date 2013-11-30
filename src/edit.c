@@ -8219,11 +8219,12 @@ ins_reg()
 #endif
 }
 
+DEFINE_ASYNC_CALLBACK(ins_ctrl_g__cb1);
 /*
  * CTRL-G commands in Insert mode.
  */
     static void
-ins_ctrl_g()
+ins_ctrl_g(DECL_ASYNC_ARG1)
 {
     int		c;
 
@@ -8237,7 +8238,19 @@ ins_ctrl_g()
      * deleted when ESC is hit.
      */
     ++no_mapping;
+#ifndef FEAT_GUI_BROWSER
     c = plain_vgetc();
+#else
+    ASYNC_PUSH(ins_ctrl_g__cb1);
+    plain_vgetc(ASYNC_ARG1);
+    return;
+}
+DEFINE_ASYNC_CALLBACK(ins_ctrl_g__cb1)
+{
+    ASYNC_CHECK(ins_ctrl_g__cb1);
+    int c = ASYNC_RETVAL;
+    ASYNC_POP;
+#endif
     --no_mapping;
     switch (c)
     {
@@ -8265,6 +8278,7 @@ ins_ctrl_g()
 	/* Unknown CTRL-G command, reserved for future expansion. */
 	default:  vim_beep();
     }
+    ASYNC_RETURN(0);
 }
 
 /*

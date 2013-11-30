@@ -8,6 +8,8 @@
 
 /*
  * Everything we need to store for async functions
+ * async_context_struct are chained, it works pretty much as a custom stack, 
+ * which stores local variables and return values
  */
 typedef struct async_context_struct
 {

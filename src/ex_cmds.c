@@ -4714,6 +4714,8 @@ do_sub(eap)
 			goto skip;
 		}
 
+#ifndef FEAT_GUI_BROWSER
+                // Lu Wang: WIP, disable do_ask
 		if (do_ask)
 		{
 		    int typed = 0;
@@ -4921,6 +4923,7 @@ do_sub(eap)
 		    if (got_quit)
 			goto skip;
 		}
+#endif
 
 		/* Move the cursor to the start of the match, so that we can
 		 * use "\=col("."). */

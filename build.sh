@@ -8,6 +8,7 @@ CPPFLAGS="-DFEAT_GUI_BROWSER" \
 CPP="gcc -E" \
 $EM_DIR/emconfigure ./configure \
     --enable-gui=browser \
+    --with-features=tiny \
     --disable-nls \
 
 }

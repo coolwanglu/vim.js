@@ -225,6 +225,13 @@
 #ifdef FEAT_LISTCMDS
 # undef FEAT_LISTCMDS
 #endif
+#ifdef FEAT_MBYTE
+# undef FEAT_MBYTE
+#endif
+/* 
+ * Other disabled features
+ * do_ask in do_sub() - ex_cmds.c
+ */
 #endif
 
 /* +x11 is only enabled when it's both available and wanted. */

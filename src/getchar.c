@@ -1542,6 +1542,9 @@ updatescript(c)
 DEFINE_ASYNC_CALLBACK(vgetc__cb1);
 DEFINE_ASYNC_CALLBACK(vgetc__cb2);
 DEFINE_ASYNC_CALLBACK(vgetc__cb3);
+DEFINE_ASYNC_CALLBACK(vgetc__cb4);
+DEFINE_ASYNC_CALLBACK(vgetc__cb5);
+DEFINE_ASYNC_CALLBACK(vgetc__cb6);
 /*
  * Get the next input character.
  * Can return a special key or a multi-byte character.
@@ -1587,6 +1590,8 @@ vgetc(DECL_ASYNC_ARG1)
       mod_mask = 0x0;
       last_recorded_len = 0;
 #ifndef FEAT_GUI_BROWSER
+      //Lu Wang: this loop is split separately, see bloe
+
       for (;;)			/* this is done twice if there are modifiers */
       {
 	if (mod_mask)		/* no mapping after modifier has been read */
@@ -1802,6 +1807,7 @@ vgetc(DECL_ASYNC_ARG1)
 #endif
 DEFINE_ASYNC_CALLBACK(vgetc__cb1)
 {
+    // starts the loop
     /*for (;;) */
     {
         if (mod_mask)		/* no mapping after modifier has been read */
@@ -1816,6 +1822,7 @@ DEFINE_ASYNC_CALLBACK(vgetc__cb1)
 }
 DEFINE_ASYNC_CALLBACK(vgetc__cb2)
 {
+    // follows __cb1, continus the loop
     ASYNC_CHECK(vgetc__cb2);
     int c = ASYNC_RETVAL;
     ASYNC_POP;
@@ -1833,42 +1840,17 @@ DEFINE_ASYNC_CALLBACK(vgetc__cb2)
 #endif
        )
     {
-        int	    save_allow_keys = allow_keys;
-
-        ++no_mapping;
-        allow_keys = 0;		/* make sure BS is not found */
-        c2 = vgetorpeek(TRUE);	/* no mapping for these chars */
-        c = vgetorpeek(TRUE);
-        --no_mapping;
-        allow_keys = save_allow_keys;
-        if (c2 == KS_MODIFIER)
-        {
-            mod_mask = c;
-            continue;
-        }
-        c = TO_SPECIAL(c2, c);
-
-#ifdef FEAT_GUI
-        /* Handle focus event here, so that the caller doesn't need to
-         * know about it.  Return K_IGNORE so that we loop once (needed if
-         * 'lazyredraw' is set). */
-        if (c == K_FOCUSGAINED || c == K_FOCUSLOST)
-        {
-            ui_focus_change(c == K_FOCUSGAINED);
-            c = K_IGNORE;
-        }
-
-        /* Translate K_CSI to CSI.  The special key is only used to avoid
-         * it being recognized as the start of a special key. */
-        if (c == K_CSI)
-            c = CSI;
-#endif
+        // define a new function for simplicity
+        ASYNC_PUSH(vgetc__cb3);
+        vgetc__cb4(ASYNC_ARG1);
+        return 0;
     }
     ASYNC_PUSH(vgetc__cb3);
     ASYNC_RETURN(c);
 }
 DEFINE_ASYNC_CALLBACK(vgetc__cb3)
 {
+    //follows __cb2, outside the loop;
     ASYNC_CHECK(vgetc__cb3);
     int c = ASYNC_RETVAL;
     ASYNC_POP;
@@ -1966,9 +1948,13 @@ DEFINE_ASYNC_CALLBACK(vgetc__cb3)
         }
         --no_mapping;
         c = (*mb_ptr2char)(buf);
+
     }
 #endif
 
+    // now outside the origina for-loop
+    // break;
+    
 #ifdef FEAT_EVAL
     /*
      * In the main loop "may_garbage_collect" can be set to do garbage
@@ -1980,37 +1966,135 @@ DEFINE_ASYNC_CALLBACK(vgetc__cb3)
 
     ASYNC_RETURN(c);
 }
+
+DEFINE_ASYNC_CALLBACK(vgetc__cb4)
+{
+    int  save_allow_keys = allow_keys;
+
+    ++no_mapping;
+    allow_keys = 0;		/* make sure BS is not found */
+    ASYNC_PUSH(vgetc__cb5);
+    ASYNC_PUT(save_allow_keys);
+    vgetorpeek(TRUE ASYNC_ARG);	/* no mapping for these chars */
+    return 0;
+}
+DEFINE_ASYNC_CALLBACK(vgetc__cb5)
+{
+    ASYNC_CHECK(vgetc__cb5);
+    int c2 = ASYNC_RETVAL;
+    ASYNC_GET_INIT;
+    ASYNC_GET(save_allow_keys);
+    ASYNC_POP;
+
+    ASYNC_PUSH(vgetc__cb6);
+    ASYNC_PUT(c2);
+    ASYNC_PUT(save_allow_keys);
+    vgetorpeek(TRUE ASYNC_ARG);
+    return 0;
+}
+DEFINE_ASYNC_CALLBACK(vgetc__cb6)
+{
+    ASYNC_CHECK(vgetc__cb6);
+    int c = ASYNC_RETVAL;
+    ASYNC_GET_INIT;
+    ASYNC_GET(c2);
+    ASYNC_GET(save_allow_keys);
+    ASYNC_POP;
+
+    --no_mapping;
+    allow_keys = save_allow_keys;
+    if (c2 == KS_MODIFIER)
+    {
+        mod_mask = c;
+        // continue the loop
+        vgetc__cb1(ASYNC_ARG1);
+        return 0;
+    }
+    c = TO_SPECIAL(c2, c);
+
+#ifdef FEAT_GUI
+    /* Handle focus event here, so that the caller doesn't need to
+     * know about it.  Return K_IGNORE so that we loop once (needed if
+     * 'lazyredraw' is set). */
+    if (c == K_FOCUSGAINED || c == K_FOCUSLOST)
+    {
+        ui_focus_change(c == K_FOCUSGAINED);
+        c = K_IGNORE;
+    }
+
+    /* Translate K_CSI to CSI.  The special key is only used to avoid
+     * it being recognized as the start of a special key. */
+    if (c == K_CSI)
+        c = CSI;
+#endif
+    // goto to __cb3, which needs c
+    ASYNC_RETURN(c);
+}
 #endif
 
+DEFINE_ASYNC_CALLBACK(safe_vgetc__cb1);
 /*
  * Like vgetc(), but never return a NUL when called recursively, get a key
  * directly from the user (ignoring typeahead).
  */
     int
-safe_vgetc()
+safe_vgetc(DECL_ASYNC_ARG1)
 {
     int	c;
 
+#ifndef FEAT_GUI_BROWSER
     c = vgetc();
+#else
+    ASYNC_PUSH(safe_vgetc__cb1);
+    vgetc(ASYNC_ARG1);
+    return 0;
+}
+DEFINE_ASYNC_CALLBACK(safe_vgetc__cb1)
+{
+    ASYNC_CHECK(safe_vgetc__cb1);
+    int c = ASYNC_RETVAL;
+    ASYNC_POP;
+#endif
     if (c == NUL)
 	c = get_keystroke();
-    return c;
+    ASYNC_RETURN(c);
 }
 
+DEFINE_ASYNC_CALLBACK(plain_vgetc__cb1);
 /*
  * Like safe_vgetc(), but loop to handle K_IGNORE.
  * Also ignore scrollbar events.
  */
     int
-plain_vgetc()
+plain_vgetc(DECL_ASYNC_ARG1)
 {
+#ifndef FEAT_GUI_BROWSER
     int c;
 
     do
     {
-	c = safe_vgetc();
+        c = safe_vgetc();
     } while (c == K_IGNORE || c == K_VER_SCROLLBAR || c == K_HOR_SCROLLBAR);
     return c;
+#else
+    ASYNC_PUSH(plain_vgetc__cb1);
+    safe_vgetc(ASYNC_ARG1);
+    return 0;
+}
+DEFINE_ASYNC_CALLBACK(plain_vgetc__cb1)
+{
+    ASYNC_CHECK(plain_vgetc__cb1);
+    int c = ASYNC_RETVAL;
+    if(c == K_IGNORE || c == K_VER_SCROLLBAR || c == K_HOR_SCROLLBAR)
+    {
+        // do not pop 
+        safe_vgetc(ASYNC_ARG1);
+        return 0;
+    }
+
+    ASYNC_POP;
+    ASYNC_RETURN(c);
+#endif
 }
 
 /*
@@ -2019,11 +2103,12 @@ plain_vgetc()
  * character is not valid!.
  */
     int
-vpeekc()
+vpeekc(DECL_ASYNC_ARG1)
 {
     if (old_char != -1)
-	return old_char;
-    return vgetorpeek(FALSE);
+        ASYNC_RETURN(old_char);
+
+    return vgetorpeek(FALSE ASYNC_ARG);
 }
 
 #if defined(FEAT_TERMRESPONSE) || defined(PROTO)
