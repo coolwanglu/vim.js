@@ -190,12 +190,17 @@
 # endif
 #endif
 
-#ifdef ASYNC
+#ifdef FEAT_GUI_BROWSER
+#define NO_CONSOLE
 /*
  * Disable some functions not supported by emscripten
+ * need to do this before including feature.h
  */
 #ifdef HAVE_TGETENT
 #  undef HAVE_TGETENT
+#endif
+#ifdef HAVE_SIGSTACK
+#  undef HAVE_SIGSTACK
 #endif
 #ifdef HAVE_SIGALTSTACK
 #  undef HAVE_SIGALTSTACK
@@ -203,7 +208,10 @@
 #ifdef HAVE_SIGSET
 #  undef HAVE_SIGSET
 #endif
-#endif // ASYNC
+#ifdef HAVE_SYSINFO
+#  undef HAVE_SYSINFO
+#endif
+#endif // FEAT_GUI_BROWSER
 
 #include "async.h"
 

@@ -1,4 +1,9 @@
 /* menu.c */
+async_context *async_push __ARGS((async_context *prev_context, async_callback_t callback));
+void async_put __ARGS((async_context *context, void *value, size_t length));
+void async_get __ARGS((char **p, async_context *context, void *value, size_t length));
+void async_return __ARGS((async_context *context, int ret));
+async_context *async_pop __ARGS((async_context *context));
 void ex_menu __ARGS((exarg_T *eap));
 char_u *set_context_in_menu_cmd __ARGS((expand_T *xp, char_u *cmd, char_u *arg, int forceit));
 char_u *get_menu_name __ARGS((expand_T *xp, int idx));

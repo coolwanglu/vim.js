@@ -1,4 +1,8 @@
-#ifdef ASYNC
+/*
+ * functions and macros for async functions calls
+ * Copyright (c) 2013 Lu Wang <coolwanglu@gmail.com>
+ */
+#ifdef FEAT_GUI_BROWSER
 #include <string.h>
 #include <stdlib.h>
 
@@ -107,7 +111,10 @@ async_pop( async_context * context)
 }
 
 #define DECL_ASYNC_ARG ,async_context * _async_context
-#define ASYNC_ARG _async_context
+#define DECL_ASYNC_ARG1 async_context * _async_context
+#define ASYNC_CTX _async_context
+#define ASYNC_ARG , ASYNC_CTX
+#define ASYNC_ARG1 ASYNC_CTX
 #define DEFINE_ASYNC_CALLBACK(fn) static int fn (async_context * _async_context)
 #define ASYNC_PUSH(callback) (_async_context = async_push(_async_context, callback))
 #define ASYNC_POP (_async_context = async_pop(_async_context))
@@ -119,9 +126,11 @@ async_pop( async_context * context)
 #define ASYNC_GET_INIT char * _async_get_pointer = NULL;
 #define ASYNC_GET(val) async_get(&_async_get_pointer, _async_context, val, sizeof(val));
 
-#else
+#else // FEAT_GUI_BROWSER
 #define DECL_ASYNC_ARG 
+#define ASYNC_ARG 
+#define ASYNC_ARG1 
 #define ASYNC_RETURN(ret) return (ret)
 #define ASYNC_PUSH(callback)
 #define ASYNC_POP
-#endif
+#endif // FEAT_GUI_BROWSER

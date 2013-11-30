@@ -2394,9 +2394,18 @@ tltoa(i)
  * minimal tgoto() implementation.
  * no padding and we only parse for %i %d and %+char
  */
-static char *tgoto __ARGS((char *, int, int));
 
-    static char *
+#ifndef FEAT_GUI_BROWSER
+// Lu WAng: I don't know why
+static 
+#endif
+char *tgoto __ARGS((char *, int, int));
+
+#ifndef FEAT_GUI_BROWSER
+// Lu WAng: I don't know why
+static 
+#endif
+    char *
 tgoto(cm, x, y)
     char *cm;
     int x, y;
@@ -2507,7 +2516,7 @@ static int		out_pos = 0;	/* number of chars in out_buf */
  * out_flush(): flush the output buffer
  */
     void
-out_flush()
+out_flush(DECL_ASYNC_ARG1)
 {
     int	    len;
 
@@ -2516,7 +2525,7 @@ out_flush()
 	/* set out_pos to 0 before ui_write, to avoid recursiveness */
 	len = out_pos;
 	out_pos = 0;
-	ui_write(out_buf, len);
+	ui_write(out_buf, len ASYNC_ARG);
     }
 }
 

@@ -1,4 +1,9 @@
 /* regexp.c */
+async_context *async_push __ARGS((async_context *prev_context, async_callback_t callback));
+void async_put __ARGS((async_context *context, void *value, size_t length));
+void async_get __ARGS((char **p, async_context *context, void *value, size_t length));
+void async_return __ARGS((async_context *context, int ret));
+async_context *async_pop __ARGS((async_context *context));
 int re_multiline __ARGS((regprog_T *prog));
 int re_lookbehind __ARGS((regprog_T *prog));
 char_u *skip_regexp __ARGS((char_u *startp, int dirc, int magic, char_u **newp));

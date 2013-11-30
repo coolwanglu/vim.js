@@ -1,14 +1,19 @@
 /* term.c */
+async_context *async_push __ARGS((async_context *prev_context, async_callback_t callback));
+void async_put __ARGS((async_context *context, void *value, size_t length));
+void async_get __ARGS((char **p, async_context *context, void *value, size_t length));
+void async_return __ARGS((async_context *context, int ret));
+async_context *async_pop __ARGS((async_context *context));
 int set_termname __ARGS((char_u *term));
 void set_mouse_termcode __ARGS((int n, char_u *s));
 void del_mouse_termcode __ARGS((int n));
-void getlinecol __ARGS((long *cp, long *rp));
 int add_termcap_entry __ARGS((char_u *name, int force));
 int term_is_8bit __ARGS((char_u *name));
 int term_is_gui __ARGS((char_u *name));
 char_u *tltoa __ARGS((unsigned long i));
+char *tgoto __ARGS((char *cm, int x, int y));
 void termcapinit __ARGS((char_u *name));
-void out_flush __ARGS((void));
+void out_flush __ARGS((async_context *_async_context));
 void out_flush_check __ARGS((void));
 void out_trash __ARGS((void));
 void out_char __ARGS((unsigned c));

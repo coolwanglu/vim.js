@@ -1,4 +1,9 @@
 /* os_msdos.c */
+async_context *async_push __ARGS((async_context *prev_context, async_callback_t callback));
+void async_put __ARGS((async_context *context, void *value, size_t length));
+void async_get __ARGS((char **p, async_context *context, void *value, size_t length));
+void async_return __ARGS((async_context *context, int ret));
+async_context *async_pop __ARGS((async_context *context));
 void mch_set_normal_colors __ARGS((void));
 void mch_update_cursor __ARGS((void));
 long_u mch_avail_mem __ARGS((int special));
@@ -18,6 +23,7 @@ int mch_isFullName __ARGS((char_u *fname));
 void mch_early_init __ARGS((void));
 void mch_exit __ARGS((int r));
 void mch_settmode __ARGS((int tmode));
+void mch_setmouse __ARGS((int on));
 int mch_screenmode __ARGS((char_u *arg));
 int mch_get_shellsize __ARGS((void));
 void mch_set_shellsize __ARGS((void));

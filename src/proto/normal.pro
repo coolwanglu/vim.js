@@ -1,4 +1,9 @@
 /* normal.c */
+async_context *async_push __ARGS((async_context *prev_context, async_callback_t callback));
+void async_put __ARGS((async_context *context, void *value, size_t length));
+void async_get __ARGS((char **p, async_context *context, void *value, size_t length));
+void async_return __ARGS((async_context *context, int ret));
+async_context *async_pop __ARGS((async_context *context));
 void init_normal_cmds __ARGS((void));
 void normal_cmd __ARGS((oparg_T *oap, int toplevel));
 void do_pending_operator __ARGS((cmdarg_T *cap, int old_col, int gui_yank));

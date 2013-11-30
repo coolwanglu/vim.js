@@ -1,4 +1,9 @@
 /* gui.c */
+async_context *async_push __ARGS((async_context *prev_context, async_callback_t callback));
+void async_put __ARGS((async_context *context, void *value, size_t length));
+void async_get __ARGS((char **p, async_context *context, void *value, size_t length));
+void async_return __ARGS((async_context *context, int ret));
+async_context *async_pop __ARGS((async_context *context));
 void gui_start __ARGS((void));
 void gui_prepare __ARGS((int *argc, char **argv));
 int gui_init_check __ARGS((void));
@@ -29,7 +34,7 @@ int gui_outstr_nowrap __ARGS((char_u *s, int len, int flags, guicolor_T fg, guic
 void gui_undraw_cursor __ARGS((void));
 void gui_redraw __ARGS((int x, int y, int w, int h));
 int gui_redraw_block __ARGS((int row1, int col1, int row2, int col2, int flags));
-int gui_wait_for_chars __ARGS((long wtime));
+int gui_wait_for_chars __ARGS((long wtime, async_context *_async_context));
 void gui_send_mouse_event __ARGS((int button, int x, int y, int repeated_click, int_u modifiers));
 int gui_xy2colrow __ARGS((int x, int y, int *colp));
 void gui_menu_cb __ARGS((vimmenu_T *menu));
@@ -57,7 +62,6 @@ void gui_mouse_correct __ARGS((void));
 void ex_gui __ARGS((exarg_T *eap));
 int gui_find_bitmap __ARGS((char_u *name, char_u *buffer, char *ext));
 void gui_find_iconfile __ARGS((char_u *name, char_u *buffer, char *ext));
-void fflush __ARGS((int stderr));
 int no_console_input __ARGS((void));
 void gui_update_screen __ARGS((void));
 char_u *get_find_dialog_text __ARGS((char_u *arg, int *wwordp, int *mcasep));

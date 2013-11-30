@@ -4,7 +4,7 @@ EM_DIR=~/src/emscripten
 
 do_config() {
 # something wrong with emcc + cproto, use gcc as CPP instead
-CPPFLAGS="-DASYNC" \
+CPPFLAGS="-DFEAT_GUI_BROWSER" \
 CPP="gcc -E" \
 $EM_DIR/emconfigure ./configure \
     --enable-gui=browser \

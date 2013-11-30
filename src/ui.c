@@ -25,16 +25,14 @@
 #endif
 
     void
-ui_write(s, len)
-    char_u  *s;
-    int	    len;
+ui_write(char_u *s, int len DECL_ASYNC_ARG)
 {
 #ifdef FEAT_GUI
     if (gui.in_use && !gui.dying && !gui.starting)
     {
 	gui_write(s, len);
 	if (p_wd)
-	    gui_wait_for_chars(p_wd);
+	    gui_wait_for_chars(p_wd ASYNC_ARG);
 	return;
     }
 #endif
@@ -245,13 +243,13 @@ ui_char_avail()
  * cancel the delay if a key is hit.
  */
     void
-ui_delay(msec, ignoreinput)
+ui_delay(long msec, int ignoreinput, DECL_ASYNC_ARG)
     long	msec;
     int		ignoreinput;
 {
 #ifdef FEAT_GUI
     if (gui.in_use && !ignoreinput)
-	gui_wait_for_chars(msec);
+	gui_wait_for_chars(msec ASYNC_ARG);
     else
 #endif
 	mch_delay(msec, ignoreinput);

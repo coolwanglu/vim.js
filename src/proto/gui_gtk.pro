@@ -1,4 +1,9 @@
 /* gui_gtk.c */
+async_context *async_push __ARGS((async_context *prev_context, async_callback_t callback));
+void async_put __ARGS((async_context *context, void *value, size_t length));
+void async_get __ARGS((char **p, async_context *context, void *value, size_t length));
+void async_return __ARGS((async_context *context, int ret));
+async_context *async_pop __ARGS((async_context *context));
 void gui_gtk_register_stock_icons __ARGS((void));
 void gui_mch_add_menu __ARGS((vimmenu_T *menu, int idx));
 void gui_mch_add_menu_item __ARGS((vimmenu_T *menu, int idx));
