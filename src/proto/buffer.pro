@@ -1,8 +1,8 @@
 /* buffer.c */
 async_context *async_push __ARGS((async_context *prev_context, async_callback_t callback));
-void async_put __ARGS((async_context *context, void *value, size_t length));
-void async_get __ARGS((char **p, async_context *context, void *value, size_t length));
-void async_return __ARGS((async_context *context, int ret));
+void async_put __ARGS((async_context *context, char *value, size_t length));
+void async_get __ARGS((char **p, async_context *context, char *value, size_t length));
+void async_return __ARGS((async_context *context));
 async_context *async_pop __ARGS((async_context *context));
 int open_buffer __ARGS((int read_stdin, exarg_T *eap, int flags));
 int buf_valid __ARGS((buf_T *buf));
@@ -16,7 +16,7 @@ int do_buffer __ARGS((int action, int start, int dir, int count, int forceit));
 void set_curbuf __ARGS((buf_T *buf, int action));
 void enter_buffer __ARGS((buf_T *buf));
 void do_autochdir __ARGS((void));
-buf_T *buflist_new __ARGS((char_u *ffname, char_u *sfname, linenr_T lnum, int flags));
+buf_T *buflist_new __ARGS((char_u *ffname, char_u *sfname, linenr_T lnum, int flags, async_context *_async_context));
 void free_buf_options __ARGS((buf_T *buf, int free_p_ff));
 int buflist_getfile __ARGS((int n, linenr_T lnum, int options, int forceit));
 void buflist_getfpos __ARGS((void));

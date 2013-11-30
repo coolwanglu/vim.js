@@ -101,6 +101,7 @@ ui_inchar_undo(s, len)
 }
 #endif
 
+DEFINE_ASYNC_CALLBACK(ui_inchar__cb1)
 /*
  * ui_inchar(): low level input function.
  * Get characters from the keyboard.
@@ -114,12 +115,9 @@ ui_inchar_undo(s, len)
  * from a remote client) "buf" can no longer be used.  "tb_change_cnt" is NULL
  * otherwise.
  */
+/* wtime: don't use "time", MIPS cannot handle it */
     int
-ui_inchar(buf, maxlen, wtime, tb_change_cnt)
-    char_u	*buf;
-    int		maxlen;
-    long	wtime;	    /* don't use "time", MIPS cannot handle it */
-    int		tb_change_cnt;
+ui_inchar(char_u *buf, int maxlen, long wtime, int tb_change_cnt DECL_ASYNC_ARG)
 {
     int		retval = 0;
 
@@ -129,22 +127,22 @@ ui_inchar(buf, maxlen, wtime, tb_change_cnt)
      */
     if (ta_str != NULL)
     {
-	if (maxlen >= ta_len - ta_off)
-	{
-	    mch_memmove(buf, ta_str + ta_off, (size_t)ta_len);
-	    vim_free(ta_str);
-	    ta_str = NULL;
-	    return ta_len;
-	}
-	mch_memmove(buf, ta_str + ta_off, (size_t)maxlen);
-	ta_off += maxlen;
-	return maxlen;
+        if (maxlen >= ta_len - ta_off)
+        {
+            mch_memmove(buf, ta_str + ta_off, (size_t)ta_len);
+            vim_free(ta_str);
+            ta_str = NULL;
+            return ta_len;
+        }
+        mch_memmove(buf, ta_str + ta_off, (size_t)maxlen);
+        ta_off += maxlen;
+        return maxlen;
     }
 #endif
 
 #ifdef FEAT_PROFILE
     if (do_profiling == PROF_YES && wtime != 0)
-	prof_inchar_enter();
+        prof_inchar_enter();
 #endif
 
 #ifdef NO_CONSOLE_INPUT
@@ -154,38 +152,53 @@ ui_inchar(buf, maxlen, wtime, tb_change_cnt)
      * this very often we probably got stuck, exit Vim. */
     if (no_console_input())
     {
-	static int count = 0;
+        static int count = 0;
 
 # ifndef NO_CONSOLE
-	retval = mch_inchar(buf, maxlen, (wtime >= 0 && wtime < 10)
-						? 10L : wtime, tb_change_cnt);
-	if (retval > 0 || typebuf_changed(tb_change_cnt) || wtime >= 0)
-	    goto theend;
+        retval = mch_inchar(buf, maxlen, (wtime >= 0 && wtime < 10)
+                ? 10L : wtime, tb_change_cnt);
+        if (retval > 0 || typebuf_changed(tb_change_cnt) || wtime >= 0)
+            goto theend;
 # endif
-	if (wtime == -1 && ++count == 1000)
-	    read_error_exit();
-	buf[0] = CAR;
-	retval = 1;
-	goto theend;
+        if (wtime == -1 && ++count == 1000)
+            read_error_exit();
+        buf[0] = CAR;
+        retval = 1;
+        goto theend;
     }
 #endif
 
     /* If we are going to wait for some time or block... */
     if (wtime == -1 || wtime > 100L)
     {
-	/* ... allow signals to kill us. */
-	(void)vim_handle_signal(SIGNAL_UNBLOCK);
+        /* ... allow signals to kill us. */
+        (void)vim_handle_signal(SIGNAL_UNBLOCK);
 
-	/* ... there is no need for CTRL-C to interrupt something, don't let
-	 * it set got_int when it was mapped. */
-	if (mapped_ctrl_c)
-	    ctrl_c_interrupts = FALSE;
+        /* ... there is no need for CTRL-C to interrupt something, don't let
+         * it set got_int when it was mapped. */
+        if (mapped_ctrl_c)
+            ctrl_c_interrupts = FALSE;
     }
 
 #ifdef FEAT_GUI
     if (gui.in_use)
     {
-	if (gui_wait_for_chars(wtime) && !typebuf_changed(tb_change_cnt))
+#ifndef FEAT_GUI_BROWSER
+        int ret = gui_wait_for_chars(wtime);
+#else
+        ASYNC_PUSH(ui_inchar__cb1);
+        gui_wait_for_chars(wtime ASYNC_ARG);
+        return OK;
+    }
+}
+DEFINE_ASYNC_CALLBACK(ui_inchar__cb1)
+{
+    {
+        int ret = ASYNC_RETVAL;
+        ASYNC_CHECK(ui_inchar__cb1);
+        ASYNC_POP;
+#endif
+        if (ret && !typebuf_changed(tb_change_cnt))
 	    retval = read_from_input_buf(buf, (long)maxlen);
     }
 #endif

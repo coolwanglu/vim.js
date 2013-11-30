@@ -1,8 +1,8 @@
 /* if_cscope.c */
 async_context *async_push __ARGS((async_context *prev_context, async_callback_t callback));
-void async_put __ARGS((async_context *context, void *value, size_t length));
-void async_get __ARGS((char **p, async_context *context, void *value, size_t length));
-void async_return __ARGS((async_context *context, int ret));
+void async_put __ARGS((async_context *context, char *value, size_t length));
+void async_get __ARGS((char **p, async_context *context, char *value, size_t length));
+void async_return __ARGS((async_context *context));
 async_context *async_pop __ARGS((async_context *context));
 char_u *get_cscope_name __ARGS((expand_T *xp, int idx));
 void set_context_in_cscope_cmd __ARGS((expand_T *xp, char_u *arg, cmdidx_T cmdidx));

@@ -1417,6 +1417,7 @@ catch_signals(func_deadly, func_other)
 	    signal(signal_info[i].sig, func_other);
 }
 
+#ifndef FEAT_GUI_BROWSER
 /*
  * Handling of SIGHUP, SIGQUIT and SIGTERM:
  * "when" == a signal:       when busy, postpone and return FALSE, otherwise
@@ -1457,6 +1458,7 @@ vim_handle_signal(sig)
     }
     return FALSE;
 }
+#endif //FEAT_GUI_BROWSER
 
 /*
  * Check_win checks whether we have an interactive stdout.

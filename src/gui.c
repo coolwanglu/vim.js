@@ -110,6 +110,8 @@ gui_start()
 	gui_attempt_start();
     }
 
+    // Lu Wang: this should be also for ALWAYS_USE_GUI ?
+#ifndef FEAT_GUI_BROWSER
     if (!gui.in_use)			/* failed to start GUI */
     {
 	/* Back to old term settings
@@ -128,6 +130,7 @@ gui_start()
 	set_title_defaults();		/* set 'title' and 'icon' again */
 #endif
     }
+#endif
 
     vim_free(old_term);
 

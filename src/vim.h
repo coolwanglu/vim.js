@@ -2221,7 +2221,7 @@ typedef int VimClipboard;	/* This is required for the prototypes. */
 /* values for vim_handle_signal() that are not a signal */
 #define SIGNAL_BLOCK	-1
 #define SIGNAL_UNBLOCK  -2
-#if !defined(UNIX) && !defined(VMS) && !defined(OS2)
+#if (!defined(UNIX) && !defined(VMS) && !defined(OS2)) || defined(FEAT_GUI_BROWSER)
 # define vim_handle_signal(x) 0
 #endif
 

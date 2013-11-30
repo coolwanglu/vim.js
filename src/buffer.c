@@ -1612,13 +1612,17 @@ do_autochdir()
  * This is the ONLY way to create a new buffer.
  */
 static int  top_file_num = 1;		/* highest file number */
+DEFINE_ASYNC_CALLBACK(buflist_new__cb1);
+
+/*
+    char_u	*ffname;	/ * full path of fname or relative * /
+    char_u	*sfname;	/ * short fname or NULL * /
+    linenr_T	lnum;		/ * preferred cursor line * /
+    int		flags;		/ * BLN_ defines * /
+*/
 
     buf_T *
-buflist_new(ffname, sfname, lnum, flags)
-    char_u	*ffname;	/* full path of fname or relative */
-    char_u	*sfname;	/* short fname or NULL */
-    linenr_T	lnum;		/* preferred cursor line */
-    int		flags;		/* BLN_ defines */
+buflist_new(char_u *ffname, char_u *sfname, linenr_T lnum, int flags DECL_ASYNC_ARG)
 {
     buf_T	*buf;
 #ifdef UNIX
@@ -1634,31 +1638,31 @@ buflist_new(ffname, sfname, lnum, flags)
     /* On Unix we can use inode numbers when the file exists.  Works better
      * for hard links. */
     if (sfname == NULL || mch_stat((char *)sfname, &st) < 0)
-	st.st_dev = (dev_T)-1;
+        st.st_dev = (dev_T)-1;
 #endif
     if (ffname != NULL && !(flags & BLN_DUMMY) && (buf =
 #ifdef UNIX
-		buflist_findname_stat(ffname, &st)
+                buflist_findname_stat(ffname, &st)
 #else
-		buflist_findname(ffname)
+                buflist_findname(ffname)
 #endif
-		) != NULL)
+                ) != NULL)
     {
-	vim_free(ffname);
-	if (lnum != 0)
-	    buflist_setfpos(buf, curwin, lnum, (colnr_T)0, FALSE);
-	/* copy the options now, if 'cpo' doesn't have 's' and not done
-	 * already */
-	buf_copy_options(buf, 0);
-	if ((flags & BLN_LISTED) && !buf->b_p_bl)
-	{
-	    buf->b_p_bl = TRUE;
+        vim_free(ffname);
+        if (lnum != 0)
+            buflist_setfpos(buf, curwin, lnum, (colnr_T)0, FALSE);
+        /* copy the options now, if 'cpo' doesn't have 's' and not done
+         * already */
+        buf_copy_options(buf, 0);
+        if ((flags & BLN_LISTED) && !buf->b_p_bl)
+        {
+            buf->b_p_bl = TRUE;
 #ifdef FEAT_AUTOCMD
-	    if (!(flags & BLN_DUMMY))
-		apply_autocmds(EVENT_BUFADD, NULL, NULL, FALSE, buf);
+            if (!(flags & BLN_DUMMY))
+                apply_autocmds(EVENT_BUFADD, NULL, NULL, FALSE, buf);
 #endif
-	}
-	return buf;
+        }
+        return buf;
     }
 
     /*
@@ -1671,124 +1675,159 @@ buflist_new(ffname, sfname, lnum, flags)
      */
     buf = NULL;
     if ((flags & BLN_CURBUF)
-	    && curbuf != NULL
-	    && curbuf->b_ffname == NULL
-	    && curbuf->b_nwindows <= 1
-	    && (curbuf->b_ml.ml_mfp == NULL || bufempty()))
+            && curbuf != NULL
+            && curbuf->b_ffname == NULL
+            && curbuf->b_nwindows <= 1
+            && (curbuf->b_ml.ml_mfp == NULL || bufempty()))
     {
-	buf = curbuf;
+        buf = curbuf;
 #ifdef FEAT_AUTOCMD
-	/* It's like this buffer is deleted.  Watch out for autocommands that
-	 * change curbuf!  If that happens, allocate a new buffer anyway. */
-	if (curbuf->b_p_bl)
-	    apply_autocmds(EVENT_BUFDELETE, NULL, NULL, FALSE, curbuf);
-	if (buf == curbuf)
-	    apply_autocmds(EVENT_BUFWIPEOUT, NULL, NULL, FALSE, curbuf);
+        /* It's like this buffer is deleted.  Watch out for autocommands that
+         * change curbuf!  If that happens, allocate a new buffer anyway. */
+        if (curbuf->b_p_bl)
+            apply_autocmds(EVENT_BUFDELETE, NULL, NULL, FALSE, curbuf);
+        if (buf == curbuf)
+            apply_autocmds(EVENT_BUFWIPEOUT, NULL, NULL, FALSE, curbuf);
 # ifdef FEAT_EVAL
-	if (aborting())		/* autocmds may abort script processing */
-	    return NULL;
+        if (aborting())		/* autocmds may abort script processing */
+            return NULL;
 # endif
 #endif
 #ifdef FEAT_QUICKFIX
 # ifdef FEAT_AUTOCMD
-	if (buf == curbuf)
+        if (buf == curbuf)
 # endif
-	{
-	    /* Make sure 'bufhidden' and 'buftype' are empty */
-	    clear_string_option(&buf->b_p_bh);
-	    clear_string_option(&buf->b_p_bt);
-	}
+        {
+            /* Make sure 'bufhidden' and 'buftype' are empty */
+            clear_string_option(&buf->b_p_bh);
+            clear_string_option(&buf->b_p_bt);
+        }
 #endif
     }
     if (buf != curbuf || curbuf == NULL)
     {
-	buf = (buf_T *)alloc_clear((unsigned)sizeof(buf_T));
-	if (buf == NULL)
-	{
-	    vim_free(ffname);
-	    return NULL;
-	}
+        buf = (buf_T *)alloc_clear((unsigned)sizeof(buf_T));
+        if (buf == NULL)
+        {
+            vim_free(ffname);
+            return NULL;
+        }
 #ifdef FEAT_EVAL
-	/* init b: variables */
-	buf->b_vars = dict_alloc();
-	if (buf->b_vars == NULL)
-	{
-	    vim_free(ffname);
-	    vim_free(buf);
-	    return NULL;
-	}
-	init_var_dict(buf->b_vars, &buf->b_bufvar, VAR_SCOPE);
+        /* init b: variables */
+        buf->b_vars = dict_alloc();
+        if (buf->b_vars == NULL)
+        {
+            vim_free(ffname);
+            vim_free(buf);
+            return NULL;
+        }
+        init_var_dict(buf->b_vars, &buf->b_bufvar, VAR_SCOPE);
 #endif
     }
 
     if (ffname != NULL)
     {
-	buf->b_ffname = ffname;
-	buf->b_sfname = vim_strsave(sfname);
+        buf->b_ffname = ffname;
+        buf->b_sfname = vim_strsave(sfname);
     }
 
     clear_wininfo(buf);
     buf->b_wininfo = (wininfo_T *)alloc_clear((unsigned)sizeof(wininfo_T));
 
     if ((ffname != NULL && (buf->b_ffname == NULL || buf->b_sfname == NULL))
-	    || buf->b_wininfo == NULL)
+            || buf->b_wininfo == NULL)
     {
-	vim_free(buf->b_ffname);
-	buf->b_ffname = NULL;
-	vim_free(buf->b_sfname);
-	buf->b_sfname = NULL;
-	if (buf != curbuf)
-	    free_buffer(buf);
-	return NULL;
+        vim_free(buf->b_ffname);
+        buf->b_ffname = NULL;
+        vim_free(buf->b_sfname);
+        buf->b_sfname = NULL;
+        if (buf != curbuf)
+            free_buffer(buf);
+        return NULL;
     }
 
     if (buf == curbuf)
     {
-	/* free all things allocated for this buffer */
-	buf_freeall(buf, 0);
-	if (buf != curbuf)	 /* autocommands deleted the buffer! */
-	    return NULL;
+        /* free all things allocated for this buffer */
+        buf_freeall(buf, 0);
+        if (buf != curbuf)	 /* autocommands deleted the buffer! */
+            return NULL;
 #if defined(FEAT_AUTOCMD) && defined(FEAT_EVAL)
-	if (aborting())		/* autocmds may abort script processing */
-	    return NULL;
+        if (aborting())		/* autocmds may abort script processing */
+            return NULL;
 #endif
-	/* buf->b_nwindows = 0; why was this here? */
-	free_buffer_stuff(buf, FALSE);	/* delete local variables et al. */
+        /* buf->b_nwindows = 0; why was this here? */
+        free_buffer_stuff(buf, FALSE);	/* delete local variables et al. */
 
-	/* Init the options. */
-	buf->b_p_initialized = FALSE;
-	buf_copy_options(buf, BCO_ENTER);
+        /* Init the options. */
+        buf->b_p_initialized = FALSE;
+        buf_copy_options(buf, BCO_ENTER);
 
 #ifdef FEAT_KEYMAP
-	/* need to reload lmaps and set b:keymap_name */
-	curbuf->b_kmap_state |= KEYMAP_INIT;
+        /* need to reload lmaps and set b:keymap_name */
+        curbuf->b_kmap_state |= KEYMAP_INIT;
 #endif
     }
     else
     {
-	/*
-	 * put new buffer at the end of the buffer list
-	 */
-	buf->b_next = NULL;
-	if (firstbuf == NULL)		/* buffer list is empty */
-	{
-	    buf->b_prev = NULL;
-	    firstbuf = buf;
-	}
-	else				/* append new buffer at end of list */
-	{
-	    lastbuf->b_next = buf;
-	    buf->b_prev = lastbuf;
-	}
-	lastbuf = buf;
+        /*
+         * put new buffer at the end of the buffer list
+         */
+        buf->b_next = NULL;
+        if (firstbuf == NULL)		/* buffer list is empty */
+        {
+            buf->b_prev = NULL;
+            firstbuf = buf;
+        }
+        else				/* append new buffer at end of list */
+        {
+            lastbuf->b_next = buf;
+            buf->b_prev = lastbuf;
+        }
+        lastbuf = buf;
 
-	buf->b_fnum = top_file_num++;
-	if (top_file_num < 0)		/* wrap around (may cause duplicates) */
-	{
-	    EMSG(_("W14: Warning: List of file names overflow"));
-	    if (emsg_silent == 0)
-	    {
-		out_flush();
+        buf->b_fnum = top_file_num++;
+        if (top_file_num < 0)		/* wrap around (may cause duplicates) */
+        {
+            EMSG(_("W14: Warning: List of file names overflow"));
+            if (emsg_silent == 0)
+            {
+#ifndef FEAT_GUI_BROWSER
+                out_flush();
+#else
+                ASYNC_PUSH(buflist_new__cb1);
+                ASYNC_PUT(buf);
+                ASYNC_PUT(lnum);
+                ASYNC_PUT(flags);
+#ifdef UNIX
+                ASYNC_PUT(st);
+#endif
+                out_flush(ASYNC_ARG1);
+                return NULL;
+            }
+        }
+    }
+}
+DEFINE_ASYNC_CALLBACK(buflist_new__cb1)
+{
+    ASYNC_CHECK(buflist_new__cb1);
+    ASYNC_GET_INIT;
+
+    buf_T *buf;
+    ASYNC_GET(buf);
+    linenr_T lnum;
+    ASYNC_GET(lnum);
+    int flags;
+    ASYNC_GET(flags);
+#ifdef UNIX
+    struct stat st;
+    ASYNC_GET(st);
+#endif
+    ASYNC_POP;
+    {
+        {
+            {
+#endif
 		ui_delay(3000L, TRUE);	/* make sure it is noticed */
 	    }
 	    top_file_num = 1;
@@ -1835,12 +1874,12 @@ buflist_new(ffname, sfname, lnum, flags)
 	    apply_autocmds(EVENT_BUFADD, NULL, NULL, FALSE, buf);
 # ifdef FEAT_EVAL
 	if (aborting())		/* autocmds may abort script processing */
-	    return NULL;
+	    ASYNC_RETURN_P(NULL);
 # endif
     }
 #endif
 
-    return buf;
+    ASYNC_RETURN_P(buf);
 }
 
 /*

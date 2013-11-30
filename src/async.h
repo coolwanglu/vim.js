@@ -14,6 +14,7 @@ typedef struct async_context_struct
     union
     {
         int i;
+        void *p;
     } ret;
     char * data;
     size_t data_used;
@@ -47,7 +48,7 @@ async_push( async_context * prev_context, async_callback_t callback )
  */
 inline
 void 
-async_put( async_context * context, void * value, size_t length)
+async_put( async_context * context, char * value, size_t length)
 {
     if(!(context->data))
     {
@@ -76,7 +77,7 @@ async_put( async_context * context, void * value, size_t length)
  */
 inline
 void
-async_get( char ** p, async_context * context, void * value, size_t length)
+async_get( char ** p, async_context * context, char * value, size_t length)
 {
     if((*p) == NULL)
         *p = context->data;
@@ -91,9 +92,8 @@ async_get( char ** p, async_context * context, void * value, size_t length)
  */
 inline
 void 
-async_return( async_context * context, int ret)
+async_return(async_context * context)
 {
-    context->ret.i = ret;
     (*(context->callback))(context);
 }
 
@@ -110,21 +110,48 @@ async_pop( async_context * context)
     return prev_context;
 }
 
+// used to insert argument for function declarations
 #define DECL_ASYNC_ARG ,async_context * _async_context
 #define DECL_ASYNC_ARG1 async_context * _async_context
+
+// a hidden variable to store context
 #define ASYNC_CTX _async_context
+
+// used when calling async functions
 #define ASYNC_ARG , ASYNC_CTX
 #define ASYNC_ARG1 ASYNC_CTX
-#define DEFINE_ASYNC_CALLBACK(fn) static int fn (async_context * _async_context)
-#define ASYNC_PUSH(callback) (_async_context = async_push(_async_context, callback))
-#define ASYNC_POP (_async_context = async_pop(_async_context))
-#define ASYNC_RETURN(ret) { int _async_ret = (ret); async_return(_async_context, _async_ret); return _async_ret; }
-// used in callback, retrieve retval from previous function
-#define ASYNC_RETVAL (_async_context->ret.i)
-#define ASYNC_CHECK(func) (assert(_async_context->callback == func));
-#define ASYNC_PUT(val) async_put(_async_context, (&val), sizeof(val));
+
+// declare/define common callback functions
+#define DEFINE_ASYNC_CALLBACK(fn) static int fn (async_context * ASYNC_CTX)
+
+// insert a new callback to the context
+#define ASYNC_PUSH(callback) (ASYNC_CTX = async_push(ASYNC_CTX, callback))
+// used in callback, to get the previous context
+#define ASYNC_POP (ASYNC_CTX = async_pop(ASYNC_CTX))
+// used in callback, make sure that we have called ASYNC_PUSH and ASYNC_POP properly
+#define ASYNC_CHECK(func) (assert(ASYNC_CTX->callback == func));
+
+// send and retrive the return value between callbacks
+// integer
+#define ASYNC_RETVAL (ASYNC_CTX->ret.i)
+#define ASYNC_RETURN(reti) { int _async_ret = (int)(reti); \
+    ASYNC_CTX->ret.i = _async_ret; \
+    async_return(ASYNC_CTX); \
+    return _async_ret; }
+// pointer
+#define ASYNC_RETVAL_P (ASYNC_CTX->ret.p)
+#define ASYNC_RETURN_P(retp) { void * _async_ret = (void*)(retp); \
+    ASYNC_CTX->ret.p = _async_ret; \
+    async_return(ASYNC_CTX); \
+    return _async_ret; }
+
+
+// store something in the context
+#define ASYNC_PUT(val) async_put(ASYNC_CTX, ((char*)(&val)), sizeof(val));
+
+// retrive somethinbg from the context, must be in the same order/type as stored
 #define ASYNC_GET_INIT char * _async_get_pointer = NULL;
-#define ASYNC_GET(val) async_get(&_async_get_pointer, _async_context, val, sizeof(val));
+#define ASYNC_GET(val) async_get(&_async_get_pointer, ASYNC_CTX, ((char*)(&val)), sizeof(val));
 
 #else // FEAT_GUI_BROWSER
 #define DECL_ASYNC_ARG 
