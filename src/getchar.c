@@ -1802,7 +1802,7 @@ vgetc(DECL_ASYNC_ARG1)
 #endif
 DEFINE_ASYNC_CALLBACK(vgetc__cb1)
 {
-    /*for (;;) we don't have FEAT_GUI_GTK, so do this only once */
+    /*for (;;) */
     {
         if (mod_mask)		/* no mapping after modifier has been read */
         {
@@ -1810,7 +1810,7 @@ DEFINE_ASYNC_CALLBACK(vgetc__cb1)
             ++allow_keys;
         }
         ASYNC_PUSH(vgetc__cb2);
-        vgetorpeek(TRUE, ASYNC_ARG);
+        vgetorpeek(TRUE ASYNC_ARG);
         return 0;
     }
 }

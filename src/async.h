@@ -144,6 +144,10 @@ async_pop( async_context * context)
     ASYNC_CTX->ret.p = _async_ret; \
     async_return(ASYNC_CTX); \
     return _async_ret; }
+#define ASYNC_RETURN_P_(retp, ret2) { void * _async_ret = (void*)(retp); \
+    ASYNC_CTX->ret.p = _async_ret; \
+    async_return(ASYNC_CTX); \
+    return ret2; }
 
 
 // store something in the context
@@ -151,7 +155,10 @@ async_pop( async_context * context)
 
 // retrive somethinbg from the context, must be in the same order/type as stored
 #define ASYNC_GET_INIT char * _async_get_pointer = NULL;
-#define ASYNC_GET(val) async_get(&_async_get_pointer, ASYNC_CTX, ((char*)(&val)), sizeof(val));
+#define ASYNC_GET_T(T, val) T val;async_get(&_async_get_pointer, ASYNC_CTX, ((char*)(&val)), sizeof(val));
+#define ASYNC_GET(val) ASYNC_GET_T(int, val)
+
+#define ASYNC_CLEAR_DATA ASYNC_CTX->data_used = 0;
 
 #else // FEAT_GUI_BROWSER
 #define DECL_ASYNC_ARG 

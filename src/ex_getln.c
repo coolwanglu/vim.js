@@ -2185,30 +2185,32 @@ DEFINE_ASYNC_CALLBACK(getexline__cb1)
 {
     ASYNC_CHECK(getexline__cb1);
     ASYNC_GET_INIT;
-    int c;
     ASYNC_GET(c);
-
-    int indent;
     ASYNC_GET(indent);
 
     ASYNC_POP;
 #endif
     char_u * ret = getcmdline(c, 1L, indent);
-    ASYNC_RETURN_P(ret);
+    ASYNC_RETURN_P_(ret, 0);
 }
 
+DEFINE_ASYNC_CALLBACK(getexmodeline__cb1);
+DEFINE_ASYNC_CALLBACK(getexmodeline__cb2);
+DEFINE_ASYNC_CALLBACK(getexmodeline__cb3);
 /*
  * Get an Ex command line for Ex mode.
  * In Ex mode we only use the OS supplied line editing features and no
  * mappings or abbreviations.
  * Returns a string in allocated memory or NULL.
  */
-    char_u *
-getexmodeline(promptc, cookie, indent)
-    int		promptc;	/* normally ':', NUL for ":append" and '?' for
-				   :s prompt */
+/*
+    int		promptc;	/ * normally ':', NUL for ":append" and '?' for
+				   :s prompt * /
     void	*cookie UNUSED;
-    int		indent;		/* indent for inside conditionals */
+    int		indent;		/ * indent for inside conditionals * /
+*/
+    char_u *
+getexmodeline(int promptc, void *cookie UNUSED, int indent DECL_ASYNC_ARG)
 {
     garray_T	line_ga;
     char_u	*pend;
@@ -2226,15 +2228,15 @@ getexmodeline(promptc, cookie, indent)
     /* always start in column 0; write a newline if necessary */
     compute_cmdrow();
     if ((msg_col || msg_didout) && promptc != '?')
-	msg_putchar('\n');
+        msg_putchar('\n');
     if (promptc == ':')
     {
-	/* indent that is only displayed, not in the line itself */
-	if (p_prompt)
-	    msg_putchar(':');
-	while (indent-- > 0)
-	    msg_putchar(' ');
-	startcol = msg_col;
+        /* indent that is only displayed, not in the line itself */
+        if (p_prompt)
+            msg_putchar(':');
+        while (indent-- > 0)
+            msg_putchar(' ');
+        startcol = msg_col;
     }
 
     ga_init2(&line_ga, 1, 30);
@@ -2242,18 +2244,18 @@ getexmodeline(promptc, cookie, indent)
     /* autoindent for :insert and :append is in the line itself */
     if (promptc <= 0)
     {
-	vcol = indent;
-	while (indent >= 8)
-	{
-	    ga_append(&line_ga, TAB);
-	    msg_puts((char_u *)"        ");
-	    indent -= 8;
-	}
-	while (indent-- > 0)
-	{
-	    ga_append(&line_ga, ' ');
-	    msg_putchar(' ');
-	}
+        vcol = indent;
+        while (indent >= 8)
+        {
+            ga_append(&line_ga, TAB);
+            msg_puts((char_u *)"        ");
+            indent -= 8;
+        }
+        while (indent-- > 0)
+        {
+            ga_append(&line_ga, ' ');
+            msg_putchar(' ');
+        }
     }
     ++no_mapping;
     ++allow_keys;
@@ -2262,187 +2264,313 @@ getexmodeline(promptc, cookie, indent)
      * Get the line, one character at a time.
      */
     got_int = FALSE;
+#ifdef FEAT_GUI_BROWSER
+// this might be too slow
+// may use ASYNC_CTX->data as a struct 
+#define ASYNC_PUT_ALL_GETEXMODELINE \
+    ASYNC_PUT(indent); \
+    ASYNC_PUT(line_ga); \
+    ASYNC_PUT(pend); \
+    ASYNC_PUT(startcol); \
+    ASYNC_PUT(c1); \
+    ASYNC_PUT(escaped); \
+    ASYNC_PUT(vcol); \
+    ASYNC_PUT(prev_char);
+
+#define ASYNC_GET_ALL_GETEXMODELINE \
+    ASYNC_GET_INIT; \
+    ASYNC_GET(indent); \
+    ASYNC_GET_T(garray_T, line_ga); \
+    ASYNC_GET_T(char_u*, pend); \
+    ASYNC_GET(startcol); \
+    ASYNC_GET(c1); \
+    ASYNC_GET(escaped); \
+    ASYNC_GET(vcol); \
+    ASYNC_GET(prev_char);
+
+
+    // we will put all the local variables into the entry for __cb1
+    ASYNC_PUSH(getexmodeline__cb1);
+    ASYNC_PUT_ALL_GETEXMODELINE;
+    getexmodeline__cb1(ASYNC_ARG1);
+    return NULL;
+}
+DEFINE_ASYNC_CALLBACK(getexmodeline__cb1)
+{
+    ASYNC_CHECK(getexmodeline__cb1);
+
+    ASYNC_GET_ALL_GETEXMODELINE;
+    // do not pop,  keep the local variables
+
+#endif
     while (!got_int)
     {
-	if (ga_grow(&line_ga, 40) == FAIL)
-	    break;
+        if (ga_grow(&line_ga, 40) == FAIL)
+#ifndef FEAT_GUI_BROWSER
+            break;
+#else
+            goto label_break;
+#endif
 
-	/* Get one character at a time.  Don't use inchar(), it can't handle
-	 * special characters. */
-	prev_char = c1;
-	c1 = vgetc();
+        /* Get one character at a time.  Don't use inchar(), it can't handle
+         * special characters. */
+        prev_char = c1;
+#ifndef FEAT_GUI_BROWSER
+        c1 = vgetc();
+#else 
+        // refresh local variables
+        ASYNC_CLEAR_DATA; 
+        ASYNC_PUT_ALL_GETEXMODELINE;
 
-	/*
-	 * Handle line editing.
-	 * Previously this was left to the system, putting the terminal in
-	 * cooked mode, but then CTRL-D and CTRL-T can't be used properly.
-	 */
-	if (got_int)
-	{
-	    msg_putchar('\n');
-	    break;
-	}
-
-	if (!escaped)
-	{
-	    /* CR typed means "enter", which is NL */
-	    if (c1 == '\r')
-		c1 = '\n';
-
-	    if (c1 == BS || c1 == K_BS
-			  || c1 == DEL || c1 == K_DEL || c1 == K_KDEL)
-	    {
-		if (line_ga.ga_len > 0)
-		{
-		    --line_ga.ga_len;
-		    goto redraw;
-		}
-		continue;
-	    }
-
-	    if (c1 == Ctrl_U)
-	    {
-		msg_col = startcol;
-		msg_clr_eos();
-		line_ga.ga_len = 0;
-		continue;
-	    }
-
-	    if (c1 == Ctrl_T)
-	    {
-		long        sw = get_sw_value(curbuf);
-
-		p = (char_u *)line_ga.ga_data;
-		p[line_ga.ga_len] = NUL;
-		indent = get_indent_str(p, 8);
-		indent += sw - indent % sw;
-add_indent:
-		while (get_indent_str(p, 8) < indent)
-		{
-		    char_u *s = skipwhite(p);
-
-		    ga_grow(&line_ga, 1);
-		    mch_memmove(s + 1, s, line_ga.ga_len - (s - p) + 1);
-		    *s = ' ';
-		    ++line_ga.ga_len;
-		}
-redraw:
-		/* redraw the line */
-		msg_col = startcol;
-		vcol = 0;
-		for (p = (char_u *)line_ga.ga_data;
-			  p < (char_u *)line_ga.ga_data + line_ga.ga_len; ++p)
-		{
-		    if (*p == TAB)
-		    {
-			do
-			{
-			    msg_putchar(' ');
-			} while (++vcol % 8);
-		    }
-		    else
-		    {
-			msg_outtrans_len(p, 1);
-			vcol += char2cells(*p);
-		    }
-		}
-		msg_clr_eos();
-		windgoto(msg_row, msg_col);
-		continue;
-	    }
-
-	    if (c1 == Ctrl_D)
-	    {
-		/* Delete one shiftwidth. */
-		p = (char_u *)line_ga.ga_data;
-		if (prev_char == '0' || prev_char == '^')
-		{
-		    if (prev_char == '^')
-			ex_keep_indent = TRUE;
-		    indent = 0;
-		    p[--line_ga.ga_len] = NUL;
-		}
-		else
-		{
-		    p[line_ga.ga_len] = NUL;
-		    indent = get_indent_str(p, 8);
-		    --indent;
-		    indent -= indent % get_sw_value(curbuf);
-		}
-		while (get_indent_str(p, 8) > indent)
-		{
-		    char_u *s = skipwhite(p);
-
-		    mch_memmove(s - 1, s, line_ga.ga_len - (s - p) + 1);
-		    --line_ga.ga_len;
-		}
-		goto add_indent;
-	    }
-
-	    if (c1 == Ctrl_V || c1 == Ctrl_Q)
-	    {
-		escaped = TRUE;
-		continue;
-	    }
-
-	    /* Ignore special key codes: mouse movement, K_IGNORE, etc. */
-	    if (IS_SPECIAL(c1))
-		continue;
-	}
-
-	if (IS_SPECIAL(c1))
-	    c1 = '?';
-	((char_u *)line_ga.ga_data)[line_ga.ga_len] = c1;
-	if (c1 == '\n')
-	    msg_putchar('\n');
-	else if (c1 == TAB)
-	{
-	    /* Don't use chartabsize(), 'ts' can be different */
-	    do
-	    {
-		msg_putchar(' ');
-	    } while (++vcol % 8);
-	}
-	else
-	{
-	    msg_outtrans_len(
-		     ((char_u *)line_ga.ga_data) + line_ga.ga_len, 1);
-	    vcol += char2cells(c1);
-	}
-	++line_ga.ga_len;
-	escaped = FALSE;
-
-	windgoto(msg_row, msg_col);
-	pend = (char_u *)(line_ga.ga_data) + line_ga.ga_len;
-
-	/* We are done when a NL is entered, but not when it comes after an
-	 * odd number of backslashes, that results in a NUL. */
-	if (line_ga.ga_len > 0 && pend[-1] == '\n')
-	{
-	    int bcount = 0;
-
-	    while (line_ga.ga_len - 2 >= bcount && pend[-2 - bcount] == '\\')
-		++bcount;
-
-	    if (bcount > 0)
-	    {
-		/* Halve the number of backslashes: "\NL" -> "NUL", "\\NL" ->
-		 * "\NL", etc. */
-		line_ga.ga_len -= (bcount + 1) / 2;
-		pend -= (bcount + 1) / 2;
-		pend[-1] = '\n';
-	    }
-
-	    if ((bcount & 1) == 0)
-	    {
-		--line_ga.ga_len;
-		--pend;
-		*pend = NUL;
-		break;
-	    }
-	}
+        ASYNC_PUSH(getexmodeline__cb3);
+        vgetc(ASYNC_ARG1);
+        return 0;
     }
+label_break:
+    // do not pop, keep line_ga for __cb2
+    ASYNC_CLEAR_DATA; 
+    ASYNC_PUT_ALL_GETEXMODELINE;
+    getexmodeline__cb2(ASYNC_ARG1);
+    return 0;
+}
+DEFINE_ASYNC_CALLBACK(getexmodeline__cb3)
+{
+    ASYNC_CHECK(getexmodeline__cb3);
+    int _c1 = ASYNC_RETVAL;
+    // pop and retrive variables from __cb1
+    ASYNC_POP;
+    ASYNC_CHECK(getexmodeline__cb1);
+    ASYNC_GET_ALL_GETEXMODELINE;
 
+    c1 = _c1;
+    char_u * p;
+
+    while (!got_int)
+    {
+#endif
+
+        /*
+         * Handle line editing.
+         * Previously this was left to the system, putting the terminal in
+         * cooked mode, but then CTRL-D and CTRL-T can't be used properly.
+         */
+        if (got_int)
+        {
+            msg_putchar('\n');
+#ifndef FEAT_GUI_BROWSER
+            break;
+#else
+            goto label_break;
+#endif
+        }
+
+        if (!escaped)
+        {
+            /* CR typed means "enter", which is NL */
+            if (c1 == '\r')
+                c1 = '\n';
+
+            if (c1 == BS || c1 == K_BS
+                    || c1 == DEL || c1 == K_DEL || c1 == K_KDEL)
+            {
+                if (line_ga.ga_len > 0)
+                {
+                    --line_ga.ga_len;
+                    goto redraw;
+                }
+#ifndef FEAT_GUI_BROWSER
+                continue;
+#else
+                goto label_continue;
+#endif
+            }
+
+            if (c1 == Ctrl_U)
+            {
+                msg_col = startcol;
+                msg_clr_eos();
+                line_ga.ga_len = 0;
+#ifndef FEAT_GUI_BROWSER
+                continue;
+#else
+                goto label_continue;
+#endif
+            }
+
+            if (c1 == Ctrl_T)
+            {
+                long        sw = get_sw_value(curbuf);
+
+                p = (char_u *)line_ga.ga_data;
+                p[line_ga.ga_len] = NUL;
+                indent = get_indent_str(p, 8);
+                indent += sw - indent % sw;
+add_indent:
+                while (get_indent_str(p, 8) < indent)
+                {
+                    char_u *s = skipwhite(p);
+
+                    ga_grow(&line_ga, 1);
+                    mch_memmove(s + 1, s, line_ga.ga_len - (s - p) + 1);
+                    *s = ' ';
+                    ++line_ga.ga_len;
+                }
+redraw:
+                /* redraw the line */
+                msg_col = startcol;
+                vcol = 0;
+                for (p = (char_u *)line_ga.ga_data;
+                        p < (char_u *)line_ga.ga_data + line_ga.ga_len; ++p)
+                {
+                    if (*p == TAB)
+                    {
+                        do
+                        {
+                            msg_putchar(' ');
+                        } while (++vcol % 8);
+                    }
+                    else
+                    {
+                        msg_outtrans_len(p, 1);
+                        vcol += char2cells(*p);
+                    }
+                }
+                msg_clr_eos();
+                windgoto(msg_row, msg_col);
+#ifndef FEAT_GUI_BROWSER
+                continue;
+#else
+                goto label_continue;
+#endif
+            }
+
+            if (c1 == Ctrl_D)
+            {
+                /* Delete one shiftwidth. */
+                p = (char_u *)line_ga.ga_data;
+                if (prev_char == '0' || prev_char == '^')
+                {
+                    if (prev_char == '^')
+                        ex_keep_indent = TRUE;
+                    indent = 0;
+                    p[--line_ga.ga_len] = NUL;
+                }
+                else
+                {
+                    p[line_ga.ga_len] = NUL;
+                    indent = get_indent_str(p, 8);
+                    --indent;
+                    indent -= indent % get_sw_value(curbuf);
+                }
+                while (get_indent_str(p, 8) > indent)
+                {
+                    char_u *s = skipwhite(p);
+
+                    mch_memmove(s - 1, s, line_ga.ga_len - (s - p) + 1);
+                    --line_ga.ga_len;
+                }
+                goto add_indent;
+            }
+
+            if (c1 == Ctrl_V || c1 == Ctrl_Q)
+            {
+                escaped = TRUE;
+#ifndef FEAT_GUI_BROWSER
+                continue;
+#else
+                goto label_continue;
+#endif
+            }
+
+            /* Ignore special key codes: mouse movement, K_IGNORE, etc. */
+            if (IS_SPECIAL(c1))
+#ifndef FEAT_GUI_BROWSER
+                continue;
+#else
+                goto label_continue;
+#endif
+        }
+
+        if (IS_SPECIAL(c1))
+            c1 = '?';
+        ((char_u *)line_ga.ga_data)[line_ga.ga_len] = c1;
+        if (c1 == '\n')
+            msg_putchar('\n');
+        else if (c1 == TAB)
+        {
+            /* Don't use chartabsize(), 'ts' can be different */
+            do
+            {
+                msg_putchar(' ');
+            } while (++vcol % 8);
+        }
+        else
+        {
+            msg_outtrans_len(
+                    ((char_u *)line_ga.ga_data) + line_ga.ga_len, 1);
+            vcol += char2cells(c1);
+        }
+        ++line_ga.ga_len;
+        escaped = FALSE;
+
+        windgoto(msg_row, msg_col);
+        pend = (char_u *)(line_ga.ga_data) + line_ga.ga_len;
+
+        /* We are done when a NL is entered, but not when it comes after an
+         * odd number of backslashes, that results in a NUL. */
+        if (line_ga.ga_len > 0 && pend[-1] == '\n')
+        {
+            int bcount = 0;
+
+            while (line_ga.ga_len - 2 >= bcount && pend[-2 - bcount] == '\\')
+                ++bcount;
+
+            if (bcount > 0)
+            {
+                /* Halve the number of backslashes: "\NL" -> "NUL", "\\NL" ->
+                 * "\NL", etc. */
+                line_ga.ga_len -= (bcount + 1) / 2;
+                pend -= (bcount + 1) / 2;
+                pend[-1] = '\n';
+            }
+
+            if ((bcount & 1) == 0)
+            {
+                --line_ga.ga_len;
+                --pend;
+                *pend = NUL;
+#ifndef FEAT_GUI_BROWSER
+                break;
+#else           
+                goto label_break;
+#endif
+            }
+        }
+    }
+#ifdef FEAT_GUI_BROWSER
+label_continue:
+    // refresh line_ga
+    ASYNC_CLEAR_DATA; 
+    ASYNC_PUT_ALL_GETEXMODELINE;
+    getexmodeline__cb1(ASYNC_ARG1);
+    return 0;
+label_break:
+    ASYNC_CLEAR_DATA; 
+    ASYNC_PUT_ALL_GETEXMODELINE;
+    // do not pop, keep line_ga for __cb2
+    getexmodeline__cb2(ASYNC_ARG1);
+    return 0;
+}
+DEFINE_ASYNC_CALLBACK(getexmodeline__cb2)
+{
+    // still using entry of __cb1 for line_ga
+    ASYNC_CHECK(getexmodeline__cb1);
+    ASYNC_GET_ALL_GETEXMODELINE;
+    ASYNC_POP;
+
+#undef ASYNC_PUT_ALL_GETEXMODELINE
+#undef ASYNC_GET_ALL_GETEXMODELINE
+#endif
     --no_mapping;
     --allow_keys;
 
@@ -2453,10 +2581,12 @@ redraw:
 	++msg_row;
     emsg_on_display = FALSE;		/* don't want ui_delay() */
 
+#ifndef FEAT_GUI_BROWSER
     if (got_int)
 	ga_clear(&line_ga);
+#endif
 
-    return (char_u *)line_ga.ga_data;
+    ASYNC_RETURN_P_(((char_u *)line_ga.ga_data), 0);
 }
 
 # if defined(MCH_CURSOR_SHAPE) || defined(FEAT_GUI) \
