@@ -16,7 +16,7 @@ int do_buffer __ARGS((int action, int start, int dir, int count, int forceit));
 void set_curbuf __ARGS((buf_T *buf, int action));
 void enter_buffer __ARGS((buf_T *buf));
 void do_autochdir __ARGS((void));
-buf_T *buflist_new __ARGS((char_u *ffname, char_u *sfname, linenr_T lnum, int flags, async_context *_async_context));
+buf_T *buflist_new __ARGS((char_u *ffname, char_u *sfname, linenr_T lnum, int flags));
 void free_buf_options __ARGS((buf_T *buf, int free_p_ff));
 int buflist_getfile __ARGS((int n, linenr_T lnum, int options, int forceit));
 void buflist_getfpos __ARGS((void));

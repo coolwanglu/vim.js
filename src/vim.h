@@ -1,4 +1,4 @@
-/* vi:set ts=8 sts=4 sw=4:
+/* vi:set ts=9 sts=4 sw=4:
  *
  * VIM - Vi IMproved	by Bram Moolenaar
  *
@@ -217,6 +217,15 @@
 
 
 #include "feature.h"	/* #defines for optionals and features */
+
+/*
+ * WIP: some features are not supported by FEAT_GUI_BROWSER yet
+ */
+#ifdef FEAT_GUI_BROWSER
+#ifdef FEAT_LISTCMDS
+# undef FEAT_LISTCMDS
+#endif
+#endif
 
 /* +x11 is only enabled when it's both available and wanted. */
 #if defined(HAVE_X11) && defined(WANT_X11)
@@ -1983,7 +1992,8 @@ typedef int VimClipboard;	/* This is required for the prototypes. */
  * been seen at that stage.  But it must be before globals.h, where error_ga
  * is declared. */
 #if !defined(FEAT_GUI_W32) && !defined(FEAT_GUI_X11) \
-	&& !defined(FEAT_GUI_GTK) && !defined(FEAT_GUI_MAC)
+	&& !defined(FEAT_GUI_GTK) && !defined(FEAT_GUI_MAC) \
+         && !defined(FEAT_GUI_BROWSER)
 # define mch_errmsg(str)	fprintf(stderr, "%s", (str))
 # define display_errors()	fflush(stderr)
 # define mch_msg(str)		printf("%s", (str))

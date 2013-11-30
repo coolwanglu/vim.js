@@ -964,12 +964,14 @@ do_intr:
 	     * Insert mode */
 	    if (goto_im())
 	    {
+#ifndef FEAT_GUI_BROWSER
 		if (got_int)
 		{
 		    (void)vgetc();		/* flush all buffers */
 		    got_int = FALSE;
 		}
 		else
+#endif
 		    vim_beep();
 		break;
 	    }
@@ -2199,7 +2201,9 @@ has_compl_option(dict_opt)
 	    vim_beep();
 	    setcursor();
 	    out_flush();
+#ifndef FEAT_GUI_BROWSER
 	    ui_delay(2000L, FALSE);
+#endif
 	}
 	return FALSE;
     }
@@ -5405,6 +5409,7 @@ ins_complete(c)
     compl_curr_match = compl_shown_match;
     compl_direction = compl_shows_dir;
 
+#ifndef FEAT_GUI_BROWSER
     /* Eat the ESC that vgetc() returns after a CTRL-C to avoid leaving Insert
      * mode. */
     if (got_int && !global_busy)
@@ -5412,6 +5417,7 @@ ins_complete(c)
 	(void)vgetc();
 	got_int = FALSE;
     }
+#endif
 
     /* we found no match if the list has only the "compl_orig_text"-entry */
     if (compl_first_match == compl_first_match->cp_next)
@@ -5979,6 +5985,10 @@ insertchar(c, flags, second_indent)
      * Don't do this when there an InsertCharPre autocommand is defined,
      * because we need to fire the event for every character.
      */
+#ifndef FEAT_GUI_BROWSER
+    // Lu Wang: Disable this to ease my life
+    // TODO: re-enable it
+    
 #ifdef USE_ON_FLY_SCROLL
     dont_scroll = FALSE;		/* allow scrolling here */
 #endif
@@ -6058,6 +6068,7 @@ insertchar(c, flags, second_indent)
 	    AppendToRedobuffLit(buf + i, -1);
     }
     else
+#endif // FEAT_GUI_BROWSER
     {
 #ifdef FEAT_MBYTE
 	int		cc;

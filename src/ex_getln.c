@@ -2152,19 +2152,49 @@ correct_cmdspos(idx, cells)
 }
 #endif
 
+DEFINE_ASYNC_CALLBACK(getexline__cb1);
 /*
  * Get an Ex command line for the ":" command.
  */
-    char_u *
-getexline(c, cookie, indent)
-    int		c;		/* normally ':', NUL for ":append" */
+/*
+    int		c;		/ * normally ':', NUL for ":append" * /
     void	*cookie UNUSED;
-    int		indent;		/* indent for inside conditionals */
+    int		indent;		/ * indent for inside conditionals * /
+*/
+    char_u *
+getexline(int c, void *cookie UNUSED, int indent DECL_ASYNC_ARG)
 {
     /* When executing a register, remove ':' that's in front of each line. */
     if (exec_from_reg && vpeekc() == ':')
-	(void)vgetc();
-    return getcmdline(c, 1L, indent);
+#ifndef FEAT_GUI_BROWSER
+        (void)vgetc();
+#else
+    {
+        ASYNC_PUSH(getexline__cb1);
+        ASYNC_PUT(c);
+        ASYNC_PUT(indent);
+        vgetc(ASYNC_ARG1);
+        return 0;
+    }
+    ASYNC_PUSH(getexline__cb1);
+    ASYNC_PUT(c);
+    ASYNC_PUT(indent);
+    ASYNC_RETURN_P(0);
+}
+DEFINE_ASYNC_CALLBACK(getexline__cb1)
+{
+    ASYNC_CHECK(getexline__cb1);
+    ASYNC_GET_INIT;
+    int c;
+    ASYNC_GET(c);
+
+    int indent;
+    ASYNC_GET(indent);
+
+    ASYNC_POP;
+#endif
+    char_u * ret = getcmdline(c, 1L, indent);
+    ASYNC_RETURN_P(ret);
 }
 
 /*

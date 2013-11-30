@@ -1612,8 +1612,6 @@ do_autochdir()
  * This is the ONLY way to create a new buffer.
  */
 static int  top_file_num = 1;		/* highest file number */
-DEFINE_ASYNC_CALLBACK(buflist_new__cb1);
-
 /*
     char_u	*ffname;	/ * full path of fname or relative * /
     char_u	*sfname;	/ * short fname or NULL * /
@@ -1622,7 +1620,7 @@ DEFINE_ASYNC_CALLBACK(buflist_new__cb1);
 */
 
     buf_T *
-buflist_new(char_u *ffname, char_u *sfname, linenr_T lnum, int flags DECL_ASYNC_ARG)
+buflist_new(char_u *ffname, char_u *sfname, linenr_T lnum, int flags)
 {
     buf_T	*buf;
 #ifdef UNIX
@@ -1792,43 +1790,10 @@ buflist_new(char_u *ffname, char_u *sfname, linenr_T lnum, int flags DECL_ASYNC_
             EMSG(_("W14: Warning: List of file names overflow"));
             if (emsg_silent == 0)
             {
-#ifndef FEAT_GUI_BROWSER
                 out_flush();
-#else
-                ASYNC_PUSH(buflist_new__cb1);
-                ASYNC_PUT(buf);
-                ASYNC_PUT(lnum);
-                ASYNC_PUT(flags);
-#ifdef UNIX
-                ASYNC_PUT(st);
-#endif
-                out_flush(ASYNC_ARG1);
-                return NULL;
-            }
-        }
-    }
-}
-DEFINE_ASYNC_CALLBACK(buflist_new__cb1)
-{
-    ASYNC_CHECK(buflist_new__cb1);
-    ASYNC_GET_INIT;
-
-    buf_T *buf;
-    ASYNC_GET(buf);
-    linenr_T lnum;
-    ASYNC_GET(lnum);
-    int flags;
-    ASYNC_GET(flags);
-#ifdef UNIX
-    struct stat st;
-    ASYNC_GET(st);
-#endif
-    ASYNC_POP;
-    {
-        {
-            {
-#endif
+#ifndef FEAT_GUI_BROWSER
 		ui_delay(3000L, TRUE);	/* make sure it is noticed */
+#endif
 	    }
 	    top_file_num = 1;
 	}
@@ -1874,12 +1839,12 @@ DEFINE_ASYNC_CALLBACK(buflist_new__cb1)
 	    apply_autocmds(EVENT_BUFADD, NULL, NULL, FALSE, buf);
 # ifdef FEAT_EVAL
 	if (aborting())		/* autocmds may abort script processing */
-	    ASYNC_RETURN_P(NULL);
+            return NULL;
 # endif
     }
 #endif
 
-    ASYNC_RETURN_P(buf);
+    return buf;
 }
 
 /*

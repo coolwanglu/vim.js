@@ -67,6 +67,9 @@ extern int _stricoll __ARGS((char *a, char *b));
 # ifdef __QNX__
 #  include "os_qnx.pro"
 # endif
+# ifdef FEAT_GUI_BROWSER
+#  include "os_browser.pro" 
+# endif
 
 # ifdef FEAT_CRYPT
 #  include "blowfish.pro"

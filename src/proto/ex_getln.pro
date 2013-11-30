@@ -10,7 +10,7 @@ int text_locked __ARGS((void));
 void text_locked_msg __ARGS((void));
 int curbuf_locked __ARGS((void));
 int allbuf_locked __ARGS((void));
-char_u *getexline __ARGS((int c, void *cookie, int indent));
+char_u *getexline __ARGS((int c, void *cookie, int indent, async_context *_async_context));
 char_u *getexmodeline __ARGS((int promptc, void *cookie, int indent));
 int cmdline_overstrike __ARGS((void));
 int cmdline_at_end __ARGS((void));

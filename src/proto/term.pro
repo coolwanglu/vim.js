@@ -13,7 +13,7 @@ int term_is_gui __ARGS((char_u *name));
 char_u *tltoa __ARGS((unsigned long i));
 char *tgoto __ARGS((char *cm, int x, int y));
 void termcapinit __ARGS((char_u *name));
-void out_flush __ARGS((async_context *_async_context));
+void out_flush __ARGS((void));
 void out_flush_check __ARGS((void));
 void out_trash __ARGS((void));
 void out_char __ARGS((unsigned c));

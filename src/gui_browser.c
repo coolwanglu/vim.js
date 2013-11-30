@@ -10,7 +10,9 @@
 
 #include "vim.h"
 
+#ifndef PROTO
 #include <emscripten/emscripten.h>
+#endif
 
      void
 gui_mch_mousehide(int hide)

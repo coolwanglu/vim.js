@@ -8390,7 +8390,9 @@ do_sleep(msec)
     out_flush();
     for (done = 0; !got_int && done < msec; done += 1000L)
     {
+#ifndef FEAT_GUI_BROWSER
 	ui_delay(msec - done > 1000L ? 1000L : msec - done, TRUE);
+#endif
 	ui_breakcheck();
 #ifdef FEAT_NETBEANS_INTG
 	/* Process the netbeans messages that may have been received in the

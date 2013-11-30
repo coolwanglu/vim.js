@@ -25,14 +25,16 @@
 #endif
 
     void
-ui_write(char_u *s, int len DECL_ASYNC_ARG)
+ui_write(char_u *s, int len)
 {
 #ifdef FEAT_GUI
     if (gui.in_use && !gui.dying && !gui.starting)
     {
 	gui_write(s, len);
+#ifndef FEAT_GUI_BROWSER
 	if (p_wd)
-	    gui_wait_for_chars(p_wd ASYNC_ARG);
+	    gui_wait_for_chars(p_wd);
+#endif
 	return;
     }
 #endif
@@ -101,7 +103,7 @@ ui_inchar_undo(s, len)
 }
 #endif
 
-DEFINE_ASYNC_CALLBACK(ui_inchar__cb1)
+DEFINE_ASYNC_CALLBACK(ui_inchar__cb1);
 /*
  * ui_inchar(): low level input function.
  * Get characters from the keyboard.
@@ -256,7 +258,7 @@ ui_char_avail()
  * cancel the delay if a key is hit.
  */
     void
-ui_delay(long msec, int ignoreinput, DECL_ASYNC_ARG)
+ui_delay(long msec, int ignoreinput DECL_ASYNC_ARG)
     long	msec;
     int		ignoreinput;
 {

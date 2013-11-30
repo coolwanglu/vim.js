@@ -2516,7 +2516,7 @@ static int		out_pos = 0;	/* number of chars in out_buf */
  * out_flush(): flush the output buffer
  */
     void
-out_flush(DECL_ASYNC_ARG1)
+out_flush()
 {
     int	    len;
 
@@ -2525,7 +2525,7 @@ out_flush(DECL_ASYNC_ARG1)
 	/* set out_pos to 0 before ui_write, to avoid recursiveness */
 	len = out_pos;
 	out_pos = 0;
-	ui_write(out_buf, len ASYNC_ARG);
+	ui_write(out_buf, len);
     }
 }
 
