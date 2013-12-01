@@ -1827,7 +1827,8 @@ plain_vgetc()
  * character is not valid!.
  */
     int
-vpeekc()
+vpeekc( ASYNC_ARG_ONLY)
+    DECL_ASYNC_ARG_KR
 {
     if (old_char != -1)
 	return old_char;
