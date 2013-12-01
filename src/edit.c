@@ -8983,7 +8983,7 @@ ins_bs(c, mode, inserted_space_p ASYNC_ARG)
 	    /* Compute the virtual column where we want to be.  Since
 	     * 'showbreak' may get in the way, need to get the last column of
 	     * the previous character. */
-	    getvcol(curwin, &curwin->w_cursor, &vcol, NULL, NULL);
+	    getvcol(curwin, &curwin->w_cursor, &vcol, NULL, NULL ASYNC_ARG);
 	    start_vcol = vcol;
 	    dec_cursor();
 	    getvcol(curwin, &curwin->w_cursor, NULL, NULL, &want_vcol);
