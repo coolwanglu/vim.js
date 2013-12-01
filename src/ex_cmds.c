@@ -2625,7 +2625,7 @@ do_write(eap ASYNC_ARG)
 #ifdef FEAT_QUICKFIX
 		bt_dontwrite_msg(curbuf) ||
 #endif
-		check_fname() == FAIL || check_readonly(&eap->forceit, curbuf ASYNC_ARG)))
+		check_fname(ASYNC_ARG_ONLY) == FAIL || check_readonly(&eap->forceit, curbuf ASYNC_ARG)))
 	goto theend;
 
     if (!other)
@@ -2939,7 +2939,7 @@ do_wqall(eap ASYNC_ARG)
 	    }
 	    else if (check_readonly(&eap->forceit, buf ASYNC_ARG)
 		    || check_overwrite(eap, buf, buf->b_fname, buf->b_ffname,
-							       FALSE) == FAIL)
+							       FALSE ASYNC_ARG) == FAIL)
 	    {
 		++error;
 	    }
@@ -5774,7 +5774,7 @@ ex_help(eap ASYNC_ARG)
 	     */
 	    if ((helpfd = mch_fopen((char *)p_hf, READBIN)) == NULL)
 	    {
-		smsg((char_u *)_("Sorry, help file \"%s\" not found"), p_hf);
+		smsg(ASYNC_ARG_FIRST (char_u *)_("Sorry, help file \"%s\" not found"), p_hf);
 		goto erret;
 	    }
 	    fclose(helpfd);

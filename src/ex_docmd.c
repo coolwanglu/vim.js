@@ -4683,7 +4683,7 @@ expand_filename(eap, cmdlinep, errormsgp)
 		    if (p_wic)
 			options += WILD_ICASE;
 		    p = ExpandOne(&xpc, eap->arg, NULL,
-						   options, WILD_EXPAND_FREE);
+						   options, WILD_EXPAND_FREE ASYNC_ARG);
 		    if (p == NULL)
 			return FAIL;
 		}
