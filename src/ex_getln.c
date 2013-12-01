@@ -1466,7 +1466,7 @@ getcmdline(firstc, count, indent ASYNC_ARG)
 #endif
 
 		/* completion: longest common part */
-		if (nextwild(&xpc, WILD_LONGEST, 0, firstc != '@') == FAIL)
+		if (nextwild(&xpc, WILD_LONGEST, 0, firstc != '@' ASYNC_ARG) == FAIL)
 		    break;
 		goto cmdline_changed;
 
