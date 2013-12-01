@@ -3676,7 +3676,7 @@ buf_write(buf, fname, sfname, start, end, eap, append, forceit,
 	 */
 	if (overwriting)
 	{
-	    retval = check_mtime(buf, &st_old);
+	    retval = check_mtime(buf, &st_old ASYNC_ARG);
 	    if (retval == FAIL)
 		goto fail;
 	}
