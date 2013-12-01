@@ -2771,10 +2771,11 @@ buflist_name_nr(fnum, fname, lnum)
  *	OK otherwise.
  */
     int
-setfname(buf, ffname, sfname, message)
+setfname(buf, ffname, sfname, message ASYNC_ARG)
     buf_T	*buf;
     char_u	*ffname, *sfname;
     int		message;	/* give message when buffer already exists */
+    DECL_ASYNC_ARG_KR
 {
     buf_T	*obuf = NULL;
 #ifdef UNIX
