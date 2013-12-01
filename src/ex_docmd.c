@@ -6925,8 +6925,9 @@ ex_hide(eap)
  * ":stop" and ":suspend": Suspend Vim.
  */
     static void
-ex_stop(eap)
+ex_stop(eap ASYNC_ARG)
     exarg_T	*eap;
+    DECL_ASYNC_ARG_KR
 {
     /*
      * Disallow suspending for "rvim".
