@@ -890,7 +890,7 @@ edit(cmdchar, startln, count ASYNC_ARG)
 #endif
 	if (c == Ctrl_V || c == Ctrl_Q)
 	{
-	    ins_ctrl_v();
+	    ins_ctrl_v( ASYNC_ARG_ONLY);
 	    c = Ctrl_V;	/* pretend CTRL-V is last typed character */
 	    continue;
 	}
