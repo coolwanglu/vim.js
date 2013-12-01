@@ -2942,8 +2942,9 @@ setaltfname(ffname, sfname, lnum ASYNC_ARG)
  * Return NULL if there isn't any, and give error message if requested.
  */
     char_u  *
-getaltfname(errmsg)
+getaltfname(errmsg ASYNC_ARG)
     int		errmsg;		/* give error message */
+    DECL_ASYNC_ARG_KR
 {
     char_u	*fname;
     linenr_T	dummy;

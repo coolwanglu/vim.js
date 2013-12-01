@@ -30,7 +30,7 @@ int setfname __ARGS((buf_T *buf, char_u *ffname, char_u *sfname, int message, as
 void buf_set_name __ARGS((int fnum, char_u *name));
 void buf_name_changed __ARGS((buf_T *buf));
 buf_T *setaltfname __ARGS((char_u *ffname, char_u *sfname, linenr_T lnum, async_context *_async_context));
-char_u *getaltfname __ARGS((int errmsg));
+char_u *getaltfname __ARGS((int errmsg, async_context *_async_context));
 int buflist_add __ARGS((char_u *fname, int flags, async_context *_async_context));
 void buflist_slash_adjust __ARGS((void));
 void buflist_altfpos __ARGS((win_T *win));
