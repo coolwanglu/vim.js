@@ -1831,7 +1831,7 @@ vpeekc()
 {
     if (old_char != -1)
 	return old_char;
-    return vgetorpeek(FALSE);
+    return vgetorpeek(FALSE ASYNC_ARG);
 }
 
 #if defined(FEAT_TERMRESPONSE) || defined(PROTO)
