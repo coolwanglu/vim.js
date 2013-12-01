@@ -757,7 +757,7 @@ do_marks(eap ASYNC_ARG)
 		vim_free(name);
 	}
     }
-    show_one_mark('"', arg, &curbuf->b_last_cursor, NULL, TRUE);
+    show_one_mark('"', arg, &curbuf->b_last_cursor, NULL, TRUE ASYNC_ARG);
     show_one_mark('[', arg, &curbuf->b_op_start, NULL, TRUE);
     show_one_mark(']', arg, &curbuf->b_op_end, NULL, TRUE);
     show_one_mark('^', arg, &curbuf->b_last_insert, NULL, TRUE);
