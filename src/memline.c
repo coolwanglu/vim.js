@@ -3630,7 +3630,7 @@ ml_find_line(buf, lnum, action ASYNC_ARG)
 	 * update the line count in pointer blocks.
 	 */
 	if (buf->b_ml.ml_locked_lineadd != 0)
-	    ml_lineadd(buf, buf->b_ml.ml_locked_lineadd);
+	    ml_lineadd(buf, buf->b_ml.ml_locked_lineadd ASYNC_ARG);
     }
 
     if (action == ML_FLUSH)	    /* nothing else to do */
