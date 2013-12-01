@@ -4230,7 +4230,7 @@ buf_write(buf, fname, sfname, start, end, eap, append, forceit,
     if (reset_changed && !newfile && overwriting
 					      && !(exiting && backup != NULL))
     {
-	ml_preserve(buf, FALSE);
+	ml_preserve(buf, FALSE ASYNC_ARG);
 	if (got_int)
 	{
 	    errmsg = (char_u *)_(e_interr);
