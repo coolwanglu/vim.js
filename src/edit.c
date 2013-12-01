@@ -1123,7 +1123,7 @@ doESCkey:
 
 	case Ctrl_W:	/* delete word before the cursor */
 	    did_backspace = ins_bs(c, BACKSPACE_WORD, &inserted_space);
-	    auto_format(FALSE, TRUE);
+	    auto_format(FALSE, TRUE ASYNC_ARG);
 	    break;
 
 	case Ctrl_U:	/* delete all inserted text in current line */
