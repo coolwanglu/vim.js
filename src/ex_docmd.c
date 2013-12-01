@@ -4994,8 +4994,9 @@ getargopt(eap)
  * ":abbreviate" and friends.
  */
     static void
-ex_abbreviate(eap)
+ex_abbreviate(eap ASYNC_ARG)
     exarg_T	*eap;
+    DECL_ASYNC_ARG_KR
 {
     do_exmap(eap, TRUE ASYNC_ARG);	/* almost the same as mapping */
 }
