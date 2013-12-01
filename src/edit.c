@@ -8651,9 +8651,10 @@ ins_ctrl_o()
  * autoindent, we support it everywhere.
  */
     static void
-ins_shift(c, lastc)
+ins_shift(c, lastc ASYNC_ARG)
     int	    c;
     int	    lastc;
+    DECL_ASYNC_ARG_KR
 {
     if (stop_arrow() == FAIL)
 	return;
