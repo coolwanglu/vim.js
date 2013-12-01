@@ -19,7 +19,7 @@ int get_literal __ARGS((void));
 void insertchar __ARGS((int c, int flags, int second_indent, async_context *_async_context));
 void auto_format __ARGS((int trailblank, int prev_line, async_context *_async_context));
 int comp_textwidth __ARGS((int ff));
-int stop_arrow __ARGS((void));
+int stop_arrow __ARGS((async_context *_async_context));
 void set_last_insert __ARGS((int c));
 void free_last_insert __ARGS((void));
 char_u *add_char2buf __ARGS((int c, char_u *s));

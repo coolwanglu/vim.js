@@ -6753,7 +6753,8 @@ spell_back_to_badword()
  * Returns FAIL if undo is impossible, shouldn't insert then.
  */
     int
-stop_arrow()
+stop_arrow( ASYNC_ARG_ONLY)
+    DECL_ASYNC_ARG_KR
 {
     if (arrow_used)
     {
