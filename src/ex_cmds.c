@@ -2943,7 +2943,7 @@ do_wqall(eap)
 	    }
 	    else
 	    {
-		if (buf_write_all(buf, eap->forceit) == FAIL)
+		if (buf_write_all(buf, eap->forceit ASYNC_ARG) == FAIL)
 		    ++error;
 #ifdef FEAT_AUTOCMD
 		/* an autocommand may have deleted the buffer */
