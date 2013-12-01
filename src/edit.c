@@ -7400,7 +7400,7 @@ echeck_abbr(c)
     if (p_paste || no_abbr || arrow_used)
 	return FALSE;
 
-    return check_abbr(c, ml_get_curline(), curwin->w_cursor.col,
+    return check_abbr(c, ml_get_curline( ASYNC_ARG_ONLY), curwin->w_cursor.col,
 		curwin->w_cursor.lnum == Insstart.lnum ? Insstart.col : 0);
 }
 
