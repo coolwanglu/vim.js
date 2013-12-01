@@ -2764,9 +2764,10 @@ check_overwrite(eap, buf, fname, ffname, other)
     exarg_T	*eap;
     buf_T	*buf;
     char_u	*fname;	    /* file name to be used (can differ from
-			       buf->ffname) */
+			       buf->ffname ASYNC_ARG) */
     char_u	*ffname;    /* full path version of fname */
     int		other;	    /* writing under other name */
+    DECL_ASYNC_ARG_KR
 {
     /*
      * write to other file or b_flags set or not writing the whole file:
