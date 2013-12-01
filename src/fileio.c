@@ -6816,7 +6816,7 @@ move_lines(frombuf, tobuf)
     for (lnum = 1; lnum <= frombuf->b_ml.ml_line_count; ++lnum)
     {
 	p = vim_strsave(ml_get_buf(frombuf, lnum, FALSE));
-	if (p == NULL || ml_append(lnum - 1, p, 0, FALSE) == FAIL)
+	if (p == NULL || ml_append(lnum - 1, p, 0, FALSE ASYNC_ARG) == FAIL)
 	{
 	    vim_free(p);
 	    retval = FAIL;
