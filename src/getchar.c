@@ -1531,7 +1531,7 @@ updatescript(c)
 	putc(c, scriptout);
     if (c == 0 || (p_uc > 0 && ++count >= p_uc))
     {
-	ml_sync_all(c == 0, TRUE);
+	ml_sync_all(c == 0, TRUE ASYNC_ARG);
 	count = 0;
     }
 }
