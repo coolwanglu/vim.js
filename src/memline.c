@@ -245,7 +245,7 @@ static bhdr_T *ml_new_data __ARGS((memfile_T *, int, int));
 static bhdr_T *ml_new_ptr __ARGS((memfile_T *));
 static bhdr_T *ml_find_line __ARGS((buf_T *, linenr_T, int DECL_ASYNC_ARG));
 static int ml_add_stack __ARGS((buf_T *));
-static void ml_lineadd __ARGS((buf_T *, int));
+static void ml_lineadd __ARGS((buf_T *, int DECL_ASYNC_ARG));
 static int b0_magic_wrong __ARGS((ZERO_BL *));
 #ifdef CHECK_INODE
 static int fnamecmp_ino __ARGS((char_u *, char_u *, long));
