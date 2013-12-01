@@ -103,7 +103,7 @@ static void	cmdline_del __ARGS((int from));
 static void	redrawcmdprompt __ARGS((void));
 static void	cursorcmd __ARGS((void));
 static int	ccheck_abbr __ARGS((int));
-static int	nextwild __ARGS((expand_T *xp, int type, int options, int escape));
+static int	nextwild __ARGS((expand_T *xp, int type, int options, int escape DECL_ASYNC_ARG));
 static void	escape_fname __ARGS((char_u **pp));
 static int	showmatches __ARGS((expand_T *xp, int wildmenu));
 static void	set_expand_context __ARGS((expand_T *xp));
