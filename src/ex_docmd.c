@@ -8691,7 +8691,7 @@ ex_copymove(eap ASYNC_ARG)
 	    return;
     }
     else
-	ex_copy(eap->line1, eap->line2, n);
+	ex_copy(eap->line1, eap->line2, n ASYNC_ARG);
     u_clearline();
     beginline(BL_SOL | BL_FIX);
     ex_may_print(eap);
