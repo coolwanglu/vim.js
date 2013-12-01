@@ -8441,7 +8441,7 @@ do_exmap(eap, isabbrev)
     mode = get_map_mode(&cmdp, eap->forceit || isabbrev);
 
     switch (do_map((*cmdp == 'n') ? 2 : (*cmdp == 'u'),
-						    eap->arg, mode, isabbrev))
+						    eap->arg, mode, isabbrev ASYNC_ARG))
     {
 	case 1: EMSG(_(e_invarg));
 		break;
