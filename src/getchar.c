@@ -1506,7 +1506,8 @@ using_script()
  * waiting 'updatetime' for a character to arrive.
  */
     void
-before_blocking()
+before_blocking( ASYNC_ARG_ONLY)
+    DECL_ASYNC_ARG_KR
 {
     updatescript(0 ASYNC_ARG);
 #ifdef FEAT_EVAL
