@@ -5075,7 +5075,7 @@ do_modelines(flags)
     ++entered;
     for (lnum = 1; lnum <= curbuf->b_ml.ml_line_count && lnum <= nmlines;
 								       ++lnum)
-	if (chk_modeline(lnum, flags) == FAIL)
+	if (chk_modeline(lnum, flags ASYNC_ARG) == FAIL)
 	    nmlines = 0;
 
     for (lnum = curbuf->b_ml.ml_line_count; lnum > 0 && lnum > nmlines
