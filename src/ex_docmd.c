@@ -7383,8 +7383,9 @@ ex_preserve(eap ASYNC_ARG)
  * ":recover".
  */
     static void
-ex_recover(eap)
+ex_recover(eap ASYNC_ARG)
     exarg_T	*eap;
+    DECL_ASYNC_ARG_KR
 {
     /* Set recoverymode right away to avoid the ATTENTION prompt. */
     recoverymode = TRUE;
