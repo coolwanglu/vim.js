@@ -5236,9 +5236,10 @@ check_nextcmd(p)
  * return OK otherwise
  */
     static int
-check_more(message, forceit)
+check_more(message, forceit ASYNC_ARG)
     int message;	    /* when FALSE check only, no messages */
     int forceit;
+    DECL_ASYNC_ARG_KR
 {
     int	    n = ARGCOUNT - curwin->w_arg_idx - 1;
 
