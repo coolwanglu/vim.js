@@ -4997,7 +4997,7 @@ getargopt(eap)
 ex_abbreviate(eap)
     exarg_T	*eap;
 {
-    do_exmap(eap, TRUE);	/* almost the same as mapping */
+    do_exmap(eap, TRUE ASYNC_ARG);	/* almost the same as mapping */
 }
 
 /*
