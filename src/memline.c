@@ -3060,10 +3060,11 @@ ml_append_int(buf, lnum, line, len, newfile, mark)
  * return FAIL for failure, OK otherwise
  */
     int
-ml_replace(lnum, line, copy)
+ml_replace(lnum, line, copy ASYNC_ARG)
     linenr_T	lnum;
     char_u	*line;
     int		copy;
+    DECL_ASYNC_ARG_KR
 {
     if (line == NULL)		/* just checking... */
 	return FAIL;
