@@ -880,7 +880,7 @@ ex_copy(line1, line2, n ASYNC_ARG)
     {
 	/* need to use vim_strsave() because the line will be unlocked within
 	 * ml_append() */
-	p = vim_strsave(ml_get(line1));
+	p = vim_strsave(ml_get(line1 ASYNC_ARG));
 	if (p != NULL)
 	{
 	    ml_append(curwin->w_cursor.lnum, p, (colnr_T)0, FALSE ASYNC_ARG);
