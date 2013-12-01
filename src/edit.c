@@ -6015,7 +6015,7 @@ insertchar(c, flags, second_indent ASYNC_ARG)
 	buf[0] = c;
 	i = 1;
 	if (textwidth > 0)
-	    virtcol = get_nolist_virtcol();
+	    virtcol = get_nolist_virtcol( ASYNC_ARG_ONLY);
 	/*
 	 * Stop the string when:
 	 * - no more chars available
