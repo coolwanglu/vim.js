@@ -309,17 +309,16 @@ static int	did_add_space = FALSE;	/* auto_format() added an extra space
  *
  * Return TRUE if a CTRL-O command caused the return (insert mode pending).
  */
+// Lu Wang: move static variable outside for async_calls;
+static linenr_T edit__o_lnum = 0;
+/* startln:  if set, insert at start of line */
     int
-edit(cmdchar, startln, count)
-    int		cmdchar;
-    int		startln;	/* if set, insert at start of line */
-    long	count;
+edit(int cmdchar, ing startln, long count)
 {
     int		c = 0;
     char_u	*ptr;
     int		lastc;
     int		mincol;
-    static linenr_T o_lnum = 0;
     int		i;
     int		did_backspace = TRUE;	    /* previous char was backspace */
 #ifdef FEAT_CINDENT
@@ -332,6 +331,7 @@ edit(cmdchar, startln, count)
     int		inserted_space = FALSE;     /* just inserted a space */
     int		replaceState = REPLACE;
     int		nomove = FALSE;		    /* don't move cursor on return */
+
 
     /* Remember whether editing was restarted after CTRL-O. */
     did_restart_edit = restart_edit;
@@ -544,7 +544,7 @@ edit(cmdchar, startln, count)
 	 */
 	validate_virtcol();
 	update_curswant();
-	if (((ins_at_eol && curwin->w_cursor.lnum == o_lnum)
+	if (((ins_at_eol && curwin->w_cursor.lnum == edit__o_lnum)
 		    || curwin->w_curswant > curwin->w_virtcol)
 		&& *(ptr = ml_get_curline() + curwin->w_cursor.col) != NUL)
 	{
@@ -982,7 +982,7 @@ doESCkey:
 	    /* Always update o_lnum, so that a "CTRL-O ." that adds a line
 	     * still puts the cursor back after the inserted text. */
 	    if (ins_at_eol && gchar_cursor() == NUL)
-		o_lnum = curwin->w_cursor.lnum;
+		edit__o_lnum = curwin->w_cursor.lnum;
 
 	    if (ins_esc(&count, cmdchar, nomove))
 	    {

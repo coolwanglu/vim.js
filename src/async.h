@@ -160,6 +160,9 @@ async_pop( async_context * context)
 #define ASYNC_GET_T(T, val) T val;async_get(&_async_get_pointer, ASYNC_CTX, ((char*)(&val)), sizeof(val));
 #define ASYNC_GET(val) ASYNC_GET_T(int, val)
 
+// to push/get lots of variables
+#define DEFINE_ASYNC_VARIABLE_STORE(fn) struct async_variable_store__##fn
+
 #define ASYNC_CLEAR_DATA ASYNC_CTX->data_used = 0;
 
 #else // FEAT_GUI_BROWSER
