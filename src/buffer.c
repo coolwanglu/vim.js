@@ -5045,7 +5045,7 @@ ex_buffer_all(eap)
 
 #endif /* FEAT_WINDOWS */
 
-static int  chk_modeline __ARGS((linenr_T, int));
+static int  chk_modeline __ARGS((linenr_T, int DECL_ASYNC_ARG));
 
 /*
  * do_modelines() - process mode lines for the current file
