@@ -8717,7 +8717,7 @@ ins_del()
     AppendCharToRedobuff(K_DEL);
 }
 
-static void ins_bs_one __ARGS((colnr_T *vcolp));
+static void ins_bs_one __ARGS((colnr_T *vcolp DECL_ASYNC_ARG));
 
 /*
  * Delete one character for ins_bs().
