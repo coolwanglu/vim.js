@@ -2507,7 +2507,7 @@ failed:
 		p = msg_may_trunc(FALSE, IObuff);
 	    else
 #endif
-		p = msg_trunc_attr(IObuff, FALSE, 0);
+		p = msg_trunc_attr(IObuff, FALSE, 0 ASYNC_ARG);
 	    if (read_stdin || read_buffer || restart_edit != 0
 		    || (msg_scrolled != 0 && !need_wait_return))
 		/* Need to repeat the message after redrawing when:
