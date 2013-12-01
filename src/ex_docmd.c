@@ -195,7 +195,7 @@ static void	ex_goto __ARGS((exarg_T *eap));
 # define ex_goto		ex_ni
 #endif
 static void	ex_shell __ARGS((exarg_T *eap DECL_ASYNC_ARG));
-static void	ex_preserve __ARGS((exarg_T *eap));
+static void	ex_preserve __ARGS((exarg_T *eap DECL_ASYNC_ARG));
 static void	ex_recover __ARGS((exarg_T *eap));
 #ifndef FEAT_LISTCMDS
 # define ex_argedit		ex_ni
