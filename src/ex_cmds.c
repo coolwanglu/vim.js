@@ -3100,7 +3100,7 @@ getfile(fnum, ffname, sfname, setpm, lnum, forceit ASYNC_ARG)
 	if (lnum != 0)
 	    curwin->w_cursor.lnum = lnum;
 	check_cursor_lnum();
-	beginline(BL_SOL | BL_FIX);
+	beginline(BL_SOL | BL_FIX ASYNC_ARG);
 	retval = 0;	/* it's in the same file */
     }
     else if (do_ecmd(fnum, ffname, sfname, NULL, lnum,
