@@ -882,7 +882,7 @@ ex_copy(line1, line2, n)
 	p = vim_strsave(ml_get(line1));
 	if (p != NULL)
 	{
-	    ml_append(curwin->w_cursor.lnum, p, (colnr_T)0, FALSE);
+	    ml_append(curwin->w_cursor.lnum, p, (colnr_T)0, FALSE ASYNC_ARG);
 	    vim_free(p);
 	}
 	/* situation 2: skip already copied lines */
