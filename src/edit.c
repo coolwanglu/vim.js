@@ -1105,7 +1105,7 @@ doESCkey:
 	    }
 # endif
 	    ins_shift(c, lastc);
-	    auto_format(FALSE, TRUE);
+	    auto_format(FALSE, TRUE ASYNC_ARG);
 	    inserted_space = FALSE;
 	    break;
 
