@@ -7375,7 +7375,7 @@ ex_preserve(eap)
     exarg_T	*eap UNUSED;
 {
     curbuf->b_flags |= BF_PRESERVED;
-    ml_preserve(curbuf, TRUE);
+    ml_preserve(curbuf, TRUE ASYNC_ARG);
 }
 
 /*
