@@ -5884,7 +5884,7 @@ insertchar(c, flags, second_indent)
 #ifdef FEAT_VREPLACE
 			&& !(State & VREPLACE_FLAG)
 #endif
-			&& *ml_get_cursor() != NUL)
+			&& *ml_get_cursor( ASYNC_ARG_ONLY) != NUL)
 		    && (curwin->w_cursor.lnum != Insstart.lnum
 			|| ((!has_format_option(FO_INS_LONG)
 				|| Insstart_textlen <= (colnr_T)textwidth)
