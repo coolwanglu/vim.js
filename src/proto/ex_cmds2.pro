@@ -52,7 +52,7 @@ void ex_last __ARGS((exarg_T *eap, async_context *_async_context));
 void ex_argument __ARGS((exarg_T *eap, async_context *_async_context));
 void do_argfile __ARGS((exarg_T *eap, int argn, async_context *_async_context));
 void ex_next __ARGS((exarg_T *eap, async_context *_async_context));
-void ex_runtime __ARGS((exarg_T *eap));
+void ex_runtime __ARGS((exarg_T *eap, async_context *_async_context));
 int source_runtime __ARGS((char_u *name, int all, async_context *_async_context));
 int do_in_runtimepath __ARGS((char_u *name, int all, void (*callback)(char_u *fname, void *ck), void *cookie, async_context *_async_context));
 void ex_source __ARGS((exarg_T *eap, async_context *_async_context));

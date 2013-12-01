@@ -2728,8 +2728,9 @@ ex_compiler(eap)
  * ":runtime {name}"
  */
     void
-ex_runtime(eap)
+ex_runtime(eap ASYNC_ARG)
     exarg_T	*eap;
+    DECL_ASYNC_ARG_KR
 {
     source_runtime(eap->arg, eap->forceit ASYNC_ARG);
 }
