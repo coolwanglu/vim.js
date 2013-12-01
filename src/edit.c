@@ -1009,7 +1009,7 @@ doESCkey:
 	    if (ctrl_x_mode == CTRL_X_OMNI)
 		goto docomplete;
 #endif
-	    if (echeck_abbr(Ctrl_O + ABBR_OFF))
+	    if (echeck_abbr(Ctrl_O + ABBR_OFF ASYNC_ARG))
 		break;
 	    ins_ctrl_o();
 
