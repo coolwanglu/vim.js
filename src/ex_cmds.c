@@ -5191,7 +5191,7 @@ skip:
 			    if (u_savedel(lnum, nmatch_tl) != OK)
 				break;
 			    for (i = 0; i < nmatch_tl; ++i)
-				ml_delete(lnum, (int)FALSE);
+				ml_delete(lnum, (int)FALSE ASYNC_ARG);
 			    mark_adjust(lnum, lnum + nmatch_tl - 1,
 						   (long)MAXLNUM, -nmatch_tl);
 			    if (do_ask)
