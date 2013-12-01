@@ -2406,7 +2406,7 @@ ml_get_pos(pos ASYNC_ARG)
     char_u *
 ml_get_curline()
 {
-    return ml_get_buf(curbuf, curwin->w_cursor.lnum, FALSE);
+    return ml_get_buf(curbuf, curwin->w_cursor.lnum, FALSE ASYNC_ARG);
 }
 
 /*
