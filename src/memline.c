@@ -2385,7 +2385,7 @@ theend:
 ml_get(lnum)
     linenr_T	lnum;
 {
-    return ml_get_buf(curbuf, lnum, FALSE);
+    return ml_get_buf(curbuf, lnum, FALSE ASYNC_ARG);
 }
 
 /*
