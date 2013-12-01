@@ -1112,7 +1112,7 @@ doESCkey:
 	case K_DEL:	/* delete character under the cursor */
 	case K_KDEL:
 	    ins_del();
-	    auto_format(FALSE, TRUE);
+	    auto_format(FALSE, TRUE ASYNC_ARG);
 	    break;
 
 	case K_BS:	/* delete character before the cursor */
