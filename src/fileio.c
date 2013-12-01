@@ -4942,7 +4942,7 @@ restore_backup:
 		STRCAT(IObuff, shortmess(SHM_WRI) ? _(" [w]") : _(" written"));
 	}
 
-	set_keep_msg(msg_trunc_attr(IObuff, FALSE, 0), 0);
+	set_keep_msg(msg_trunc_attr(IObuff, FALSE, 0 ASYNC_ARG), 0);
     }
 
     /* When written everything correctly: reset 'modified'.  Unless not
