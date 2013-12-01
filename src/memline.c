@@ -1123,7 +1123,7 @@ ml_recover( ASYNC_ARG_ONLY)
 	directly = FALSE;
 
 	/* count the number of matching swap files */
-	len = recover_names(fname, FALSE, 0, NULL);
+	len = recover_names(fname, FALSE, 0, NULL ASYNC_ARG);
 	if (len == 0)		    /* no swap files found */
 	{
 	    EMSG2(_("E305: No swap file found for %s"), fname);
