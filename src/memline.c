@@ -1642,7 +1642,7 @@ ml_recover( ASYNC_ARG_ONLY)
      */
     while (curbuf->b_ml.ml_line_count > lnum
 				       && !(curbuf->b_ml.ml_flags & ML_EMPTY))
-	ml_delete(curbuf->b_ml.ml_line_count, FALSE);
+	ml_delete(curbuf->b_ml.ml_line_count, FALSE ASYNC_ARG);
     curbuf->b_flags |= BF_RECOVERED;
 
     recoverymode = FALSE;
