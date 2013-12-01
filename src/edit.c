@@ -8677,7 +8677,7 @@ ins_shift(c, lastc)
     else
 	change_indent(c == Ctrl_D ? INDENT_DEC : INDENT_INC, 0, TRUE, 0, TRUE);
 
-    if (did_ai && *skipwhite(ml_get_curline()) != NUL)
+    if (did_ai && *skipwhite(ml_get_curline( ASYNC_ARG_ONLY)) != NUL)
 	did_ai = FALSE;
 #ifdef FEAT_SMARTINDENT
     did_si = FALSE;
