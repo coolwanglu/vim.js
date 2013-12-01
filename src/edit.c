@@ -1876,7 +1876,7 @@ change_indent(type, amount, round, replaced, call_changed_bytes ASYNC_ARG)
 
     /* determine offset from first non-blank */
     new_cursor_col = curwin->w_cursor.col;
-    beginline(BL_WHITE);
+    beginline(BL_WHITE ASYNC_ARG);
     new_cursor_col -= curwin->w_cursor.col;
 
     insstart_less = curwin->w_cursor.col;
