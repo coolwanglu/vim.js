@@ -187,7 +187,7 @@ open_buffer(read_stdin, eap, flags ASYNC_ARG)
 	    {
 		/* Delete the converted lines. */
 		while (curbuf->b_ml.ml_line_count > line_count)
-		    ml_delete(line_count, FALSE);
+		    ml_delete(line_count, FALSE ASYNC_ARG);
 	    }
 	    /* Put the cursor on the first line. */
 	    curwin->w_cursor.lnum = 1;
