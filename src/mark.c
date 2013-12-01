@@ -830,8 +830,9 @@ show_one_mark(c, arg, p, name, current ASYNC_ARG)
  * ":delmarks[!] [marks]"
  */
     void
-ex_delmarks(eap)
+ex_delmarks(eap ASYNC_ARG)
     exarg_T *eap;
+    DECL_ASYNC_ARG_KR
 {
     char_u	*p;
     int		from, to;
