@@ -1997,7 +1997,7 @@ buflist_getfile(n, lnum, options, forceit ASYNC_ARG)
 
     if (text_locked())
     {
-	text_locked_msg();
+	text_locked_msg(ASYNC_ARG_ONLY);
 	return FAIL;
     }
 #ifdef FEAT_AUTOCMD
