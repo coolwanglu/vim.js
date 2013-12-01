@@ -2166,37 +2166,11 @@ getexline(int c, void *cookie UNUSED, int indent DECL_ASYNC_ARG)
 {
     /* When executing a register, remove ':' that's in front of each line. */
     if (exec_from_reg && vpeekc() == ':')
-#ifndef FEAT_GUI_BROWSER
-        (void)vgetc();
-#else
-    {
-        ASYNC_PUSH(getexline__cb1);
-        ASYNC_PUT(c);
-        ASYNC_PUT(indent);
-        vgetc(ASYNC_ARG1);
-        return 0;
-    }
-    ASYNC_PUSH(getexline__cb1);
-    ASYNC_PUT(c);
-    ASYNC_PUT(indent);
-    ASYNC_RETURN_P(0);
-}
-DEFINE_ASYNC_CALLBACK(getexline__cb1)
-{
-    ASYNC_CHECK(getexline__cb1);
-    ASYNC_GET_INIT;
-    ASYNC_GET(c);
-    ASYNC_GET(indent);
-
-    ASYNC_POP;
-#endif
+        (void)vgetc(ASYNC_ARG1);
     char_u * ret = getcmdline(c, 1L, indent);
     ASYNC_RETURN_P_(ret, 0);
 }
 
-DEFINE_ASYNC_CALLBACK(getexmodeline__cb1);
-DEFINE_ASYNC_CALLBACK(getexmodeline__cb2);
-DEFINE_ASYNC_CALLBACK(getexmodeline__cb3);
 /*
  * Get an Ex command line for Ex mode.
  * In Ex mode we only use the OS supplied line editing features and no
@@ -2264,53 +2238,10 @@ getexmodeline(int promptc, void *cookie UNUSED, int indent DECL_ASYNC_ARG)
      * Get the line, one character at a time.
      */
     got_int = FALSE;
-#ifdef FEAT_GUI_BROWSER
-// this might be too slow
-// may use ASYNC_CTX->data as a struct 
-#define ASYNC_PUT_ALL_GETEXMODELINE \
-    ASYNC_PUT(indent); \
-    ASYNC_PUT(line_ga); \
-    ASYNC_PUT(pend); \
-    ASYNC_PUT(startcol); \
-    ASYNC_PUT(c1); \
-    ASYNC_PUT(escaped); \
-    ASYNC_PUT(vcol); \
-    ASYNC_PUT(prev_char);
-
-#define ASYNC_GET_ALL_GETEXMODELINE \
-    ASYNC_GET_INIT; \
-    ASYNC_GET(indent); \
-    ASYNC_GET_T(garray_T, line_ga); \
-    ASYNC_GET_T(char_u*, pend); \
-    ASYNC_GET(startcol); \
-    ASYNC_GET(c1); \
-    ASYNC_GET(escaped); \
-    ASYNC_GET(vcol); \
-    ASYNC_GET(prev_char);
-
-
-    // we will put all the local variables into the entry for __cb1
-    ASYNC_PUSH(getexmodeline__cb1);
-    ASYNC_PUT_ALL_GETEXMODELINE;
-    getexmodeline__cb1(ASYNC_ARG1);
-    return NULL;
-}
-DEFINE_ASYNC_CALLBACK(getexmodeline__cb1)
-{
-    ASYNC_CHECK(getexmodeline__cb1);
-
-    ASYNC_GET_ALL_GETEXMODELINE;
-    // do not pop,  keep the local variables
-
-#endif
     while (!got_int)
     {
         if (ga_grow(&line_ga, 40) == FAIL)
-#ifndef FEAT_GUI_BROWSER
             break;
-#else
-            goto label_break;
-#endif
 
         /* Get one character at a time.  Don't use inchar(), it can't handle
          * special characters. */

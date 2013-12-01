@@ -1791,9 +1791,7 @@ buflist_new(char_u *ffname, char_u *sfname, linenr_T lnum, int flags)
             if (emsg_silent == 0)
             {
                 out_flush();
-#ifndef FEAT_GUI_BROWSER
 		ui_delay(3000L, TRUE);	/* make sure it is noticed */
-#endif
 	    }
 	    top_file_num = 1;
 	}

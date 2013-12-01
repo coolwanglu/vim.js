@@ -1,9 +1,4 @@
 /* fold.c */
-async_context *async_push __ARGS((async_context *prev_context, async_callback_t callback));
-void async_put __ARGS((async_context *context, char *value, size_t length));
-void async_get __ARGS((char **p, async_context *context, char *value, size_t length));
-void async_return __ARGS((async_context *context));
-async_context *async_pop __ARGS((async_context *context));
 void copyFoldingState __ARGS((win_T *wp_from, win_T *wp_to));
 int hasAnyFolding __ARGS((win_T *win));
 int hasFolding __ARGS((linenr_T lnum, linenr_T *firstp, linenr_T *lastp));

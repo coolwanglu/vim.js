@@ -7080,13 +7080,11 @@ buf_check_timestamp(buf, focus)
 		    if (emsg_silent == 0)
 		    {
 			out_flush();
-# ifndef FEAT_GUI_BROWSER
 # ifdef FEAT_GUI
 			if (!focus)
 # endif
 			    /* give the user some time to think about it */
 			    ui_delay(1000L, TRUE);
-# endif
 
 			/* don't redraw and erase the message */
 			redraw_cmdline = FALSE;

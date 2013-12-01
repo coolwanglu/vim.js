@@ -1,16 +1,11 @@
 /* charset.c */
-async_context *async_push __ARGS((async_context *prev_context, async_callback_t callback));
-void async_put __ARGS((async_context *context, char *value, size_t length));
-void async_get __ARGS((char **p, async_context *context, char *value, size_t length));
-void async_return __ARGS((async_context *context));
-async_context *async_pop __ARGS((async_context *context));
 int init_chartab __ARGS((void));
 int buf_init_chartab __ARGS((buf_T *buf, int global));
 void trans_characters __ARGS((char_u *buf, int bufsize));
 char_u *transstr __ARGS((char_u *s));
 char_u *str_foldcase __ARGS((char_u *str, int orglen, char_u *buf, int buflen));
 char_u *transchar __ARGS((int c));
-char_u *transchar_byte __ARGS((int c));
+char_u *transchar __ARGS((int c));
 void transchar_nonprint __ARGS((char_u *buf, int c));
 void transchar_hex __ARGS((char_u *buf, int c));
 int byte2cells __ARGS((int b));

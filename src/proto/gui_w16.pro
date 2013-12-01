@@ -1,9 +1,4 @@
 /* gui_w16.c */
-async_context *async_push __ARGS((async_context *prev_context, async_callback_t callback));
-void async_put __ARGS((async_context *context, char *value, size_t length));
-void async_get __ARGS((char **p, async_context *context, char *value, size_t length));
-void async_return __ARGS((async_context *context));
-async_context *async_pop __ARGS((async_context *context));
 void gui_mch_set_blinking __ARGS((long wait, long on, long off));
 void gui_mch_stop_blink __ARGS((void));
 void gui_mch_start_blink __ARGS((void));
@@ -54,7 +49,6 @@ void gui_mch_flash __ARGS((int msec));
 void gui_mch_delete_lines __ARGS((int row, int num_lines));
 void gui_mch_insert_lines __ARGS((int row, int num_lines));
 void gui_mch_exit __ARGS((int rc));
-void gui_mch_wide_font_changed __ARGS((void));
 int gui_mch_init_font __ARGS((char_u *font_name, int fontset));
 int gui_mch_maximized __ARGS((void));
 void gui_mch_newfont __ARGS((void));

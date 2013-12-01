@@ -1,6 +1,5 @@
 /* vi:set ts=8 sts=4 sw=4:
  *
- *
  * VIM - Vi IMproved	by Bram Moolenaar
  *
  * Do ":help uganda"  in Vim to read copying and usage conditions.
@@ -125,7 +124,7 @@ static void	init_typebuf __ARGS((void));
 static void	gotchars __ARGS((char_u *, int));
 static void	may_sync_undo __ARGS((void));
 static void	closescript __ARGS((void));
-static int	vgetorpeek __ARGS((int DECL_ASYNC_ARG));
+static int	vgetorpeek __ARGS((int));
 static void	map_free __ARGS((mapblock_T **));
 static void	validate_maphash __ARGS((void));
 static void	showmap __ARGS((mapblock_T *mp, int local));
@@ -432,7 +431,6 @@ flush_buffers(flush_typeahead)
     while (read_stuff(TRUE) != NUL)
 	;
 
-#ifndef FEAT_GUI_BROWSER
     if (flush_typeahead)	    /* remove all typeahead */
     {
 	/*
@@ -447,7 +445,6 @@ flush_buffers(flush_typeahead)
 	typebuf.tb_len = 0;
     }
     else		    /* remove mapped characters at the start only */
-#endif
     {
 	typebuf.tb_off += typebuf.tb_maplen;
 	typebuf.tb_len -= typebuf.tb_maplen;
@@ -1539,12 +1536,6 @@ updatescript(c)
     }
 }
 
-DEFINE_ASYNC_CALLBACK(vgetc__cb1);
-DEFINE_ASYNC_CALLBACK(vgetc__cb2);
-DEFINE_ASYNC_CALLBACK(vgetc__cb3);
-DEFINE_ASYNC_CALLBACK(vgetc__cb4);
-DEFINE_ASYNC_CALLBACK(vgetc__cb5);
-DEFINE_ASYNC_CALLBACK(vgetc__cb6);
 /*
  * Get the next input character.
  * Can return a special key or a multi-byte character.
@@ -1555,7 +1546,7 @@ DEFINE_ASYNC_CALLBACK(vgetc__cb6);
  * Returns the modifiers in the global "mod_mask".
  */
     int
-vgetc(DECL_ASYNC_ARG1)
+vgetc()
 {
     int		c, c2;
 #ifdef FEAT_MBYTE
@@ -1589,9 +1580,6 @@ vgetc(DECL_ASYNC_ARG1)
     {
       mod_mask = 0x0;
       last_recorded_len = 0;
-#ifndef FEAT_GUI_BROWSER
-      //Lu Wang: this loop is split separately, see bloe
-
       for (;;)			/* this is done twice if there are modifiers */
       {
 	if (mod_mask)		/* no mapping after modifier has been read */
@@ -1781,10 +1769,6 @@ vgetc(DECL_ASYNC_ARG1)
 
 	break;
       }
-#else
-      vgetc__cb1(ASYNC_ARG1);
-      return 0;
-#endif
     }
 
 #ifdef FEAT_EVAL
@@ -1796,305 +1780,38 @@ vgetc(DECL_ASYNC_ARG1)
     may_garbage_collect = FALSE;
 #endif
 
-    ASYNC_RETURN(c);
-}
-#ifdef FEAT_GUI_BROWSER
-// Lu Wang: the original vgetc() is splitted into callbacks here
-#ifdef FEAT_MBYTE
-    int		n;
-    char_u	buf[MB_MAXBYTES + 1];
-    int		i;
-#endif
-DEFINE_ASYNC_CALLBACK(vgetc__cb1)
-{
-    // starts the loop
-    /*for (;;) */
-    {
-        if (mod_mask)		/* no mapping after modifier has been read */
-        {
-            ++no_mapping;
-            ++allow_keys;
-        }
-        ASYNC_PUSH(vgetc__cb2);
-        vgetorpeek(TRUE ASYNC_ARG);
-        return 0;
-    }
-}
-DEFINE_ASYNC_CALLBACK(vgetc__cb2)
-{
-    // follows __cb1, continus the loop
-    ASYNC_CHECK(vgetc__cb2);
-    int c = ASYNC_RETVAL;
-    ASYNC_POP;
-
-    if (mod_mask)
-    {
-        --no_mapping;
-        --allow_keys;
-    }
-
-    /* Get two extra bytes for special keys */
-    if (c == K_SPECIAL
-#ifdef FEAT_GUI
-            || c == CSI
-#endif
-       )
-    {
-        // define a new function for simplicity
-        ASYNC_PUSH(vgetc__cb3);
-        vgetc__cb4(ASYNC_ARG1);
-        return 0;
-    }
-    ASYNC_PUSH(vgetc__cb3);
-    ASYNC_RETURN(c);
-}
-DEFINE_ASYNC_CALLBACK(vgetc__cb3)
-{
-    //follows __cb2, outside the loop;
-    ASYNC_CHECK(vgetc__cb3);
-    int c = ASYNC_RETVAL;
-    ASYNC_POP;
-
-    /* a keypad or special function key was not mapped, use it like
-     * its ASCII equivalent */
-    switch (c)
-    {
-        case K_KPLUS:		c = '+'; break;
-        case K_KMINUS:		c = '-'; break;
-        case K_KDIVIDE:		c = '/'; break;
-        case K_KMULTIPLY:	c = '*'; break;
-        case K_KENTER:		c = CAR; break;
-        case K_KPOINT:
-#ifdef WIN32
-                                /* Can be either '.' or a ',', *
-                                 * depending on the type of keypad. */
-                                c = MapVirtualKey(VK_DECIMAL, 2); break;
-#else
-                                c = '.'; break;
-#endif
-        case K_K0:		c = '0'; break;
-        case K_K1:		c = '1'; break;
-        case K_K2:		c = '2'; break;
-        case K_K3:		c = '3'; break;
-        case K_K4:		c = '4'; break;
-        case K_K5:		c = '5'; break;
-        case K_K6:		c = '6'; break;
-        case K_K7:		c = '7'; break;
-        case K_K8:		c = '8'; break;
-        case K_K9:		c = '9'; break;
-
-        case K_XHOME:
-        case K_ZHOME:	if (mod_mask == MOD_MASK_SHIFT)
-                            {
-                                c = K_S_HOME;
-                                mod_mask = 0;
-                            }
-                            else if (mod_mask == MOD_MASK_CTRL)
-                            {
-                                c = K_C_HOME;
-                                mod_mask = 0;
-                            }
-                            else
-                                c = K_HOME;
-                            break;
-        case K_XEND:
-        case K_ZEND:	if (mod_mask == MOD_MASK_SHIFT)
-                            {
-                                c = K_S_END;
-                                mod_mask = 0;
-                            }
-                            else if (mod_mask == MOD_MASK_CTRL)
-                            {
-                                c = K_C_END;
-                                mod_mask = 0;
-                            }
-                            else
-                                c = K_END;
-                            break;
-
-        case K_XUP:		c = K_UP; break;
-        case K_XDOWN:	c = K_DOWN; break;
-        case K_XLEFT:	c = K_LEFT; break;
-        case K_XRIGHT:	c = K_RIGHT; break;
-    }
-
-#ifdef FEAT_MBYTE
-    /* For a multi-byte character get all the bytes and return the
-     * converted character.
-     * Note: This will loop until enough bytes are received!
-     */
-    if (has_mbyte && (n = MB_BYTE2LEN_CHECK(c)) > 1)
-    {
-        ++no_mapping;
-        buf[0] = c;
-        for (i = 1; i < n; ++i)
-        {
-            buf[i] = vgetorpeek(TRUE);
-            if (buf[i] == K_SPECIAL
-#ifdef FEAT_GUI
-                    || buf[i] == CSI
-#endif
-                    )
-            {
-                /* Must be a K_SPECIAL - KS_SPECIAL - KE_FILLER sequence,
-                 * which represents a K_SPECIAL (0x80),
-                 * or a CSI - KS_EXTRA - KE_CSI sequence, which represents
-                 * a CSI (0x9B),
-                 * of a K_SPECIAL - KS_EXTRA - KE_CSI, which is CSI too. */
-                c = vgetorpeek(TRUE);
-                if (vgetorpeek(TRUE) == (int)KE_CSI && c == KS_EXTRA)
-                    buf[i] = CSI;
-            }
-        }
-        --no_mapping;
-        c = (*mb_ptr2char)(buf);
-
-    }
-#endif
-
-    // now outside the origina for-loop
-    // break;
-    
-#ifdef FEAT_EVAL
-    /*
-     * In the main loop "may_garbage_collect" can be set to do garbage
-     * collection in the first next vgetc().  It's disabled after that to
-     * avoid internally used Lists and Dicts to be freed.
-     */
-    may_garbage_collect = FALSE;
-#endif
-
-    ASYNC_RETURN(c);
+    return c;
 }
 
-DEFINE_ASYNC_CALLBACK(vgetc__cb4)
-{
-    int  save_allow_keys = allow_keys;
-
-    ++no_mapping;
-    allow_keys = 0;		/* make sure BS is not found */
-    ASYNC_PUSH(vgetc__cb5);
-    ASYNC_PUT(save_allow_keys);
-    vgetorpeek(TRUE ASYNC_ARG);	/* no mapping for these chars */
-    return 0;
-}
-DEFINE_ASYNC_CALLBACK(vgetc__cb5)
-{
-    ASYNC_CHECK(vgetc__cb5);
-    int c2 = ASYNC_RETVAL;
-    ASYNC_GET_INIT;
-    ASYNC_GET(save_allow_keys);
-    ASYNC_POP;
-
-    ASYNC_PUSH(vgetc__cb6);
-    ASYNC_PUT(c2);
-    ASYNC_PUT(save_allow_keys);
-    vgetorpeek(TRUE ASYNC_ARG);
-    return 0;
-}
-DEFINE_ASYNC_CALLBACK(vgetc__cb6)
-{
-    ASYNC_CHECK(vgetc__cb6);
-    int c = ASYNC_RETVAL;
-    ASYNC_GET_INIT;
-    ASYNC_GET(c2);
-    ASYNC_GET(save_allow_keys);
-    ASYNC_POP;
-
-    --no_mapping;
-    allow_keys = save_allow_keys;
-    if (c2 == KS_MODIFIER)
-    {
-        mod_mask = c;
-        // continue the loop
-        vgetc__cb1(ASYNC_ARG1);
-        return 0;
-    }
-    c = TO_SPECIAL(c2, c);
-
-#ifdef FEAT_GUI
-    /* Handle focus event here, so that the caller doesn't need to
-     * know about it.  Return K_IGNORE so that we loop once (needed if
-     * 'lazyredraw' is set). */
-    if (c == K_FOCUSGAINED || c == K_FOCUSLOST)
-    {
-        ui_focus_change(c == K_FOCUSGAINED);
-        c = K_IGNORE;
-    }
-
-    /* Translate K_CSI to CSI.  The special key is only used to avoid
-     * it being recognized as the start of a special key. */
-    if (c == K_CSI)
-        c = CSI;
-#endif
-    // goto to __cb3, which needs c
-    ASYNC_RETURN(c);
-}
-#endif
-
-DEFINE_ASYNC_CALLBACK(safe_vgetc__cb1);
 /*
  * Like vgetc(), but never return a NUL when called recursively, get a key
  * directly from the user (ignoring typeahead).
  */
     int
-safe_vgetc(DECL_ASYNC_ARG1)
+safe_vgetc()
 {
     int	c;
 
-#ifndef FEAT_GUI_BROWSER
     c = vgetc();
-#else
-    ASYNC_PUSH(safe_vgetc__cb1);
-    vgetc(ASYNC_ARG1);
-    return 0;
-}
-DEFINE_ASYNC_CALLBACK(safe_vgetc__cb1)
-{
-    ASYNC_CHECK(safe_vgetc__cb1);
-    int c = ASYNC_RETVAL;
-    ASYNC_POP;
-#endif
     if (c == NUL)
 	c = get_keystroke();
-    ASYNC_RETURN(c);
+    return c;
 }
 
-DEFINE_ASYNC_CALLBACK(plain_vgetc__cb1);
 /*
  * Like safe_vgetc(), but loop to handle K_IGNORE.
  * Also ignore scrollbar events.
  */
     int
-plain_vgetc(DECL_ASYNC_ARG1)
+plain_vgetc()
 {
-#ifndef FEAT_GUI_BROWSER
     int c;
 
     do
     {
-        c = safe_vgetc();
+	c = safe_vgetc();
     } while (c == K_IGNORE || c == K_VER_SCROLLBAR || c == K_HOR_SCROLLBAR);
     return c;
-#else
-    ASYNC_PUSH(plain_vgetc__cb1);
-    safe_vgetc(ASYNC_ARG1);
-    return 0;
-}
-DEFINE_ASYNC_CALLBACK(plain_vgetc__cb1)
-{
-    ASYNC_CHECK(plain_vgetc__cb1);
-    int c = ASYNC_RETVAL;
-    if(c == K_IGNORE || c == K_VER_SCROLLBAR || c == K_HOR_SCROLLBAR)
-    {
-        // do not pop 
-        safe_vgetc(ASYNC_ARG1);
-        return 0;
-    }
-
-    ASYNC_POP;
-    ASYNC_RETURN(c);
-#endif
 }
 
 /*
@@ -2103,12 +1820,11 @@ DEFINE_ASYNC_CALLBACK(plain_vgetc__cb1)
  * character is not valid!.
  */
     int
-vpeekc(DECL_ASYNC_ARG1)
+vpeekc()
 {
     if (old_char != -1)
-        ASYNC_RETURN(old_char);
-
-    return vgetorpeek(FALSE ASYNC_ARG);
+	return old_char;
+    return vgetorpeek(FALSE);
 }
 
 #if defined(FEAT_TERMRESPONSE) || defined(PROTO)
@@ -2175,8 +1891,6 @@ vungetc(c)	/* unget one character (can only be done once!) */
 #endif
 }
 
-DEFINE_ASYNC_CALLBACK(vgetorpeek__cb1);
-DEFINE_ASYNC_CALLBACK(vgetorpeek__cb2);
 /*
  * get a character:
  * 1. from the stuffbuffer
@@ -2201,58 +1915,9 @@ DEFINE_ASYNC_CALLBACK(vgetorpeek__cb2);
  * K_SPECIAL and CSI may be escaped, need to get two more bytes then.
  */
     static int
-vgetorpeek(int advance DECL_ASYNC_ARG)
+vgetorpeek(advance)
+    int	    advance;
 {
-
-    /*
-     * This function doesn't work very well when called recursively.  This may
-     * happen though, because of:
-     * 1. The call to add_to_showcmd().	char_avail() is then used to check if
-     * there is a character available, which calls this function.  In that
-     * case we must return NUL, to indicate no character is available.
-     * 2. A GUI callback function writes to the screen, causing a
-     * wait_return().
-     * Using ":normal" can also do this, but it saves the typeahead buffer,
-     * thus it should be OK.  But don't get a key from the user then.
-     */
-    if (vgetc_busy > 0
-#ifdef FEAT_EX_EXTRA
-            && ex_normal_busy == 0
-#endif
-       )
-        return NUL;
-
-    local_State = get_real_state();
-
-    ++vgetc_busy;
-
-    if (advance)
-        KeyStuffed = FALSE;
-
-    init_typebuf();
-    start_stuff();
-    if (advance && typebuf.tb_maplen == 0)
-        Exec_reg = FALSE;
-
-#ifdef FEAT_GUI_BROWSER
-    ASYNC_PUSH(vgetorpeek__cb1);
-    ASYNC_PUT(advance);
-    vgetorpeek__cb1(ASYNC_ARG1);
-    // tell __cb1 that it's the first call
-    ASYNC_RETURN(0);
-}
-DEFINE_ASYNC_CALLBACK(vgetorpeek__cb1)
-{
-    ASYNC_CHECK(vgetorpeek__cb1);
-    int first_call = ASYNC_RETVAL;
-    first_call = !first_call;
-
-    ASYNC_GET_INIT;
-    int advance;
-    ASYNC_GET(advance);
-
-#endif
-    // Lu Wang: move the local variable here for to easily define the callback
     int		c, c1;
     int		keylen;
     char_u	*s;
@@ -2263,7 +1928,7 @@ DEFINE_ASYNC_CALLBACK(vgetorpeek__cb1)
     mapblock_T	*mp_match;
     int		mp_match_len = 0;
     int		timedout = FALSE;	    /* waited for more than 1 second
-                                               for mapping to complete */
+						for mapping to complete */
     int		mapdepth = 0;	    /* check for recursive mapping */
     int		mode_deleted = FALSE;   /* set when mode has been deleted */
     int		local_State;
@@ -2285,903 +1950,922 @@ DEFINE_ASYNC_CALLBACK(vgetorpeek__cb1)
 #endif
     int		old_wcol, old_wrow;
     int		wait_tb_len;
-    // local variable
 
+    /*
+     * This function doesn't work very well when called recursively.  This may
+     * happen though, because of:
+     * 1. The call to add_to_showcmd().	char_avail() is then used to check if
+     * there is a character available, which calls this function.  In that
+     * case we must return NUL, to indicate no character is available.
+     * 2. A GUI callback function writes to the screen, causing a
+     * wait_return().
+     * Using ":normal" can also do this, but it saves the typeahead buffer,
+     * thus it should be OK.  But don't get a key from the user then.
+     */
+    if (vgetc_busy > 0
+#ifdef FEAT_EX_EXTRA
+	    && ex_normal_busy == 0
+#endif
+	    )
+	return NUL;
+
+    local_State = get_real_state();
+
+    ++vgetc_busy;
+
+    if (advance)
+	KeyStuffed = FALSE;
+
+    init_typebuf();
+    start_stuff();
+    if (advance && typebuf.tb_maplen == 0)
+	Exec_reg = FALSE;
     do
     {
-        /*
-         * get a character: 1. from the stuffbuffer
-         */
-        if (typeahead_char != 0)
-        {
-            c = typeahead_char;
-            if (advance)
-                typeahead_char = 0;
-        }
-        else
-            c = read_stuff(advance);
-        if (c != NUL && !got_int)
-        {
-            if (advance)
-            {
-                /* KeyTyped = FALSE;  When the command that stuffed something
-                 * was typed, behave like the stuffed command was typed.
-                 * needed for CTRL-W CTRl-] to open a fold, for example. */
-                KeyStuffed = TRUE;
-            }
-            if (typebuf.tb_no_abbr_cnt == 0)
-                typebuf.tb_no_abbr_cnt = 1;	/* no abbreviations now */
-        }
-        else
-        {
-            /*
-             * Loop until we either find a matching mapped key, or we
-             * are sure that it is not a mapped key.
-             * If a mapped key sequence is found we go back to the start to
-             * try re-mapping.
-             */
-            for (;;)
-            {
-                /*
-                 * ui_breakcheck() is slow, don't use it too often when
-                 * inside a mapping.  But call it each time for typed
-                 * characters.
-                 */
-                if (typebuf.tb_maplen)
-                    line_breakcheck();
-                else
-                    ui_breakcheck();		/* check for CTRL-C */
-                keylen = 0;
-#ifndef FEAT_GUI_BROWSER
-                if (got_int)
-                {
-                    /* flush all input */
-                    c = inchar(typebuf.tb_buf, typebuf.tb_buflen - 1, 0L,
-                            typebuf.tb_change_cnt);
-                    /*
-                     * If inchar() returns TRUE (script file was active) or we
-                     * are inside a mapping, get out of insert mode.
-                     * Otherwise we behave like having gotten a CTRL-C.
-                     * As a result typing CTRL-C in insert mode will
-                     * really insert a CTRL-C.
-                     */
-                    if ((c || typebuf.tb_maplen)
-                            && (State & (INSERT + CMDLINE)))
-                        c = ESC;
-                    else
-                        c = Ctrl_C;
-                    flush_buffers(TRUE);	/* flush all typeahead */
+/*
+ * get a character: 1. from the stuffbuffer
+ */
+	if (typeahead_char != 0)
+	{
+	    c = typeahead_char;
+	    if (advance)
+		typeahead_char = 0;
+	}
+	else
+	    c = read_stuff(advance);
+	if (c != NUL && !got_int)
+	{
+	    if (advance)
+	    {
+		/* KeyTyped = FALSE;  When the command that stuffed something
+		 * was typed, behave like the stuffed command was typed.
+		 * needed for CTRL-W CTRl-] to open a fold, for example. */
+		KeyStuffed = TRUE;
+	    }
+	    if (typebuf.tb_no_abbr_cnt == 0)
+		typebuf.tb_no_abbr_cnt = 1;	/* no abbreviations now */
+	}
+	else
+	{
+	    /*
+	     * Loop until we either find a matching mapped key, or we
+	     * are sure that it is not a mapped key.
+	     * If a mapped key sequence is found we go back to the start to
+	     * try re-mapping.
+	     */
+	    for (;;)
+	    {
+		/*
+		 * ui_breakcheck() is slow, don't use it too often when
+		 * inside a mapping.  But call it each time for typed
+		 * characters.
+		 */
+		if (typebuf.tb_maplen)
+		    line_breakcheck();
+		else
+		    ui_breakcheck();		/* check for CTRL-C */
+		keylen = 0;
+		if (got_int)
+		{
+		    /* flush all input */
+		    c = inchar(typebuf.tb_buf, typebuf.tb_buflen - 1, 0L,
+						       typebuf.tb_change_cnt);
+		    /*
+		     * If inchar() returns TRUE (script file was active) or we
+		     * are inside a mapping, get out of insert mode.
+		     * Otherwise we behave like having gotten a CTRL-C.
+		     * As a result typing CTRL-C in insert mode will
+		     * really insert a CTRL-C.
+		     */
+		    if ((c || typebuf.tb_maplen)
+					      && (State & (INSERT + CMDLINE)))
+			c = ESC;
+		    else
+			c = Ctrl_C;
+		    flush_buffers(TRUE);	/* flush all typeahead */
 
-                    if (advance)
-                    {
-                        /* Also record this character, it might be needed to
-                         * get out of Insert mode. */
-                        *typebuf.tb_buf = c;
-                        gotchars(typebuf.tb_buf, 1);
-                    }
-                    cmd_silent = FALSE;
+		    if (advance)
+		    {
+			/* Also record this character, it might be needed to
+			 * get out of Insert mode. */
+			*typebuf.tb_buf = c;
+			gotchars(typebuf.tb_buf, 1);
+		    }
+		    cmd_silent = FALSE;
 
-                    break;
-                }
-                else if (typebuf.tb_len > 0)
-#endif
-                {
-                    /*
-                     * Check for a mappable key sequence.
-                     * Walk through one maphash[] list until we find an
-                     * entry that matches.
-                     *
-                     * Don't look for mappings if:
-                     * - no_mapping set: mapping disabled (e.g. for CTRL-V)
-                     * - maphash_valid not set: no mappings present.
-                     * - typebuf.tb_buf[typebuf.tb_off] should not be remapped
-                     * - in insert or cmdline mode and 'paste' option set
-                     * - waiting for "hit return to continue" and CR or SPACE
-                     *	 typed
-                     * - waiting for a char with --more--
-                     * - in Ctrl-X mode, and we get a valid char for that mode
-                     */
-                    mp = NULL;
-                    max_mlen = 0;
-                    c1 = typebuf.tb_buf[typebuf.tb_off];
-                    if (no_mapping == 0 && maphash_valid
-                            && (no_zero_mapping == 0 || c1 != '0')
-                            && (typebuf.tb_maplen == 0
-                                || (p_remap
-                                    && (typebuf.tb_noremap[typebuf.tb_off]
-                                        & (RM_NONE|RM_ABBR)) == 0))
-                            && !(p_paste && (State & (INSERT + CMDLINE)))
-                            && !(State == HITRETURN && (c1 == CAR || c1 == ' '))
-                            && State != ASKMORE
-                            && State != CONFIRM
+		    break;
+		}
+		else if (typebuf.tb_len > 0)
+		{
+		    /*
+		     * Check for a mappable key sequence.
+		     * Walk through one maphash[] list until we find an
+		     * entry that matches.
+		     *
+		     * Don't look for mappings if:
+		     * - no_mapping set: mapping disabled (e.g. for CTRL-V)
+		     * - maphash_valid not set: no mappings present.
+		     * - typebuf.tb_buf[typebuf.tb_off] should not be remapped
+		     * - in insert or cmdline mode and 'paste' option set
+		     * - waiting for "hit return to continue" and CR or SPACE
+		     *	 typed
+		     * - waiting for a char with --more--
+		     * - in Ctrl-X mode, and we get a valid char for that mode
+		     */
+		    mp = NULL;
+		    max_mlen = 0;
+		    c1 = typebuf.tb_buf[typebuf.tb_off];
+		    if (no_mapping == 0 && maphash_valid
+			    && (no_zero_mapping == 0 || c1 != '0')
+			    && (typebuf.tb_maplen == 0
+				|| (p_remap
+				    && (typebuf.tb_noremap[typebuf.tb_off]
+						    & (RM_NONE|RM_ABBR)) == 0))
+			    && !(p_paste && (State & (INSERT + CMDLINE)))
+			    && !(State == HITRETURN && (c1 == CAR || c1 == ' '))
+			    && State != ASKMORE
+			    && State != CONFIRM
 #ifdef FEAT_INS_EXPAND
-                            && !((ctrl_x_mode != 0 && vim_is_ctrl_x_key(c1))
-                                || ((compl_cont_status & CONT_LOCAL)
-                                    && (c1 == Ctrl_N || c1 == Ctrl_P)))
+			    && !((ctrl_x_mode != 0 && vim_is_ctrl_x_key(c1))
+				    || ((compl_cont_status & CONT_LOCAL)
+					&& (c1 == Ctrl_N || c1 == Ctrl_P)))
 #endif
-                       )
-                    {
+			    )
+		    {
 #ifdef FEAT_LANGMAP
-                        if (c1 == K_SPECIAL)
-                            nolmaplen = 2;
-                        else
-                        {
-                            LANGMAP_ADJUST(c1, TRUE);
-                            nolmaplen = 0;
-                        }
+			if (c1 == K_SPECIAL)
+			    nolmaplen = 2;
+			else
+			{
+			    LANGMAP_ADJUST(c1, TRUE);
+			    nolmaplen = 0;
+			}
 #endif
 #ifdef FEAT_LOCALMAP
-                        /* First try buffer-local mappings. */
-                        mp = curbuf->b_maphash[MAP_HASH(local_State, c1)];
-                        mp2 = maphash[MAP_HASH(local_State, c1)];
-                        if (mp == NULL)
-                        {
-                            /* There are no buffer-local mappings. */
-                            mp = mp2;
-                            mp2 = NULL;
-                        }
+			/* First try buffer-local mappings. */
+			mp = curbuf->b_maphash[MAP_HASH(local_State, c1)];
+			mp2 = maphash[MAP_HASH(local_State, c1)];
+			if (mp == NULL)
+			{
+			    /* There are no buffer-local mappings. */
+			    mp = mp2;
+			    mp2 = NULL;
+			}
 #else
-                        mp = maphash[MAP_HASH(local_State, c1)];
+			mp = maphash[MAP_HASH(local_State, c1)];
 #endif
-                        /*
-                         * Loop until a partly matching mapping is found or
-                         * all (local) mappings have been checked.
-                         * The longest full match is remembered in "mp_match".
-                         * A full match is only accepted if there is no partly
-                         * match, so "aa" and "aaa" can both be mapped.
-                         */
-                        mp_match = NULL;
-                        mp_match_len = 0;
-                        for ( ; mp != NULL;
+			/*
+			 * Loop until a partly matching mapping is found or
+			 * all (local) mappings have been checked.
+			 * The longest full match is remembered in "mp_match".
+			 * A full match is only accepted if there is no partly
+			 * match, so "aa" and "aaa" can both be mapped.
+			 */
+			mp_match = NULL;
+			mp_match_len = 0;
+			for ( ; mp != NULL;
 #ifdef FEAT_LOCALMAP
-                                mp->m_next == NULL ? (mp = mp2, mp2 = NULL) :
+				mp->m_next == NULL ? (mp = mp2, mp2 = NULL) :
 #endif
-                                (mp = mp->m_next))
-                        {
-                            /*
-                             * Only consider an entry if the first character
-                             * matches and it is for the current state.
-                             * Skip ":lmap" mappings if keys were mapped.
-                             */
-                            if (mp->m_keys[0] == c1
-                                    && (mp->m_mode & local_State)
-                                    && ((mp->m_mode & LANGMAP) == 0
-                                        || typebuf.tb_maplen == 0))
-                            {
+				(mp = mp->m_next))
+			{
+			    /*
+			     * Only consider an entry if the first character
+			     * matches and it is for the current state.
+			     * Skip ":lmap" mappings if keys were mapped.
+			     */
+			    if (mp->m_keys[0] == c1
+				    && (mp->m_mode & local_State)
+				    && ((mp->m_mode & LANGMAP) == 0
+					|| typebuf.tb_maplen == 0))
+			    {
 #ifdef FEAT_LANGMAP
-                                int	nomap = nolmaplen;
-                                int	c2;
+				int	nomap = nolmaplen;
+				int	c2;
 #endif
-                                /* find the match length of this mapping */
-                                for (mlen = 1; mlen < typebuf.tb_len; ++mlen)
-                                {
+				/* find the match length of this mapping */
+				for (mlen = 1; mlen < typebuf.tb_len; ++mlen)
+				{
 #ifdef FEAT_LANGMAP
-                                    c2 = typebuf.tb_buf[typebuf.tb_off + mlen];
-                                    if (nomap > 0)
-                                        --nomap;
-                                    else if (c2 == K_SPECIAL)
-                                        nomap = 2;
-                                    else
-                                        LANGMAP_ADJUST(c2, TRUE);
-                                    if (mp->m_keys[mlen] != c2)
+				    c2 = typebuf.tb_buf[typebuf.tb_off + mlen];
+				    if (nomap > 0)
+					--nomap;
+				    else if (c2 == K_SPECIAL)
+					nomap = 2;
+				    else
+					LANGMAP_ADJUST(c2, TRUE);
+				    if (mp->m_keys[mlen] != c2)
 #else
-                                        if (mp->m_keys[mlen] !=
-                                                typebuf.tb_buf[typebuf.tb_off + mlen])
+				    if (mp->m_keys[mlen] !=
+					typebuf.tb_buf[typebuf.tb_off + mlen])
 #endif
-                                            break;
-                                }
+					break;
+				}
 
 #ifdef FEAT_MBYTE
-                                /* Don't allow mapping the first byte(s) of a
-                                 * multi-byte char.  Happens when mapping
-                                 * <M-a> and then changing 'encoding'. */
-                                if (has_mbyte && MB_BYTE2LEN(c1)
-                                        > (*mb_ptr2len)(mp->m_keys))
-                                    mlen = 0;
+				/* Don't allow mapping the first byte(s) of a
+				 * multi-byte char.  Happens when mapping
+				 * <M-a> and then changing 'encoding'. */
+				if (has_mbyte && MB_BYTE2LEN(c1)
+						  > (*mb_ptr2len)(mp->m_keys))
+				    mlen = 0;
 #endif
-                                /*
-                                 * Check an entry whether it matches.
-                                 * - Full match: mlen == keylen
-                                 * - Partly match: mlen == typebuf.tb_len
-                                 */
-                                keylen = mp->m_keylen;
-                                if (mlen == keylen
-                                        || (mlen == typebuf.tb_len
-                                            && typebuf.tb_len < keylen))
-                                {
-                                    /*
-                                     * If only script-local mappings are
-                                     * allowed, check if the mapping starts
-                                     * with K_SNR.
-                                     */
-                                    s = typebuf.tb_noremap + typebuf.tb_off;
-                                    if (*s == RM_SCRIPT
-                                            && (mp->m_keys[0] != K_SPECIAL
-                                                || mp->m_keys[1] != KS_EXTRA
-                                                || mp->m_keys[2]
-                                                != (int)KE_SNR))
-                                        continue;
-                                    /*
-                                     * If one of the typed keys cannot be
-                                     * remapped, skip the entry.
-                                     */
-                                    for (n = mlen; --n >= 0; )
-                                        if (*s++ & (RM_NONE|RM_ABBR))
-                                            break;
-                                    if (n >= 0)
-                                        continue;
+				/*
+				 * Check an entry whether it matches.
+				 * - Full match: mlen == keylen
+				 * - Partly match: mlen == typebuf.tb_len
+				 */
+				keylen = mp->m_keylen;
+				if (mlen == keylen
+				     || (mlen == typebuf.tb_len
+						  && typebuf.tb_len < keylen))
+				{
+				    /*
+				     * If only script-local mappings are
+				     * allowed, check if the mapping starts
+				     * with K_SNR.
+				     */
+				    s = typebuf.tb_noremap + typebuf.tb_off;
+				    if (*s == RM_SCRIPT
+					    && (mp->m_keys[0] != K_SPECIAL
+						|| mp->m_keys[1] != KS_EXTRA
+						|| mp->m_keys[2]
+							      != (int)KE_SNR))
+					continue;
+				    /*
+				     * If one of the typed keys cannot be
+				     * remapped, skip the entry.
+				     */
+				    for (n = mlen; --n >= 0; )
+					if (*s++ & (RM_NONE|RM_ABBR))
+					    break;
+				    if (n >= 0)
+					continue;
 
-                                    if (keylen > typebuf.tb_len)
-                                    {
-                                        if (!timedout && !(mp_match != NULL
-                                                    && mp_match->m_nowait))
-                                        {
-                                            /* break at a partly match */
-                                            keylen = KEYLEN_PART_MAP;
-                                            break;
-                                        }
-                                    }
-                                    else if (keylen > mp_match_len)
-                                    {
-                                        /* found a longer match */
-                                        mp_match = mp;
-                                        mp_match_len = keylen;
-                                    }
-                                }
-                                else
-                                    /* No match; may have to check for
-                                     * termcode at next character. */
-                                    if (max_mlen < mlen)
-                                        max_mlen = mlen;
-                            }
-                        }
+				    if (keylen > typebuf.tb_len)
+				    {
+					if (!timedout && !(mp_match != NULL
+						       && mp_match->m_nowait))
+					{
+					    /* break at a partly match */
+					    keylen = KEYLEN_PART_MAP;
+					    break;
+					}
+				    }
+				    else if (keylen > mp_match_len)
+				    {
+					/* found a longer match */
+					mp_match = mp;
+					mp_match_len = keylen;
+				    }
+				}
+				else
+				    /* No match; may have to check for
+				     * termcode at next character. */
+				    if (max_mlen < mlen)
+					max_mlen = mlen;
+			    }
+			}
 
-                        /* If no partly match found, use the longest full
-                         * match. */
-                        if (keylen != KEYLEN_PART_MAP)
-                        {
-                            mp = mp_match;
-                            keylen = mp_match_len;
-                        }
-                    }
+			/* If no partly match found, use the longest full
+			 * match. */
+			if (keylen != KEYLEN_PART_MAP)
+			{
+			    mp = mp_match;
+			    keylen = mp_match_len;
+			}
+		    }
 
-                    /* Check for match with 'pastetoggle' */
-                    if (*p_pt != NUL && mp == NULL && (State & (INSERT|NORMAL)))
-                    {
-                        for (mlen = 0; mlen < typebuf.tb_len && p_pt[mlen];
-                                ++mlen)
-                            if (p_pt[mlen] != typebuf.tb_buf[typebuf.tb_off
-                                    + mlen])
-                                break;
-                        if (p_pt[mlen] == NUL)	/* match */
-                        {
-                            /* write chars to script file(s) */
-                            if (mlen > typebuf.tb_maplen)
-                                gotchars(typebuf.tb_buf + typebuf.tb_off
-                                        + typebuf.tb_maplen,
-                                        mlen - typebuf.tb_maplen);
+		    /* Check for match with 'pastetoggle' */
+		    if (*p_pt != NUL && mp == NULL && (State & (INSERT|NORMAL)))
+		    {
+			for (mlen = 0; mlen < typebuf.tb_len && p_pt[mlen];
+								       ++mlen)
+			    if (p_pt[mlen] != typebuf.tb_buf[typebuf.tb_off
+								      + mlen])
+				    break;
+			if (p_pt[mlen] == NUL)	/* match */
+			{
+			    /* write chars to script file(s) */
+			    if (mlen > typebuf.tb_maplen)
+				gotchars(typebuf.tb_buf + typebuf.tb_off
+							  + typebuf.tb_maplen,
+						    mlen - typebuf.tb_maplen);
 
-                            del_typebuf(mlen, 0); /* remove the chars */
-                            set_option_value((char_u *)"paste",
-                                    (long)!p_paste, NULL, 0);
-                            if (!(State & INSERT))
-                            {
-                                msg_col = 0;
-                                msg_row = Rows - 1;
-                                msg_clr_eos();		/* clear ruler */
-                            }
-                            showmode();
-                            setcursor();
-                            continue;
-                        }
-                        /* Need more chars for partly match. */
-                        if (mlen == typebuf.tb_len)
-                            keylen = KEYLEN_PART_KEY;
-                        else if (max_mlen < mlen)
-                            /* no match, may have to check for termcode at
-                             * next character */
-                            max_mlen = mlen + 1;
-                    }
+			    del_typebuf(mlen, 0); /* remove the chars */
+			    set_option_value((char_u *)"paste",
+						     (long)!p_paste, NULL, 0);
+			    if (!(State & INSERT))
+			    {
+				msg_col = 0;
+				msg_row = Rows - 1;
+				msg_clr_eos();		/* clear ruler */
+			    }
+			    showmode();
+			    setcursor();
+			    continue;
+			}
+			/* Need more chars for partly match. */
+			if (mlen == typebuf.tb_len)
+			    keylen = KEYLEN_PART_KEY;
+			else if (max_mlen < mlen)
+			    /* no match, may have to check for termcode at
+			     * next character */
+			    max_mlen = mlen + 1;
+		    }
 
-                    if ((mp == NULL || max_mlen >= mp_match_len)
-                            && keylen != KEYLEN_PART_MAP)
-                    {
-                        int	save_keylen = keylen;
+		    if ((mp == NULL || max_mlen >= mp_match_len)
+						 && keylen != KEYLEN_PART_MAP)
+		    {
+			int	save_keylen = keylen;
 
-                        /*
-                         * When no matching mapping found or found a
-                         * non-matching mapping that matches at least what the
-                         * matching mapping matched:
-                         * Check if we have a terminal code, when:
-                         *  mapping is allowed,
-                         *  keys have not been mapped,
-                         *  and not an ESC sequence, not in insert mode or
-                         *	p_ek is on,
-                         *  and when not timed out,
-                         */
-                        if ((no_mapping == 0 || allow_keys != 0)
-                                && (typebuf.tb_maplen == 0
-                                    || (p_remap && typebuf.tb_noremap[
-                                        typebuf.tb_off] == RM_YES))
-                                && !timedout)
-                        {
-                            keylen = check_termcode(max_mlen + 1,
-                                    NULL, 0, NULL);
+			/*
+			 * When no matching mapping found or found a
+			 * non-matching mapping that matches at least what the
+			 * matching mapping matched:
+			 * Check if we have a terminal code, when:
+			 *  mapping is allowed,
+			 *  keys have not been mapped,
+			 *  and not an ESC sequence, not in insert mode or
+			 *	p_ek is on,
+			 *  and when not timed out,
+			 */
+			if ((no_mapping == 0 || allow_keys != 0)
+				&& (typebuf.tb_maplen == 0
+				    || (p_remap && typebuf.tb_noremap[
+						   typebuf.tb_off] == RM_YES))
+				&& !timedout)
+			{
+			    keylen = check_termcode(max_mlen + 1,
+							       NULL, 0, NULL);
 
-                            /* If no termcode matched but 'pastetoggle'
-                             * matched partially it's like an incomplete key
-                             * sequence. */
-                            if (keylen == 0 && save_keylen == KEYLEN_PART_KEY)
-                                keylen = KEYLEN_PART_KEY;
+			    /* If no termcode matched but 'pastetoggle'
+			     * matched partially it's like an incomplete key
+			     * sequence. */
+			    if (keylen == 0 && save_keylen == KEYLEN_PART_KEY)
+				keylen = KEYLEN_PART_KEY;
 
-                            /*
-                             * When getting a partial match, but the last
-                             * characters were not typed, don't wait for a
-                             * typed character to complete the termcode.
-                             * This helps a lot when a ":normal" command ends
-                             * in an ESC.
-                             */
-                            if (keylen < 0
-                                    && typebuf.tb_len == typebuf.tb_maplen)
-                                keylen = 0;
-                        }
-                        else
-                            keylen = 0;
-                        if (keylen == 0)	/* no matching terminal code */
-                        {
+			    /*
+			     * When getting a partial match, but the last
+			     * characters were not typed, don't wait for a
+			     * typed character to complete the termcode.
+			     * This helps a lot when a ":normal" command ends
+			     * in an ESC.
+			     */
+			    if (keylen < 0
+				       && typebuf.tb_len == typebuf.tb_maplen)
+				keylen = 0;
+			}
+			else
+			    keylen = 0;
+			if (keylen == 0)	/* no matching terminal code */
+			{
 #ifdef AMIGA			/* check for window bounds report */
-                            if (typebuf.tb_maplen == 0 && (typebuf.tb_buf[
-                                        typebuf.tb_off] & 0xff) == CSI)
-                            {
-                                for (s = typebuf.tb_buf + typebuf.tb_off + 1;
-                                        s < typebuf.tb_buf + typebuf.tb_off
-                                        + typebuf.tb_len
-                                        && (VIM_ISDIGIT(*s) || *s == ';'
-                                            || *s == ' ');
-                                        ++s)
-                                    ;
-                                if (*s == 'r' || *s == '|') /* found one */
-                                {
-                                    del_typebuf((int)(s + 1 -
-                                                (typebuf.tb_buf + typebuf.tb_off)), 0);
-                                    /* get size and redraw screen */
-                                    shell_resized();
-                                    continue;
-                                }
-                                if (*s == NUL)	    /* need more characters */
-                                    keylen = KEYLEN_PART_KEY;
-                            }
-                            if (keylen >= 0)
+			    if (typebuf.tb_maplen == 0 && (typebuf.tb_buf[
+					       typebuf.tb_off] & 0xff) == CSI)
+			    {
+				for (s = typebuf.tb_buf + typebuf.tb_off + 1;
+					s < typebuf.tb_buf + typebuf.tb_off
+							      + typebuf.tb_len
+				   && (VIM_ISDIGIT(*s) || *s == ';'
+								|| *s == ' ');
+					++s)
+				    ;
+				if (*s == 'r' || *s == '|') /* found one */
+				{
+				    del_typebuf((int)(s + 1 -
+				       (typebuf.tb_buf + typebuf.tb_off)), 0);
+				    /* get size and redraw screen */
+				    shell_resized();
+				    continue;
+				}
+				if (*s == NUL)	    /* need more characters */
+				    keylen = KEYLEN_PART_KEY;
+			    }
+			    if (keylen >= 0)
 #endif
-                                /* When there was a matching mapping and no
-                                 * termcode could be replaced after another one,
-                                 * use that mapping (loop around). If there was
-                                 * no mapping use the character from the
-                                 * typeahead buffer right here. */
-                                if (mp == NULL)
-                                {
-                                    /*
-                                     * get a character: 2. from the typeahead buffer
-                                     */
-                                    c = typebuf.tb_buf[typebuf.tb_off] & 255;
-                                    if (advance)	/* remove chars from tb_buf */
-                                    {
-                                        cmd_silent = (typebuf.tb_silent > 0);
-                                        if (typebuf.tb_maplen > 0)
-                                            KeyTyped = FALSE;
-                                        else
-                                        {
-                                            KeyTyped = TRUE;
-                                            /* write char to script file(s) */
-                                            gotchars(typebuf.tb_buf
-                                                    + typebuf.tb_off, 1);
-                                        }
-                                        KeyNoremap = typebuf.tb_noremap[
-                                            typebuf.tb_off];
-                                        del_typebuf(1, 0);
-                                    }
-                                    break;	    /* got character, break for loop */
-                                }
-                        }
-                        if (keylen > 0)	    /* full matching terminal code */
-                        {
+			      /* When there was a matching mapping and no
+			       * termcode could be replaced after another one,
+			       * use that mapping (loop around). If there was
+			       * no mapping use the character from the
+			       * typeahead buffer right here. */
+			      if (mp == NULL)
+			      {
+/*
+ * get a character: 2. from the typeahead buffer
+ */
+				c = typebuf.tb_buf[typebuf.tb_off] & 255;
+				if (advance)	/* remove chars from tb_buf */
+				{
+				    cmd_silent = (typebuf.tb_silent > 0);
+				    if (typebuf.tb_maplen > 0)
+					KeyTyped = FALSE;
+				    else
+				    {
+					KeyTyped = TRUE;
+					/* write char to script file(s) */
+					gotchars(typebuf.tb_buf
+							 + typebuf.tb_off, 1);
+				    }
+				    KeyNoremap = typebuf.tb_noremap[
+							      typebuf.tb_off];
+				    del_typebuf(1, 0);
+				}
+				break;	    /* got character, break for loop */
+			      }
+			}
+			if (keylen > 0)	    /* full matching terminal code */
+			{
 #if defined(FEAT_GUI) && defined(FEAT_MENU)
-                            if (typebuf.tb_len >= 2
-                                    && typebuf.tb_buf[typebuf.tb_off] == K_SPECIAL
-                                    && typebuf.tb_buf[typebuf.tb_off + 1]
-                                    == KS_MENU)
-                            {
-                                /*
-                                 * Using a menu may cause a break in undo!
-                                 * It's like using gotchars(), but without
-                                 * recording or writing to a script file.
-                                 */
-                                may_sync_undo();
-                                del_typebuf(3, 0);
-                                idx = get_menu_index(current_menu, local_State);
-                                if (idx != MENU_INDEX_INVALID)
-                                {
+			    if (typebuf.tb_len >= 2
+				&& typebuf.tb_buf[typebuf.tb_off] == K_SPECIAL
+					 && typebuf.tb_buf[typebuf.tb_off + 1]
+								   == KS_MENU)
+			    {
+				/*
+				 * Using a menu may cause a break in undo!
+				 * It's like using gotchars(), but without
+				 * recording or writing to a script file.
+				 */
+				may_sync_undo();
+				del_typebuf(3, 0);
+				idx = get_menu_index(current_menu, local_State);
+				if (idx != MENU_INDEX_INVALID)
+				{
 # ifdef FEAT_VISUAL
-                                    /*
-                                     * In Select mode and a Visual mode menu
-                                     * is used:  Switch to Visual mode
-                                     * temporarily.  Append K_SELECT to switch
-                                     * back to Select mode.
-                                     */
-                                    if (VIsual_active && VIsual_select
-                                            && (current_menu->modes & VISUAL))
-                                    {
-                                        VIsual_select = FALSE;
-                                        (void)ins_typebuf(K_SELECT_STRING,
-                                                REMAP_NONE, 0, TRUE, FALSE);
-                                    }
+				    /*
+				     * In Select mode and a Visual mode menu
+				     * is used:  Switch to Visual mode
+				     * temporarily.  Append K_SELECT to switch
+				     * back to Select mode.
+				     */
+				    if (VIsual_active && VIsual_select
+					    && (current_menu->modes & VISUAL))
+				    {
+					VIsual_select = FALSE;
+					(void)ins_typebuf(K_SELECT_STRING,
+						  REMAP_NONE, 0, TRUE, FALSE);
+				    }
 # endif
-                                    ins_typebuf(current_menu->strings[idx],
-                                            current_menu->noremap[idx],
-                                            0, TRUE,
-                                            current_menu->silent[idx]);
-                                }
-                            }
+				    ins_typebuf(current_menu->strings[idx],
+						current_menu->noremap[idx],
+						0, TRUE,
+						   current_menu->silent[idx]);
+				}
+			    }
 #endif /* FEAT_GUI && FEAT_MENU */
-                            continue;	/* try mapping again */
-                        }
+			    continue;	/* try mapping again */
+			}
 
-                        /* Partial match: get some more characters.  When a
-                         * matching mapping was found use that one. */
-                        if (mp == NULL || keylen < 0)
-                            keylen = KEYLEN_PART_KEY;
-                        else
-                            keylen = mp_match_len;
-                    }
+			/* Partial match: get some more characters.  When a
+			 * matching mapping was found use that one. */
+			if (mp == NULL || keylen < 0)
+			    keylen = KEYLEN_PART_KEY;
+			else
+			    keylen = mp_match_len;
+		    }
 
-                    /* complete match */
-                    if (keylen >= 0 && keylen <= typebuf.tb_len)
-                    {
+		    /* complete match */
+		    if (keylen >= 0 && keylen <= typebuf.tb_len)
+		    {
 #ifdef FEAT_EVAL
-                        int save_m_expr;
-                        int save_m_noremap;
-                        int save_m_silent;
-                        char_u *save_m_keys;
-                        char_u *save_m_str;
+			int save_m_expr;
+			int save_m_noremap;
+			int save_m_silent;
+			char_u *save_m_keys;
+			char_u *save_m_str;
 #else
 # define save_m_noremap mp->m_noremap
 # define save_m_silent mp->m_silent
 #endif
 
-                        /* write chars to script file(s) */
-                        if (keylen > typebuf.tb_maplen)
-                            gotchars(typebuf.tb_buf + typebuf.tb_off
-                                    + typebuf.tb_maplen,
-                                    keylen - typebuf.tb_maplen);
+			/* write chars to script file(s) */
+			if (keylen > typebuf.tb_maplen)
+			    gotchars(typebuf.tb_buf + typebuf.tb_off
+							  + typebuf.tb_maplen,
+						  keylen - typebuf.tb_maplen);
 
-                        cmd_silent = (typebuf.tb_silent > 0);
-                        del_typebuf(keylen, 0);	/* remove the mapped keys */
+			cmd_silent = (typebuf.tb_silent > 0);
+			del_typebuf(keylen, 0);	/* remove the mapped keys */
 
-                        /*
-                         * Put the replacement string in front of mapstr.
-                         * The depth check catches ":map x y" and ":map y x".
-                         */
-                        if (++mapdepth >= p_mmd)
-                        {
-                            EMSG(_("E223: recursive mapping"));
-                            if (State & CMDLINE)
-                                redrawcmdline();
-                            else
-                                setcursor();
-                            flush_buffers(FALSE);
-                            mapdepth = 0;	/* for next one */
-                            c = -1;
-                            break;
-                        }
+			/*
+			 * Put the replacement string in front of mapstr.
+			 * The depth check catches ":map x y" and ":map y x".
+			 */
+			if (++mapdepth >= p_mmd)
+			{
+			    EMSG(_("E223: recursive mapping"));
+			    if (State & CMDLINE)
+				redrawcmdline();
+			    else
+				setcursor();
+			    flush_buffers(FALSE);
+			    mapdepth = 0;	/* for next one */
+			    c = -1;
+			    break;
+			}
 
 #ifdef FEAT_VISUAL
-                        /*
-                         * In Select mode and a Visual mode mapping is used:
-                         * Switch to Visual mode temporarily.  Append K_SELECT
-                         * to switch back to Select mode.
-                         */
-                        if (VIsual_active && VIsual_select
-                                && (mp->m_mode & VISUAL))
-                        {
-                            VIsual_select = FALSE;
-                            (void)ins_typebuf(K_SELECT_STRING, REMAP_NONE,
-                                    0, TRUE, FALSE);
-                        }
+			/*
+			 * In Select mode and a Visual mode mapping is used:
+			 * Switch to Visual mode temporarily.  Append K_SELECT
+			 * to switch back to Select mode.
+			 */
+			if (VIsual_active && VIsual_select
+						     && (mp->m_mode & VISUAL))
+			{
+			    VIsual_select = FALSE;
+			    (void)ins_typebuf(K_SELECT_STRING, REMAP_NONE,
+							      0, TRUE, FALSE);
+			}
 #endif
 
 #ifdef FEAT_EVAL
-                        /* Copy the values from *mp that are used, because
-                         * evaluating the expression may invoke a function
-                         * that redefines the mapping, thereby making *mp
-                         * invalid. */
-                        save_m_expr = mp->m_expr;
-                        save_m_noremap = mp->m_noremap;
-                        save_m_silent = mp->m_silent;
-                        save_m_keys = NULL;  /* only saved when needed */
-                        save_m_str = NULL;  /* only saved when needed */
+			/* Copy the values from *mp that are used, because
+			 * evaluating the expression may invoke a function
+			 * that redefines the mapping, thereby making *mp
+			 * invalid. */
+			save_m_expr = mp->m_expr;
+			save_m_noremap = mp->m_noremap;
+			save_m_silent = mp->m_silent;
+			save_m_keys = NULL;  /* only saved when needed */
+			save_m_str = NULL;  /* only saved when needed */
 
-                        /*
-                         * Handle ":map <expr>": evaluate the {rhs} as an
-                         * expression.  Also save and restore the command line
-                         * for "normal :".
-                         */
-                        if (mp->m_expr)
-                        {
-                            int		save_vgetc_busy = vgetc_busy;
+			/*
+			 * Handle ":map <expr>": evaluate the {rhs} as an
+			 * expression.  Also save and restore the command line
+			 * for "normal :".
+			 */
+			if (mp->m_expr)
+			{
+			    int		save_vgetc_busy = vgetc_busy;
 
-                            vgetc_busy = 0;
-                            save_m_keys = vim_strsave(mp->m_keys);
-                            save_m_str = vim_strsave(mp->m_str);
-                            s = eval_map_expr(save_m_str, NUL);
-                            vgetc_busy = save_vgetc_busy;
-                        }
-                        else
+			    vgetc_busy = 0;
+			    save_m_keys = vim_strsave(mp->m_keys);
+			    save_m_str = vim_strsave(mp->m_str);
+			    s = eval_map_expr(save_m_str, NUL);
+			    vgetc_busy = save_vgetc_busy;
+			}
+			else
 #endif
-                            s = mp->m_str;
+			    s = mp->m_str;
 
-                        /*
-                         * Insert the 'to' part in the typebuf.tb_buf.
-                         * If 'from' field is the same as the start of the
-                         * 'to' field, don't remap the first character (but do
-                         * allow abbreviations).
-                         * If m_noremap is set, don't remap the whole 'to'
-                         * part.
-                         */
-                        if (s == NULL)
-                            i = FAIL;
-                        else
-                        {
-                            int noremap;
+			/*
+			 * Insert the 'to' part in the typebuf.tb_buf.
+			 * If 'from' field is the same as the start of the
+			 * 'to' field, don't remap the first character (but do
+			 * allow abbreviations).
+			 * If m_noremap is set, don't remap the whole 'to'
+			 * part.
+			 */
+			if (s == NULL)
+			    i = FAIL;
+			else
+			{
+			    int noremap;
 
-                            if (save_m_noremap != REMAP_YES)
-                                noremap = save_m_noremap;
-                            else if (
+			    if (save_m_noremap != REMAP_YES)
+				noremap = save_m_noremap;
+			    else if (
 #ifdef FEAT_EVAL
-                                    STRNCMP(s, save_m_keys != NULL
-                                        ? save_m_keys : mp->m_keys,
-                                        (size_t)keylen)
+				STRNCMP(s, save_m_keys != NULL
+						   ? save_m_keys : mp->m_keys,
+							 (size_t)keylen)
 #else
-                                    STRNCMP(s, mp->m_keys, (size_t)keylen)
+				STRNCMP(s, mp->m_keys, (size_t)keylen)
 #endif
-                                    != 0)
-                                noremap = REMAP_YES;
-                            else
-                                noremap = REMAP_SKIP;
-                            i = ins_typebuf(s, noremap,
-                                    0, TRUE, cmd_silent || save_m_silent);
+				   != 0)
+				noremap = REMAP_YES;
+			    else
+				noremap = REMAP_SKIP;
+			    i = ins_typebuf(s, noremap,
+					0, TRUE, cmd_silent || save_m_silent);
 #ifdef FEAT_EVAL
-                            if (save_m_expr)
-                                vim_free(s);
+			    if (save_m_expr)
+				vim_free(s);
 #endif
-                        }
+			}
 #ifdef FEAT_EVAL
-                        vim_free(save_m_keys);
-                        vim_free(save_m_str);
+			vim_free(save_m_keys);
+			vim_free(save_m_str);
 #endif
-                        if (i == FAIL)
-                        {
-                            c = -1;
-                            break;
-                        }
-                        continue;
-                    }
-                }
+			if (i == FAIL)
+			{
+			    c = -1;
+			    break;
+			}
+			continue;
+		    }
+		}
 
-                /*
-                 * get a character: 3. from the user - handle <Esc> in Insert mode
-                 */
-                /*
-                 * special case: if we get an <ESC> in insert mode and there
-                 * are no more characters at once, we pretend to go out of
-                 * insert mode.  This prevents the one second delay after
-                 * typing an <ESC>.  If we get something after all, we may
-                 * have to redisplay the mode. That the cursor is in the wrong
-                 * place does not matter.
-                 */
-                c = 0;
+/*
+ * get a character: 3. from the user - handle <Esc> in Insert mode
+ */
+		/*
+		 * special case: if we get an <ESC> in insert mode and there
+		 * are no more characters at once, we pretend to go out of
+		 * insert mode.  This prevents the one second delay after
+		 * typing an <ESC>.  If we get something after all, we may
+		 * have to redisplay the mode. That the cursor is in the wrong
+		 * place does not matter.
+		 */
+		c = 0;
 #ifdef FEAT_CMDL_INFO
-                new_wcol = curwin->w_wcol;
-                new_wrow = curwin->w_wrow;
+		new_wcol = curwin->w_wcol;
+		new_wrow = curwin->w_wrow;
 #endif
-                if (	   advance
-                        && typebuf.tb_len == 1
-                        && typebuf.tb_buf[typebuf.tb_off] == ESC
-                        && !no_mapping
+		if (	   advance
+			&& typebuf.tb_len == 1
+			&& typebuf.tb_buf[typebuf.tb_off] == ESC
+			&& !no_mapping
 #ifdef FEAT_EX_EXTRA
-                        && ex_normal_busy == 0
+			&& ex_normal_busy == 0
 #endif
-                        && typebuf.tb_maplen == 0
-                        && (State & INSERT)
-                        && (p_timeout
-                            || (keylen == KEYLEN_PART_KEY && p_ttimeout))
-                        && (c = inchar(typebuf.tb_buf + typebuf.tb_off
-                                + typebuf.tb_len, 3, 25L,
-                                typebuf.tb_change_cnt)) == 0)
-                {
-                    colnr_T	col = 0, vcol;
-                    char_u	*ptr;
+			&& typebuf.tb_maplen == 0
+			&& (State & INSERT)
+			&& (p_timeout
+			    || (keylen == KEYLEN_PART_KEY && p_ttimeout))
+			&& (c = inchar(typebuf.tb_buf + typebuf.tb_off
+						     + typebuf.tb_len, 3, 25L,
+						 typebuf.tb_change_cnt)) == 0)
+		{
+		    colnr_T	col = 0, vcol;
+		    char_u	*ptr;
 
-                    if (mode_displayed)
-                    {
-                        unshowmode(TRUE);
-                        mode_deleted = TRUE;
-                    }
+		    if (mode_displayed)
+		    {
+			unshowmode(TRUE);
+			mode_deleted = TRUE;
+		    }
 #ifdef FEAT_GUI
-                    /* may show different cursor shape */
-                    if (gui.in_use)
-                    {
-                        int	    save_State;
+		    /* may show different cursor shape */
+		    if (gui.in_use)
+		    {
+			int	    save_State;
 
-                        save_State = State;
-                        State = NORMAL;
-                        gui_update_cursor(TRUE, FALSE);
-                        State = save_State;
-                        shape_changed = TRUE;
-                    }
+			save_State = State;
+			State = NORMAL;
+			gui_update_cursor(TRUE, FALSE);
+			State = save_State;
+			shape_changed = TRUE;
+		    }
 #endif
-                    validate_cursor();
-                    old_wcol = curwin->w_wcol;
-                    old_wrow = curwin->w_wrow;
+		    validate_cursor();
+		    old_wcol = curwin->w_wcol;
+		    old_wrow = curwin->w_wrow;
 
-                    /* move cursor left, if possible */
-                    if (curwin->w_cursor.col != 0)
-                    {
-                        if (curwin->w_wcol > 0)
-                        {
-                            if (did_ai)
-                            {
-                                /*
-                                 * We are expecting to truncate the trailing
-                                 * white-space, so find the last non-white
-                                 * character -- webb
-                                 */
-                                col = vcol = curwin->w_wcol = 0;
-                                ptr = ml_get_curline();
-                                while (col < curwin->w_cursor.col)
-                                {
-                                    if (!vim_iswhite(ptr[col]))
-                                        curwin->w_wcol = vcol;
-                                    vcol += lbr_chartabsize(ptr + col,
-                                            (colnr_T)vcol);
+		    /* move cursor left, if possible */
+		    if (curwin->w_cursor.col != 0)
+		    {
+			if (curwin->w_wcol > 0)
+			{
+			    if (did_ai)
+			    {
+				/*
+				 * We are expecting to truncate the trailing
+				 * white-space, so find the last non-white
+				 * character -- webb
+				 */
+				col = vcol = curwin->w_wcol = 0;
+				ptr = ml_get_curline();
+				while (col < curwin->w_cursor.col)
+				{
+				    if (!vim_iswhite(ptr[col]))
+					curwin->w_wcol = vcol;
+				    vcol += lbr_chartabsize(ptr + col,
+							       (colnr_T)vcol);
 #ifdef FEAT_MBYTE
-                                    if (has_mbyte)
-                                        col += (*mb_ptr2len)(ptr + col);
-                                    else
+				    if (has_mbyte)
+					col += (*mb_ptr2len)(ptr + col);
+				    else
 #endif
-                                        ++col;
-                                }
-                                curwin->w_wrow = curwin->w_cline_row
-                                    + curwin->w_wcol / W_WIDTH(curwin);
-                                curwin->w_wcol %= W_WIDTH(curwin);
-                                curwin->w_wcol += curwin_col_off();
+					++col;
+				}
+				curwin->w_wrow = curwin->w_cline_row
+					   + curwin->w_wcol / W_WIDTH(curwin);
+				curwin->w_wcol %= W_WIDTH(curwin);
+				curwin->w_wcol += curwin_col_off();
 #ifdef FEAT_MBYTE
-                                col = 0;	/* no correction needed */
+				col = 0;	/* no correction needed */
 #endif
-                            }
-                            else
-                            {
-                                --curwin->w_wcol;
+			    }
+			    else
+			    {
+				--curwin->w_wcol;
 #ifdef FEAT_MBYTE
-                                col = curwin->w_cursor.col - 1;
+				col = curwin->w_cursor.col - 1;
 #endif
-                            }
-                        }
-                        else if (curwin->w_p_wrap && curwin->w_wrow)
-                        {
-                            --curwin->w_wrow;
-                            curwin->w_wcol = W_WIDTH(curwin) - 1;
+			    }
+			}
+			else if (curwin->w_p_wrap && curwin->w_wrow)
+			{
+			    --curwin->w_wrow;
+			    curwin->w_wcol = W_WIDTH(curwin) - 1;
 #ifdef FEAT_MBYTE
-                            col = curwin->w_cursor.col - 1;
+			    col = curwin->w_cursor.col - 1;
 #endif
-                        }
+			}
 #ifdef FEAT_MBYTE
-                        if (has_mbyte && col > 0 && curwin->w_wcol > 0)
-                        {
-                            /* Correct when the cursor is on the right halve
-                             * of a double-wide character. */
-                            ptr = ml_get_curline();
-                            col -= (*mb_head_off)(ptr, ptr + col);
-                            if ((*mb_ptr2cells)(ptr + col) > 1)
-                                --curwin->w_wcol;
-                        }
+			if (has_mbyte && col > 0 && curwin->w_wcol > 0)
+			{
+			    /* Correct when the cursor is on the right halve
+			     * of a double-wide character. */
+			    ptr = ml_get_curline();
+			    col -= (*mb_head_off)(ptr, ptr + col);
+			    if ((*mb_ptr2cells)(ptr + col) > 1)
+				--curwin->w_wcol;
+			}
 #endif
-                    }
-                    setcursor();
-                    out_flush();
+		    }
+		    setcursor();
+		    out_flush();
 #ifdef FEAT_CMDL_INFO
-                    new_wcol = curwin->w_wcol;
-                    new_wrow = curwin->w_wrow;
+		    new_wcol = curwin->w_wcol;
+		    new_wrow = curwin->w_wrow;
 #endif
-                    curwin->w_wcol = old_wcol;
-                    curwin->w_wrow = old_wrow;
-                }
-                if (c < 0)
-                    continue;	/* end of input script reached */
-                typebuf.tb_len += c;
+		    curwin->w_wcol = old_wcol;
+		    curwin->w_wrow = old_wrow;
+		}
+		if (c < 0)
+		    continue;	/* end of input script reached */
+		typebuf.tb_len += c;
 
-                /* buffer full, don't map */
-                if (typebuf.tb_len >= typebuf.tb_maplen + MAXMAPLEN)
-                {
-                    timedout = TRUE;
-                    continue;
-                }
+		/* buffer full, don't map */
+		if (typebuf.tb_len >= typebuf.tb_maplen + MAXMAPLEN)
+		{
+		    timedout = TRUE;
+		    continue;
+		}
 
 #ifdef FEAT_EX_EXTRA
-                if (ex_normal_busy > 0)
-                {
+		if (ex_normal_busy > 0)
+		{
 # ifdef FEAT_CMDWIN
-                    static int tc = 0;
+		    static int tc = 0;
 # endif
 
-                    /* No typeahead left and inside ":normal".  Must return
-                     * something to avoid getting stuck.  When an incomplete
-                     * mapping is present, behave like it timed out. */
-                    if (typebuf.tb_len > 0)
-                    {
-                        timedout = TRUE;
-                        continue;
-                    }
-                    /* When 'insertmode' is set, ESC just beeps in Insert
-                     * mode.  Use CTRL-L to make edit() return.
-                     * For the command line only CTRL-C always breaks it.
-                     * For the cmdline window: Alternate between ESC and
-                     * CTRL-C: ESC for most situations and CTRL-C to close the
-                     * cmdline window. */
-                    if (p_im && (State & INSERT))
-                        c = Ctrl_L;
-                    else if ((State & CMDLINE)
+		    /* No typeahead left and inside ":normal".  Must return
+		     * something to avoid getting stuck.  When an incomplete
+		     * mapping is present, behave like it timed out. */
+		    if (typebuf.tb_len > 0)
+		    {
+			timedout = TRUE;
+			continue;
+		    }
+		    /* When 'insertmode' is set, ESC just beeps in Insert
+		     * mode.  Use CTRL-L to make edit() return.
+		     * For the command line only CTRL-C always breaks it.
+		     * For the cmdline window: Alternate between ESC and
+		     * CTRL-C: ESC for most situations and CTRL-C to close the
+		     * cmdline window. */
+		    if (p_im && (State & INSERT))
+			c = Ctrl_L;
+		    else if ((State & CMDLINE)
 # ifdef FEAT_CMDWIN
-                            || (cmdwin_type > 0 && tc == ESC)
+			    || (cmdwin_type > 0 && tc == ESC)
 # endif
-                            )
-                        c = Ctrl_C;
-                    else
-                        c = ESC;
+			    )
+			c = Ctrl_C;
+		    else
+			c = ESC;
 # ifdef FEAT_CMDWIN
-                    tc = c;
+		    tc = c;
 # endif
-                    break;
-                }
+		    break;
+		}
 #endif
 
-                /*
-                 * get a character: 3. from the user - update display
-                 */
-                /* In insert mode a screen update is skipped when characters
-                 * are still available.  But when those available characters
-                 * are part of a mapping, and we are going to do a blocking
-                 * wait here.  Need to update the screen to display the
-                 * changed text so far. Also for when 'lazyredraw' is set and
-                 * redrawing was postponed because there was something in the
-                 * input buffer (e.g., termresponse). */
-                if (((State & INSERT) != 0 || p_lz) && (State & CMDLINE) == 0
-                        && advance && must_redraw != 0 && !need_wait_return)
-                {
-                    update_screen(0);
-                    setcursor(); /* put cursor back where it belongs */
-                }
+/*
+ * get a character: 3. from the user - update display
+ */
+		/* In insert mode a screen update is skipped when characters
+		 * are still available.  But when those available characters
+		 * are part of a mapping, and we are going to do a blocking
+		 * wait here.  Need to update the screen to display the
+		 * changed text so far. Also for when 'lazyredraw' is set and
+		 * redrawing was postponed because there was something in the
+		 * input buffer (e.g., termresponse). */
+		if (((State & INSERT) != 0 || p_lz) && (State & CMDLINE) == 0
+			  && advance && must_redraw != 0 && !need_wait_return)
+		{
+		    update_screen(0);
+		    setcursor(); /* put cursor back where it belongs */
+		}
 
-                /*
-                 * If we have a partial match (and are going to wait for more
-                 * input from the user), show the partially matched characters
-                 * to the user with showcmd.
-                 */
+		/*
+		 * If we have a partial match (and are going to wait for more
+		 * input from the user), show the partially matched characters
+		 * to the user with showcmd.
+		 */
 #ifdef FEAT_CMDL_INFO
-                i = 0;
+		i = 0;
 #endif
-                c1 = 0;
-                if (typebuf.tb_len > 0 && advance && !exmode_active)
-                {
-                    if (((State & (NORMAL | INSERT)) || State == LANGMAP)
-                            && State != HITRETURN)
-                    {
-                        /* this looks nice when typing a dead character map */
-                        if (State & INSERT
-                                && ptr2cells(typebuf.tb_buf + typebuf.tb_off
-                                    + typebuf.tb_len - 1) == 1)
-                        {
-                            edit_putchar(typebuf.tb_buf[typebuf.tb_off
-                                    + typebuf.tb_len - 1], FALSE);
-                            setcursor(); /* put cursor back where it belongs */
-                            c1 = 1;
-                        }
+		c1 = 0;
+		if (typebuf.tb_len > 0 && advance && !exmode_active)
+		{
+		    if (((State & (NORMAL | INSERT)) || State == LANGMAP)
+			    && State != HITRETURN)
+		    {
+			/* this looks nice when typing a dead character map */
+			if (State & INSERT
+			    && ptr2cells(typebuf.tb_buf + typebuf.tb_off
+						   + typebuf.tb_len - 1) == 1)
+			{
+			    edit_putchar(typebuf.tb_buf[typebuf.tb_off
+						+ typebuf.tb_len - 1], FALSE);
+			    setcursor(); /* put cursor back where it belongs */
+			    c1 = 1;
+			}
 #ifdef FEAT_CMDL_INFO
-                        /* need to use the col and row from above here */
-                        old_wcol = curwin->w_wcol;
-                        old_wrow = curwin->w_wrow;
-                        curwin->w_wcol = new_wcol;
-                        curwin->w_wrow = new_wrow;
-                        push_showcmd();
-                        if (typebuf.tb_len > SHOWCMD_COLS)
-                            i = typebuf.tb_len - SHOWCMD_COLS;
-                        while (i < typebuf.tb_len)
-                            (void)add_to_showcmd(typebuf.tb_buf[typebuf.tb_off
-                                    + i++]);
-                        curwin->w_wcol = old_wcol;
-                        curwin->w_wrow = old_wrow;
+			/* need to use the col and row from above here */
+			old_wcol = curwin->w_wcol;
+			old_wrow = curwin->w_wrow;
+			curwin->w_wcol = new_wcol;
+			curwin->w_wrow = new_wrow;
+			push_showcmd();
+			if (typebuf.tb_len > SHOWCMD_COLS)
+			    i = typebuf.tb_len - SHOWCMD_COLS;
+			while (i < typebuf.tb_len)
+			    (void)add_to_showcmd(typebuf.tb_buf[typebuf.tb_off
+								      + i++]);
+			curwin->w_wcol = old_wcol;
+			curwin->w_wrow = old_wrow;
 #endif
-                    }
+		    }
 
-                    /* this looks nice when typing a dead character map */
-                    if ((State & CMDLINE)
+		    /* this looks nice when typing a dead character map */
+		    if ((State & CMDLINE)
 #if defined(FEAT_CRYPT) || defined(FEAT_EVAL)
-                            && cmdline_star == 0
+			    && cmdline_star == 0
 #endif
-                            && ptr2cells(typebuf.tb_buf + typebuf.tb_off
-                                + typebuf.tb_len - 1) == 1)
-                    {
-                        putcmdline(typebuf.tb_buf[typebuf.tb_off
-                                + typebuf.tb_len - 1], FALSE);
-                        c1 = 1;
-                    }
-                }
+			    && ptr2cells(typebuf.tb_buf + typebuf.tb_off
+						   + typebuf.tb_len - 1) == 1)
+		    {
+			putcmdline(typebuf.tb_buf[typebuf.tb_off
+						+ typebuf.tb_len - 1], FALSE);
+			c1 = 1;
+		    }
+		}
 
-                /*
-                 * get a character: 3. from the user - get it
-                 */
-                wait_tb_len = typebuf.tb_len;
-                c = inchar(typebuf.tb_buf + typebuf.tb_off + typebuf.tb_len,
-                        typebuf.tb_buflen - typebuf.tb_off - typebuf.tb_len - 1,
-                        !advance
-                        ? 0
-                        : ((typebuf.tb_len == 0
-                                || !(p_timeout || (p_ttimeout
-                                        && keylen == KEYLEN_PART_KEY)))
-                            ? -1L
-                            : ((keylen == KEYLEN_PART_KEY && p_ttm >= 0)
-                                ? p_ttm
-                                : p_tm)), typebuf.tb_change_cnt);
+/*
+ * get a character: 3. from the user - get it
+ */
+		wait_tb_len = typebuf.tb_len;
+		c = inchar(typebuf.tb_buf + typebuf.tb_off + typebuf.tb_len,
+			typebuf.tb_buflen - typebuf.tb_off - typebuf.tb_len - 1,
+			!advance
+			    ? 0
+			    : ((typebuf.tb_len == 0
+				    || !(p_timeout || (p_ttimeout
+					       && keylen == KEYLEN_PART_KEY)))
+				    ? -1L
+				    : ((keylen == KEYLEN_PART_KEY && p_ttm >= 0)
+					    ? p_ttm
+					    : p_tm)), typebuf.tb_change_cnt);
 
 #ifdef FEAT_CMDL_INFO
-                if (i != 0)
-                    pop_showcmd();
+		if (i != 0)
+		    pop_showcmd();
 #endif
-                if (c1 == 1)
-                {
-                    if (State & INSERT)
-                        edit_unputchar();
-                    if (State & CMDLINE)
-                        unputcmdline();
-                    else
-                        setcursor();	/* put cursor back where it belongs */
-                }
+		if (c1 == 1)
+		{
+		    if (State & INSERT)
+			edit_unputchar();
+		    if (State & CMDLINE)
+			unputcmdline();
+		    else
+			setcursor();	/* put cursor back where it belongs */
+		}
 
-                if (c < 0)
-                    continue;		/* end of input script reached */
-                if (c == NUL)		/* no character available */
-                {
-                    if (!advance)
-                        break;
-                    if (wait_tb_len > 0)	/* timed out */
-                    {
-                        timedout = TRUE;
-                        continue;
-                    }
-                }
-                else
-                {	    /* allow mapping for just typed characters */
-                    while (typebuf.tb_buf[typebuf.tb_off
-                            + typebuf.tb_len] != NUL)
-                        typebuf.tb_noremap[typebuf.tb_off
-                            + typebuf.tb_len++] = RM_YES;
+		if (c < 0)
+		    continue;		/* end of input script reached */
+		if (c == NUL)		/* no character available */
+		{
+		    if (!advance)
+			break;
+		    if (wait_tb_len > 0)	/* timed out */
+		    {
+			timedout = TRUE;
+			continue;
+		    }
+		}
+		else
+		{	    /* allow mapping for just typed characters */
+		    while (typebuf.tb_buf[typebuf.tb_off
+						     + typebuf.tb_len] != NUL)
+			typebuf.tb_noremap[typebuf.tb_off
+						 + typebuf.tb_len++] = RM_YES;
 #ifdef USE_IM_CONTROL
-                    /* Get IM status right after getting keys, not after the
-                     * timeout for a mapping (focus may be lost by then). */
-                    vgetc_im_active = im_get_status();
+		    /* Get IM status right after getting keys, not after the
+		     * timeout for a mapping (focus may be lost by then). */
+		    vgetc_im_active = im_get_status();
 #endif
-                }
-            }	    /* for (;;) */
-        }	/* if (!character from stuffbuf) */
+		}
+	    }	    /* for (;;) */
+	}	/* if (!character from stuffbuf) */
 
-        /* if advance is FALSE don't loop on NULs */
+			/* if advance is FALSE don't loop on NULs */
     } while (c < 0 || (advance && c == NUL));
-#ifdef FEAT_GUI_BROWSER
-    vgetorpeek__cb2(ASYNC_ARG1);
-    return 0;
-}
-DEFINE_ASYNC_CALLBACK(vgetorpeek__cb2)
-{
-#endif
 
     /*
      * The "INSERT" message is taken care of here:
@@ -3213,10 +2897,9 @@ DEFINE_ASYNC_CALLBACK(vgetorpeek__cb2)
 
     --vgetc_busy;
 
-    ASYNC_RETURN(c);
+    return c;
 }
 
-DEFINE_ASYNC_CALLBACK(inchar__cb1);
 /*
  * inchar() - get one character from
  *	1. a scriptfile
@@ -3240,9 +2923,12 @@ DEFINE_ASYNC_CALLBACK(inchar__cb1);
  *  Return the number of obtained characters.
  *  Return -1 when end of input script reached.
  */
-/* wait_time: milli seconds */
     int
-inchar(char_u *buf, int maxlen, long wait_time, int tb_change_cnt DECL_ASYNC_ARG)
+inchar(buf, maxlen, wait_time, tb_change_cnt)
+    char_u	*buf;
+    int		maxlen;
+    long	wait_time;	    /* milli seconds */
+    int		tb_change_cnt;
 {
     int		len = 0;	    /* init for GCC */
     int		retesc = FALSE;	    /* return ESC with gotint */
@@ -3318,7 +3004,6 @@ inchar(char_u *buf, int maxlen, long wait_time, int tb_change_cnt DECL_ASYNC_ARG
 
     if (script_char < 0)	/* did not get a character from script */
     {
-#ifndef FEAT_GUI_BROWSER
 	/*
 	 * If we got an interrupt, skip all previously typed characters and
 	 * return TRUE if quit reading script file.
@@ -3340,7 +3025,6 @@ inchar(char_u *buf, int maxlen, long wait_time, int tb_change_cnt DECL_ASYNC_ARG
 	    }
 	    return retesc;
 	}
-#endif
 
 	/*
 	 * Always flush the output characters when getting input characters
@@ -3352,46 +3036,13 @@ inchar(char_u *buf, int maxlen, long wait_time, int tb_change_cnt DECL_ASYNC_ARG
 	 * Fill up to a third of the buffer, because each character may be
 	 * tripled below.
 	 */
-#ifndef FEAT_GUI_BROWSER
 	len = ui_inchar(buf, maxlen / 3, wait_time, tb_change_cnt);
-#else
-        ASYNC_PUSH(inchar__cb1);
-        ASYNC_PUT(buf);
-        ASYNC_PUT(buf);
-        ui_in_char(buf, maxlen / 3, wait_time, tb_change_cnt  ASYNC_ARG);
-        return 0;
-#endif
     }
 
     if (typebuf_changed(tb_change_cnt))
-        ASYNC_RETURN(0);
+	return 0;
 
-    int ret = fix_input_buffer(buf, len, script_char >= 0);
-    ASYNC_RETURN(ret);
-}
-DEFINE_ASYNC_CALLBACK(inchar__cb1)
-{
-    ASYNC_CHECK(inchar__cb1);
-    int len = ASYNC_RETVAL;
-
-    ASYNC_GET_INIT;
-
-    char_u * buf;
-    ASYNC_GET(buf);
-
-    int tb_change_cnt;
-    ASYNC_GET(tb_change_cnt);
-
-    int script_char;
-    ASYNC_GET(script_char);
-
-    ASYNC_POP;
-
-    if (typebuf_changed(tb_change_cnt))
-        ASYNC_RETURN(0);
-
-    int ret = fix_input_buffer(buf, len, script_char >= 0);
-    ASYNC_RETURN(ret);
+    return fix_input_buffer(buf, len, script_char >= 0);
 }
 
 /*

@@ -2395,16 +2395,10 @@ tltoa(i)
  * no padding and we only parse for %i %d and %+char
  */
 
-#ifndef FEAT_GUI_BROWSER
-// Lu WAng: I don't know why
 static 
-#endif
 char *tgoto __ARGS((char *, int, int));
 
-#ifndef FEAT_GUI_BROWSER
-// Lu WAng: I don't know why
 static 
-#endif
     char *
 tgoto(cm, x, y)
     char *cm;

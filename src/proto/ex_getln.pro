@@ -1,9 +1,4 @@
 /* ex_getln.c */
-async_context *async_push __ARGS((async_context *prev_context, async_callback_t callback));
-void async_put __ARGS((async_context *context, char *value, size_t length));
-void async_get __ARGS((char **p, async_context *context, char *value, size_t length));
-void async_return __ARGS((async_context *context));
-async_context *async_pop __ARGS((async_context *context));
 char_u *getcmdline __ARGS((int firstc, long count, int indent));
 char_u *getcmdline_prompt __ARGS((int firstc, char_u *prompt, int attr, int xp_context, char_u *xp_arg));
 int text_locked __ARGS((void));
@@ -11,7 +6,11 @@ void text_locked_msg __ARGS((void));
 int curbuf_locked __ARGS((void));
 int allbuf_locked __ARGS((void));
 char_u *getexline __ARGS((int c, void *cookie, int indent, async_context *_async_context));
+int DEFINE_ASYNC_CALLBACK __ARGS((int getexline__cb1));
 char_u *getexmodeline __ARGS((int promptc, void *cookie, int indent, async_context *_async_context));
+int DEFINE_ASYNC_CALLBACK __ARGS((int getexmodeline__cb1));
+int DEFINE_ASYNC_CALLBACK __ARGS((int getexmodeline__cb3));
+int DEFINE_ASYNC_CALLBACK __ARGS((int getexmodeline__cb2));
 int cmdline_overstrike __ARGS((void));
 int cmdline_at_end __ARGS((void));
 colnr_T cmdline_getvcol_cursor __ARGS((void));

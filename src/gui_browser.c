@@ -296,34 +296,6 @@ gui_mch_update(void)
 {
 }
 
-DEFINE_ASYNC_CALLBACK(gui_browser_wait_for_chars_helper)
-{
-    ASYNC_CHECK(gui_browser_wait_for_chars_helper);
-    // we need to keep the local variables
-    // so do not pop until return to the previous level
-    
-    if(input_available()) 
-    {
-        ASYNC_POP;
-        ASYNC_RETURN(OK);
-    }
-    ASYNC_GET_INIT;
-    int wtime;
-    ASYNC_GET(wtime);
-    if(wtime > 0)
-    {
-        double stop_time;
-        ASYNC_GET(stop_time);
-        if(emscripten_get_now() < stop_time)
-        {
-            ASYNC_POP;
-            ASYNC_RETURN(FAIL);
-        }
-    }
-
-    // continue the loop
-    emscripten_async_call(gui_mch_wait_for_chars_helper, ASYNC_ARG, 0);
-}
 /*
  * GUI input routine called by gui_wait_for_chars().  Waits for a character
  * from the keyboard.
@@ -336,16 +308,16 @@ DEFINE_ASYNC_CALLBACK(gui_browser_wait_for_chars_helper)
     int
 gui_mch_wait_for_chars(int wtime DECL_ASYNC_ARG)
 {
-    ASYNC_PUSH(gui_browser_wait_for_chars_helper);
-    ASYNC_STORE(wtime);
-    if(wtime > 0)
+    double stop_time = emscripten_get_now() + wtime;
+    while(true)
     {
-        double stop_time = emscripten_get_now() + wtime;
-        ASYNC_STORE(stop_time);
+        if(input_available()) 
+            return OK;
+        if((wtime > 0) && (emscripten_get_now() > stop_time))
+            return FAIL;
+        vimjs_sleep(0 ASYNC_ARG);
     }
-    
-    emscripten_async_call(gui_mch_wait_for_chars_helper, ASYNC_ARG, 0);
-    return OK;
+    return FAIL;
 }
 
 /*

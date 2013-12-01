@@ -1,9 +1,4 @@
 /* ex_cmds2.c */
-async_context *async_push __ARGS((async_context *prev_context, async_callback_t callback));
-void async_put __ARGS((async_context *context, char *value, size_t length));
-void async_get __ARGS((char **p, async_context *context, char *value, size_t length));
-void async_return __ARGS((async_context *context));
-async_context *async_pop __ARGS((async_context *context));
 void do_debug __ARGS((char_u *cmd));
 void ex_debug __ARGS((exarg_T *eap));
 void dbg_check_breakpoint __ARGS((exarg_T *eap));
@@ -58,10 +53,6 @@ void ex_last __ARGS((exarg_T *eap));
 void ex_argument __ARGS((exarg_T *eap));
 void do_argfile __ARGS((exarg_T *eap, int argn));
 void ex_next __ARGS((exarg_T *eap));
-void ex_argedit __ARGS((exarg_T *eap));
-void ex_argadd __ARGS((exarg_T *eap));
-void ex_argdelete __ARGS((exarg_T *eap));
-void ex_listdo __ARGS((exarg_T *eap));
 void ex_compiler __ARGS((exarg_T *eap));
 void ex_runtime __ARGS((exarg_T *eap));
 int source_runtime __ARGS((char_u *name, int all));
@@ -88,8 +79,4 @@ int source_finished __ARGS((char_u *(*fgetline)(int, void *, int), void *cookie)
 void ex_checktime __ARGS((exarg_T *eap));
 char_u *get_mess_lang __ARGS((void));
 void set_lang_var __ARGS((void));
-void ex_language __ARGS((exarg_T *eap));
-void free_locales __ARGS((void));
-char_u *get_lang_arg __ARGS((expand_T *xp, int idx));
-char_u *get_locales __ARGS((expand_T *xp, int idx));
 /* vim: set ft=c : */

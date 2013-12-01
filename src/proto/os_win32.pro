@@ -1,9 +1,4 @@
 /* os_win32.c */
-async_context *async_push __ARGS((async_context *prev_context, async_callback_t callback));
-void async_put __ARGS((async_context *context, char *value, size_t length));
-void async_get __ARGS((char **p, async_context *context, char *value, size_t length));
-void async_return __ARGS((async_context *context));
-async_context *async_pop __ARGS((async_context *context));
 HINSTANCE vimLoadLib __ARGS((char *name));
 int dyn_libintl_init __ARGS((char *libname));
 void dyn_libintl_end __ARGS((void));
@@ -47,12 +42,9 @@ void mch_write __ARGS((char_u *s, int len));
 void mch_delay __ARGS((long msec, int ignoreinput));
 int mch_remove __ARGS((char_u *name));
 void mch_breakcheck __ARGS((void));
-int mch_wrename __ARGS((WCHAR *wold, WCHAR *wnew));
 int mch_rename __ARGS((const char *pszOldFile, const char *pszNewFile));
 char *default_shell __ARGS((void));
 int mch_access __ARGS((char *n, int p));
-int mch_open __ARGS((char *name, int flags, int mode));
-FILE *mch_fopen __ARGS((char *name, char *mode));
 int mch_copy_file_attribute __ARGS((char_u *from, char_u *to));
 int myresetstkoflw __ARGS((void));
 int get_cmd_argsW __ARGS((char ***argvp));

@@ -1,9 +1,4 @@
 /* quickfix.c */
-async_context *async_push __ARGS((async_context *prev_context, async_callback_t callback));
-void async_put __ARGS((async_context *context, char *value, size_t length));
-void async_get __ARGS((char **p, async_context *context, char *value, size_t length));
-void async_return __ARGS((async_context *context));
-async_context *async_pop __ARGS((async_context *context));
 int qf_init __ARGS((win_T *wp, char_u *efile, char_u *errorformat, int newlist, char_u *qf_title));
 void qf_free_all __ARGS((win_T *wp));
 void copy_loclist __ARGS((win_T *from, win_T *to));

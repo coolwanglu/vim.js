@@ -25,16 +25,14 @@
 #endif
 
     void
-ui_write(char_u *s, int len)
+ui_write(char_u *s, int len DECL_ASYNC_ARG)
 {
 #ifdef FEAT_GUI
     if (gui.in_use && !gui.dying && !gui.starting)
     {
 	gui_write(s, len);
-#ifndef FEAT_GUI_BROWSER
 	if (p_wd)
-	    gui_wait_for_chars(p_wd);
-#endif
+	    gui_wait_for_chars(p_wd ASYNC_ARG);
 	return;
     }
 #endif
@@ -103,7 +101,6 @@ ui_inchar_undo(s, len)
 }
 #endif
 
-DEFINE_ASYNC_CALLBACK(ui_inchar__cb1);
 /*
  * ui_inchar(): low level input function.
  * Get characters from the keyboard.
@@ -185,21 +182,7 @@ ui_inchar(char_u *buf, int maxlen, long wtime, int tb_change_cnt DECL_ASYNC_ARG)
 #ifdef FEAT_GUI
     if (gui.in_use)
     {
-#ifndef FEAT_GUI_BROWSER
-        int ret = gui_wait_for_chars(wtime);
-#else
-        ASYNC_PUSH(ui_inchar__cb1);
-        gui_wait_for_chars(wtime ASYNC_ARG);
-        return OK;
-    }
-}
-DEFINE_ASYNC_CALLBACK(ui_inchar__cb1)
-{
-    {
-        int ret = ASYNC_RETVAL;
-        ASYNC_CHECK(ui_inchar__cb1);
-        ASYNC_POP;
-#endif
+        int ret = gui_wait_for_chars(wtime ASYNC_ARG);
         if (ret && !typebuf_changed(tb_change_cnt))
 	    retval = read_from_input_buf(buf, (long)maxlen);
     }
@@ -267,7 +250,7 @@ ui_delay(long msec, int ignoreinput DECL_ASYNC_ARG)
 	gui_wait_for_chars(msec ASYNC_ARG);
     else
 #endif
-	mch_delay(msec, ignoreinput);
+	mch_delay(msec, ignoreinput ASYNC_ARG);
 }
 
 /*

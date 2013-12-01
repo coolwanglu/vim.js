@@ -1,9 +1,4 @@
 /* misc2.c */
-async_context *async_push __ARGS((async_context *prev_context, async_callback_t callback));
-void async_put __ARGS((async_context *context, char *value, size_t length));
-void async_get __ARGS((char **p, async_context *context, char *value, size_t length));
-void async_return __ARGS((async_context *context));
-async_context *async_pop __ARGS((async_context *context));
 int virtual_active __ARGS((void));
 int getviscol __ARGS((void));
 int getviscol2 __ARGS((colnr_T col, colnr_T coladd));
@@ -82,7 +77,6 @@ void set_fileformat __ARGS((int t, int opt_flags));
 int default_fileformat __ARGS((void));
 int call_shell __ARGS((char_u *cmd, int opt));
 int get_real_state __ARGS((void));
-int after_pathsep __ARGS((char_u *b, char_u *p));
 int same_directory __ARGS((char_u *f1, char_u *f2));
 int vim_chdirfile __ARGS((char_u *fname));
 int illegal_slash __ARGS((char *name));

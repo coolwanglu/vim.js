@@ -1,9 +1,4 @@
 /* edit.c */
-async_context *async_push __ARGS((async_context *prev_context, async_callback_t callback));
-void async_put __ARGS((async_context *context, char *value, size_t length));
-void async_get __ARGS((char **p, async_context *context, char *value, size_t length));
-void async_return __ARGS((async_context *context));
-async_context *async_pop __ARGS((async_context *context));
 int edit __ARGS((int cmdchar, int startln, long count));
 void edit_putchar __ARGS((int c, int highlight));
 void edit_unputchar __ARGS((void));
@@ -42,6 +37,7 @@ void fixthisline __ARGS((int (*get_the_indent)(void)));
 void fix_indent __ARGS((void));
 int in_cinkeys __ARGS((int keytyped, int when, int line_is_empty));
 int hkmap __ARGS((int c));
+int DEFINE_ASYNC_CALLBACK __ARGS((int ins_ctrl_g__cb1));
 void ins_scroll __ARGS((void));
 void ins_horscroll __ARGS((void));
 int ins_copychar __ARGS((linenr_T lnum));

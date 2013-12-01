@@ -1,9 +1,4 @@
 /* tag.c */
-async_context *async_push __ARGS((async_context *prev_context, async_callback_t callback));
-void async_put __ARGS((async_context *context, char *value, size_t length));
-void async_get __ARGS((char **p, async_context *context, char *value, size_t length));
-void async_return __ARGS((async_context *context));
-async_context *async_pop __ARGS((async_context *context));
 int do_tag __ARGS((char_u *tag, int type, int count, int forceit, int verbose));
 void tag_freematch __ARGS((void));
 void do_tags __ARGS((exarg_T *eap));

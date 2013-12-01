@@ -1,12 +1,8 @@
 /* ui.c */
-async_context *async_push __ARGS((async_context *prev_context, async_callback_t callback));
-void async_put __ARGS((async_context *context, char *value, size_t length));
-void async_get __ARGS((char **p, async_context *context, char *value, size_t length));
-void async_return __ARGS((async_context *context));
-async_context *async_pop __ARGS((async_context *context));
 void ui_write __ARGS((char_u *s, int len));
 void ui_inchar_undo __ARGS((char_u *s, int len));
 int ui_inchar __ARGS((char_u *buf, int maxlen, long wtime, int tb_change_cnt, async_context *_async_context));
+int DEFINE_ASYNC_CALLBACK __ARGS((int ui_inchar__cb1));
 int ui_char_avail __ARGS((void));
 void ui_delay __ARGS((long msec, int ignoreinput, async_context *_async_context));
 void ui_suspend __ARGS((void));

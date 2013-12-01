@@ -1,9 +1,4 @@
 /* sha256.c */
-async_context *async_push __ARGS((async_context *prev_context, async_callback_t callback));
-void async_put __ARGS((async_context *context, char *value, size_t length));
-void async_get __ARGS((char **p, async_context *context, char *value, size_t length));
-void async_return __ARGS((async_context *context));
-async_context *async_pop __ARGS((async_context *context));
 void sha256_start __ARGS((context_sha256_T *ctx));
 void sha256_update __ARGS((context_sha256_T *ctx, char_u *input, UINT32_T length));
 void sha256_finish __ARGS((context_sha256_T *ctx, char_u digest[32]));
