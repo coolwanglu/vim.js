@@ -4050,7 +4050,7 @@ get_file_in_dir(fname, dname)
     return retval;
 }
 
-static void attention_message __ARGS((buf_T *buf, char_u *fname));
+static void attention_message __ARGS((buf_T *buf, char_u *fname DECL_ASYNC_ARG));
 
 /*
  * Print the ATTENTION message: info about an existing swap file.
