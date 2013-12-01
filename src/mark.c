@@ -752,7 +752,7 @@ do_marks(eap ASYNC_ARG)
 	{
 	    show_one_mark(i >= NMARKS ? i - NMARKS + '0' : i + 'A',
 		    arg, &namedfm[i].fmark.mark, name,
-		    namedfm[i].fmark.fnum == curbuf->b_fnum);
+		    namedfm[i].fmark.fnum == curbuf->b_fnum ASYNC_ARG);
 	    if (namedfm[i].fmark.fnum != 0)
 		vim_free(name);
 	}
