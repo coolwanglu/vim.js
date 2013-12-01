@@ -10055,7 +10055,7 @@ ins_copychar(lnum)
 
     /* try to advance to the cursor column */
     temp = 0;
-    ptr = ml_get(lnum);
+    ptr = ml_get(lnum ASYNC_ARG);
     prev_ptr = ptr;
     validate_virtcol();
     while ((colnr_T)temp < curwin->w_virtcol && *ptr != NUL)
