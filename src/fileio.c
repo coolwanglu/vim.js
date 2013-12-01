@@ -333,7 +333,7 @@ readfile(fname, sfname, from, lines_to_skip, lines_to_read, eap, flags ASYNC_ARG
 	    && vim_strchr(p_cpo, CPO_FNAMER) != NULL
 	    && !(flags & READ_DUMMY))
     {
-	if (set_rw_fname(fname, sfname) == FAIL)
+	if (set_rw_fname(fname, sfname ASYNC_ARG) == FAIL)
 	    return FAIL;
     }
 
