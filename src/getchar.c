@@ -229,10 +229,11 @@ get_inserted()
  * K_SPECIAL and CSI should have been escaped already.
  */
     static void
-add_buff(buf, s, slen)
+add_buff(buf, s, slen ASYNC_ARG)
     struct buffheader	*buf;
     char_u		*s;
     long		slen;	/* length of "s" or -1 */
+    DECL_ASYNC_ARG_KR
 {
     struct buffblock *p;
     long_u	    len;
