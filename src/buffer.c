@@ -5808,7 +5808,7 @@ buf_contents_changed(buf ASYNC_ARG)
 	{
 	    differ = FALSE;
 	    for (lnum = 1; lnum <= curbuf->b_ml.ml_line_count; ++lnum)
-		if (STRCMP(ml_get_buf(buf, lnum, FALSE ASYNC_ARG), ml_get(lnum)) != 0)
+		if (STRCMP(ml_get_buf(buf, lnum, FALSE ASYNC_ARG), ml_get(lnum ASYNC_ARG)) != 0)
 		{
 		    differ = TRUE;
 		    break;

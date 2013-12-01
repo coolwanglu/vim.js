@@ -1264,12 +1264,13 @@ in_win_border(wp, vcol)
  * This is used very often, keep it fast!
  */
     void
-getvcol(wp, pos, start, cursor, end)
+getvcol(wp, pos, start, cursor, end ASYNC_ARG)
     win_T	*wp;
     pos_T	*pos;
     colnr_T	*start;
     colnr_T	*cursor;
     colnr_T	*end;
+    DECL_ASYNC_ARG_KR
 {
     colnr_T	vcol;
     char_u	*ptr;		/* points to current char */
@@ -1280,7 +1281,7 @@ getvcol(wp, pos, start, cursor, end)
     int		c;
 
     vcol = 0;
-    ptr = ml_get_buf(wp->w_buffer, pos->lnum, FALSE);
+    ptr = ml_get_buf(wp->w_buffer, pos->lnum, FALSE ASYNC_ARG);
     if (pos->col == MAXCOL)
 	posptr = NULL;  /* continue until the NUL */
     else

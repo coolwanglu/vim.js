@@ -50,7 +50,7 @@
 /*
  * bufempty() - return TRUE if the current buffer is empty
  */
-#define bufempty() (curbuf->b_ml.ml_line_count == 1 && *ml_get((linenr_T)1) == NUL)
+#define bufempty() (curbuf->b_ml.ml_line_count == 1 && *ml_get((linenr_T)1 ASYNC_ARG) == NUL)
 
 /*
  * toupper() and tolower() that use the current locale.
