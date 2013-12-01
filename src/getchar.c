@@ -1522,8 +1522,9 @@ before_blocking()
  * characters reaches 'updatecount' and 'updatecount' is non-zero.
  */
     void
-updatescript(c)
+updatescript(c ASYNC_ARG)
     int c;
+    DECL_ASYNC_ARG_KR
 {
     static int	    count = 0;
 
