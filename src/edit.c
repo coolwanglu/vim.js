@@ -1338,7 +1338,7 @@ doESCkey:
 #endif
 	    if (ins_eol(c) && !p_im)
 		goto doESCkey;	    /* out of memory */
-	    auto_format(FALSE, FALSE);
+	    auto_format(FALSE, FALSE ASYNC_ARG);
 	    inserted_space = FALSE;
 	    break;
 
