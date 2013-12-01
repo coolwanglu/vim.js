@@ -2913,7 +2913,7 @@ buf_name_changed(buf ASYNC_ARG)
     status_redraw_all();	/* status lines need to be redrawn */
 #endif
     fmarks_check_names(buf);	/* check named file marks */
-    ml_timestamp(buf);		/* reset timestamp */
+    ml_timestamp(buf ASYNC_ARG);		/* reset timestamp */
 }
 
 /*
