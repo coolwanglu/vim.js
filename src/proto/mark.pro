@@ -10,7 +10,7 @@ pos_T *getmark __ARGS((int c, int changefile, async_context *_async_context));
 pos_T *getmark_buf_fnum __ARGS((buf_T *buf, int c, int changefile, int *fnum, async_context *_async_context));
 pos_T *getnextmark __ARGS((pos_T *startpos, int dir, int begin_line));
 void fmarks_check_names __ARGS((buf_T *buf));
-int check_mark __ARGS((pos_T *pos));
+int check_mark __ARGS((pos_T *pos, async_context *_async_context));
 void clrallmarks __ARGS((buf_T *buf));
 char_u *fm_getname __ARGS((fmark_T *fmark, int lead_len));
 void do_marks __ARGS((exarg_T *eap, async_context *_async_context));

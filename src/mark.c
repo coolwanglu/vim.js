@@ -622,8 +622,9 @@ fmarks_check_one(fm, name, buf)
  * Give and error message and return FAIL if not.
  */
     int
-check_mark(pos)
+check_mark(pos ASYNC_ARG)
     pos_T    *pos;
+    DECL_ASYNC_ARG_KR
 {
     if (pos == NULL)
     {
