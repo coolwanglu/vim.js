@@ -1142,7 +1142,7 @@ ml_recover( ASYNC_ARG_ONLY)
 		goto theend;
 	}
 	/* get the swap file name that will be used */
-	(void)recover_names(fname, FALSE, i, &fname_used);
+	(void)recover_names(fname, FALSE, i, &fname_used ASYNC_ARG);
     }
     if (fname_used == NULL)
 	goto theend;			/* out of memory */
