@@ -229,7 +229,7 @@ typedef enum {
 static void ml_set_b0_crypt __ARGS((buf_T *buf, ZERO_BL *b0p));
 #endif
 static int ml_check_b0_id __ARGS((ZERO_BL *b0p));
-static void ml_upd_block0 __ARGS((buf_T *buf, upd_block0_T what));
+static void ml_upd_block0 __ARGS((buf_T *buf, upd_block0_T what DECL_ASYNC_ARG));
 static void set_b0_fname __ARGS((ZERO_BL *, buf_T *buf));
 static void set_b0_dir_flag __ARGS((ZERO_BL *b0p, buf_T *buf));
 #ifdef FEAT_MBYTE
