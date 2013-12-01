@@ -13,7 +13,7 @@ void fmarks_check_names __ARGS((buf_T *buf));
 int check_mark __ARGS((pos_T *pos));
 void clrallmarks __ARGS((buf_T *buf));
 char_u *fm_getname __ARGS((fmark_T *fmark, int lead_len));
-void do_marks __ARGS((exarg_T *eap));
+void do_marks __ARGS((exarg_T *eap, async_context *_async_context));
 void ex_delmarks __ARGS((exarg_T *eap));
 void ex_jumps __ARGS((exarg_T *eap));
 void ex_changes __ARGS((exarg_T *eap));

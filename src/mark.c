@@ -728,8 +728,9 @@ mark_line(mp, lead_len)
  * print the marks
  */
     void
-do_marks(eap)
+do_marks(eap ASYNC_ARG)
     exarg_T	*eap;
+    DECL_ASYNC_ARG_KR
 {
     char_u	*arg = eap->arg;
     int		i;
