@@ -2693,7 +2693,7 @@ do_write(eap ASYNC_ARG)
 	    fname = alt_buf->b_sfname;
 	    alt_buf->b_sfname = curbuf->b_sfname;
 	    curbuf->b_sfname = fname;
-	    buf_name_changed(curbuf);
+	    buf_name_changed(curbuf ASYNC_ARG);
 #ifdef FEAT_AUTOCMD
 	    apply_autocmds(EVENT_BUFFILEPOST, NULL, NULL, FALSE, curbuf);
 	    apply_autocmds(EVENT_BUFFILEPOST, NULL, NULL, FALSE, alt_buf);
