@@ -1673,7 +1673,7 @@ ins_ctrl_v()
 #ifdef FEAT_CMDL_INFO
     clear_showcmd();
 #endif
-    insert_special(c, FALSE, TRUE);
+    insert_special(c, FALSE, TRUE ASYNC_ARG);
 #ifdef FEAT_RIGHTLEFT
     revins_chars++;
     revins_legal++;
