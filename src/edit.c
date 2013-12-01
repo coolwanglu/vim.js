@@ -9013,7 +9013,7 @@ ins_bs(c, mode, inserted_space_p ASYNC_ARG)
 		    if ((State & REPLACE_FLAG))
 			replace_push(NUL);
 		}
-		getvcol(curwin, &curwin->w_cursor, &vcol, NULL, NULL);
+		getvcol(curwin, &curwin->w_cursor, &vcol, NULL, NULL ASYNC_ARG);
 	    }
 
 	    /* If we are now back where we started delete one character.  Can
