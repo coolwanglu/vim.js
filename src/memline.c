@@ -2317,7 +2317,7 @@ ml_preserve(buf, message ASYNC_ARG)
      * before. */
     got_int = FALSE;
 
-    ml_flush_line(buf);				    /* flush buffered line */
+    ml_flush_line(buf ASYNC_ARG);				    /* flush buffered line */
     (void)ml_find_line(buf, (linenr_T)0, ML_FLUSH ASYNC_ARG); /* flush locked block */
     status = mf_sync(mfp, MFS_ALL | MFS_FLUSH);
 
