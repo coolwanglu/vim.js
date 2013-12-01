@@ -3510,7 +3510,7 @@ do_ecmd(fnum, ffname, sfname, eap, newlnum, flags, oldwin ASYNC_ARG)
 #ifdef FEAT_LISTCMDS
 		(flags & ECMD_ADDBUF) ||
 #endif
-		check_fname() == FAIL)
+		check_fname( ASYNC_ARG_ONLY) == FAIL)
 	    goto theend;
 	oldbuf = (flags & ECMD_OLDBUF);
     }
