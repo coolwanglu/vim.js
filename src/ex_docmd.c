@@ -8430,9 +8430,10 @@ do_sleep(msec ASYNC_ARG)
 }
 
     static void
-do_exmap(eap, isabbrev)
+do_exmap(eap, isabbrev ASYNC_ARG)
     exarg_T	*eap;
     int		isabbrev;
+    DECL_ASYNC_ARG_KR
 {
     int	    mode;
     char_u  *cmdp;
