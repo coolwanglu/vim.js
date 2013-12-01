@@ -1613,7 +1613,7 @@ ml_recover( ASYNC_ARG_ONLY)
     {
 	/* Recovering an empty file results in two lines and the first line is
 	 * empty.  Don't set the modified flag then. */
-	if (!(curbuf->b_ml.ml_line_count == 2 && *ml_get(1) == NUL))
+	if (!(curbuf->b_ml.ml_line_count == 2 && *ml_get(1 ASYNC_ARG) == NUL))
 	{
 	    changed_int();
 	    ++curbuf->b_changedtick;
