@@ -5463,7 +5463,7 @@ ex_global(eap ASYNC_ARG)
 							    (colnr_T)0, NULL);
 	if ((type == 'g' && match) || (type == 'v' && !match))
 	{
-	    ml_setmarked(lnum);
+	    ml_setmarked(lnum ASYNC_ARG);
 	    ndone++;
 	}
 	line_breakcheck();
