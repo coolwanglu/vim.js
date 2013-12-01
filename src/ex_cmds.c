@@ -2625,7 +2625,7 @@ do_write(eap ASYNC_ARG)
 #ifdef FEAT_QUICKFIX
 		bt_dontwrite_msg(curbuf) ||
 #endif
-		check_fname() == FAIL || check_readonly(&eap->forceit, curbuf)))
+		check_fname() == FAIL || check_readonly(&eap->forceit, curbuf ASYNC_ARG)))
 	goto theend;
 
     if (!other)
