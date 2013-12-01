@@ -9745,7 +9745,7 @@ ins_tab()
 	else
 #endif
 	{
-	    ptr = ml_get_cursor();
+	    ptr = ml_get_cursor( ASYNC_ARG_ONLY);
 	    cursor = &curwin->w_cursor;
 	}
 
