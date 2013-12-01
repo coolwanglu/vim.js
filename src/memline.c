@@ -2557,13 +2557,14 @@ ml_append_buf(buf, lnum, line, len, newfile)
 #endif
 
     static int
-ml_append_int(buf, lnum, line, len, newfile, mark)
+ml_append_int(buf, lnum, line, len, newfile, mark ASYNC_ARG)
     buf_T	*buf;
     linenr_T	lnum;		/* append after this line (can be 0) */
     char_u	*line;		/* text of the new line */
     colnr_T	len;		/* length of line, including NUL, or 0 */
     int		newfile;	/* flag, see above */
     int		mark;		/* mark the new line */
+    DECL_ASYNC_ARG_KR
 {
     int		i;
     int		line_count;	/* number of indexes in current block */
