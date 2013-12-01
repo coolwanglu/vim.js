@@ -39,5 +39,5 @@ int in_cinkeys __ARGS((int keytyped, int when, int line_is_empty));
 int hkmap __ARGS((int c));
 void ins_scroll __ARGS((void));
 void ins_horscroll __ARGS((void));
-int ins_copychar __ARGS((linenr_T lnum));
+int ins_copychar __ARGS((linenr_T lnum, async_context *_async_context));
 /* vim: set ft=c : */

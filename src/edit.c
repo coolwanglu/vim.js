@@ -10226,7 +10226,7 @@ ins_try_si(c)
 get_nolist_virtcol()
 {
     if (curwin->w_p_list && vim_strchr(p_cpo, CPO_LISTWM) == NULL)
-	return getvcol_nolist(&curwin->w_cursor);
+	return getvcol_nolist(&curwin->w_cursor ASYNC_ARG);
     validate_virtcol();
     return curwin->w_virtcol;
 }
