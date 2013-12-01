@@ -2633,7 +2633,7 @@ do_one_cmd(cmdlinep, sourcing,
 
     if (ea.argt & XFILE)
     {
-	if (expand_filename(&ea, cmdlinep, &errormsg) == FAIL)
+	if (expand_filename(&ea, cmdlinep, &errormsg ASYNC_ARG) == FAIL)
 	    goto doend;
     }
 
