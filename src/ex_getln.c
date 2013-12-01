@@ -3414,7 +3414,7 @@ nextwild(xp, type, options, escape ASYNC_ARG)
 		use_options += WILD_ICASE;
 	    p2 = ExpandOne(xp, p1,
 			 vim_strnsave(&ccline.cmdbuff[i], xp->xp_pattern_len),
-							   use_options, type);
+							   use_options, type ASYNC_ARG);
 	    vim_free(p1);
 	    /* longest match: make sure it is not shorter, happens with :help */
 	    if (p2 != NULL && type == WILD_LONGEST)
