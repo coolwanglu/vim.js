@@ -6044,7 +6044,7 @@ insertchar(c, flags, second_indent ASYNC_ARG)
 # endif
 	    buf[i++] = c;
 #else
-	    buf[i++] = vgetc();
+	    buf[i++] = vgetc( ASYNC_ARG_ONLY);
 #endif
 	}
 
