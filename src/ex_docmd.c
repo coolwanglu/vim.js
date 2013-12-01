@@ -9377,8 +9377,9 @@ open_exfile(fname, forceit, mode)
  * ":mark" and ":k".
  */
     static void
-ex_mark(eap)
+ex_mark(eap ASYNC_ARG)
     exarg_T	*eap;
+    DECL_ASYNC_ARG_KR
 {
     pos_T	pos;
 
