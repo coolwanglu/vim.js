@@ -54,7 +54,7 @@ void do_argfile __ARGS((exarg_T *eap, int argn, async_context *_async_context));
 void ex_next __ARGS((exarg_T *eap, async_context *_async_context));
 void ex_runtime __ARGS((exarg_T *eap));
 int source_runtime __ARGS((char_u *name, int all));
-int do_in_runtimepath __ARGS((char_u *name, int all, void (*callback)(char_u *fname, void *ck), void *cookie));
+int do_in_runtimepath __ARGS((char_u *name, int all, void (*callback)(char_u *fname, void *ck), void *cookie, async_context *_async_context));
 void ex_source __ARGS((exarg_T *eap, async_context *_async_context));
 int do_source __ARGS((char_u *fname, int check_other, int is_vimrc, async_context *_async_context));
 void ex_scriptnames __ARGS((exarg_T *eap));

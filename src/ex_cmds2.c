@@ -2771,11 +2771,12 @@ source_runtime(name, all)
  * has done its job.
  */
     int
-do_in_runtimepath(name, all, callback, cookie)
+do_in_runtimepath(name, all, callback, cookie ASYNC_ARG)
     char_u	*name;
     int		all;
     void	(*callback)__ARGS((char_u *fname, void *ck));
     void	*cookie;
+    DECL_ASYNC_ARG_KR
 {
     char_u	*rtp;
     char_u	*np;
