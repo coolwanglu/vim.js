@@ -2739,7 +2739,7 @@ doend:
 	    }
 	    append_command(*cmdlinep);
 	}
-	emsg(errormsg);
+	emsg(errormsg ASYNC_ARG);
     }
 #ifdef FEAT_EVAL
     do_errthrow(cstack,
