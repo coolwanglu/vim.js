@@ -1118,7 +1118,7 @@ doESCkey:
 	case K_BS:	/* delete character before the cursor */
 	case Ctrl_H:
 	    did_backspace = ins_bs(c, BACKSPACE_CHAR, &inserted_space);
-	    auto_format(FALSE, TRUE);
+	    auto_format(FALSE, TRUE ASYNC_ARG);
 	    break;
 
 	case Ctrl_W:	/* delete word before the cursor */
