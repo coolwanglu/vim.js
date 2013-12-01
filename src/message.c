@@ -420,7 +420,7 @@ smsg(DECL_ASYNC_ARG_FIRST char_u *s, ...)
 #ifdef __BORLANDC__
 _RTLENTRYF
 #endif
-smsg_attr(int attr, char_u *s, ... ASYNC_ARG)
+smsg_attr(DECL_ASYNC_ARG_FIRST int attr, char_u *s, ...)
     DECL_ASYNC_ARG_KR
 {
     va_list arglist;
@@ -2354,7 +2354,7 @@ clear_sb_text()
  * "g<" command.
  */
     void
-show_sb_text(ASYNC_ARG1)
+show_sb_text(ASYNC_ARG_ONLY)
     DECL_ASYNC_ARG_KR
 {
     msgchunk_T	*mp;
@@ -3083,7 +3083,7 @@ msg_clr_cmdline()
  * return TRUE if wait_return not called.
  */
     int
-msg_end( ASYNC_ARG1)
+msg_end( ASYNC_ARG_ONLY)
     DECL_ASYNC_ARG_KR
 {
     /*
