@@ -6585,7 +6585,7 @@ ex_quit(eap ASYNC_ARG)
     if ((!P_HID(curbuf)
 		&& check_changed(curbuf, (p_awa ? CCGD_AW : 0)
 				       | (eap->forceit ? CCGD_FORCEIT : 0)
-				       | CCGD_EXCMD))
+				       | CCGD_EXCMD ASYNC_ARG))
 	    || check_more(TRUE, eap->forceit) == FAIL
 	    || (only_one_window() && check_changed_any(eap->forceit ASYNC_ARG)))
     {
