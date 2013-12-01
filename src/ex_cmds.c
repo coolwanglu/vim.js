@@ -4669,7 +4669,7 @@ do_sub(eap ASYNC_ARG)
 
 		if (sub_firstline == NULL)
 		{
-		    sub_firstline = vim_strsave(ml_get(sub_firstlnum));
+		    sub_firstline = vim_strsave(ml_get(sub_firstlnum ASYNC_ARG));
 		    if (sub_firstline == NULL)
 		    {
 			vim_free(new_start);
