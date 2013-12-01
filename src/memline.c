@@ -665,7 +665,7 @@ ml_setname(buf ASYNC_ARG)
 #else
 	    mf_set_ffname(mfp);
 #endif
-	    ml_upd_block0(buf, UB_SAME_DIR);
+	    ml_upd_block0(buf, UB_SAME_DIR ASYNC_ARG);
 	    break;
 	}
 	vim_free(fname);	    /* this fname didn't work, try another */
