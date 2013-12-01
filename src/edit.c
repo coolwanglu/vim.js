@@ -216,7 +216,7 @@ static int del_char_after_col __ARGS((int limit_col));
 static int cindent_on __ARGS((void));
 #endif
 static void ins_reg __ARGS((void));
-static void ins_ctrl_g __ARGS((void));
+static void ins_ctrl_g __ARGS(( DECL_ASYNC_ARG_ONLY));
 static void ins_ctrl_hat __ARGS((void));
 static int  ins_esc __ARGS((long *count, int cmdchar, int nomove DECL_ASYNC_ARG));
 #ifdef FEAT_RIGHTLEFT
