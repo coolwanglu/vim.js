@@ -1134,7 +1134,7 @@ ml_recover( ASYNC_ARG_ONLY)
 	else			    /* several swap files found, choose */
 	{
 	    /* list the names of the swap files */
-	    (void)recover_names(fname, TRUE, 0, NULL);
+	    (void)recover_names(fname, TRUE, 0, NULL ASYNC_ARG);
 	    msg_putchar('\n');
 	    MSG_PUTS(_("Enter number of swap file to use (0 to quit): "));
 	    i = get_number(FALSE, NULL);
