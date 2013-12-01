@@ -1463,7 +1463,7 @@ ml_recover( ASYNC_ARG_ONLY)
 		if (pp->pb_count == 0)
 		{
 		    ml_append(lnum++, (char_u *)_("???EMPTY BLOCK"),
-							    (colnr_T)0, TRUE);
+							    (colnr_T)0, TRUE ASYNC_ARG);
 		    ++error;
 		}
 		else if (idx < (int)pp->pb_count)	/* go a block deeper */
