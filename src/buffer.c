@@ -284,7 +284,7 @@ open_buffer(read_stdin, eap, flags ASYNC_ARG)
 	    /* Go to the buffer that was opened. */
 	    aucmd_prepbuf(&aco, old_curbuf);
 #endif
-	    do_modelines(0);
+	    do_modelines(0 ASYNC_ARG);
 	    curbuf->b_flags &= ~(BF_CHECK_RO | BF_NEVERLOADED);
 
 #ifdef FEAT_AUTOCMD
