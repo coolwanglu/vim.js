@@ -6448,7 +6448,7 @@ internal_format(textwidth, second_indent, flags, format_only, c)
 	     * may have added or removed indent.
 	     */
 	    curwin->w_cursor.col += startcol;
-	    len = (colnr_T)STRLEN(ml_get_curline());
+	    len = (colnr_T)STRLEN(ml_get_curline( ASYNC_ARG_ONLY));
 	    if (curwin->w_cursor.col > len)
 		curwin->w_cursor.col = len;
 	}
