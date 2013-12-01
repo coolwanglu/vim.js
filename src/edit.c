@@ -8256,7 +8256,7 @@ ins_ctrl_g( ASYNC_ARG_ONLY)
 	/* CTRL-G j and CTRL-G <Down>: cursor down to Insstart.col */
 	case K_DOWN:
 	case Ctrl_J:
-	case 'j': ins_down(TRUE);
+	case 'j': ins_down(TRUE ASYNC_ARG);
 		  break;
 
 	/* CTRL-G u: start new undoable edit */
