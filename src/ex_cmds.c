@@ -2984,9 +2984,10 @@ not_writing( ASYNC_ARG_ONLY)
  * message when the buffer is readonly.
  */
     static int
-check_readonly(forceit, buf)
+check_readonly(forceit, buf ASYNC_ARG)
     int		*forceit;
     buf_T	*buf;
+    DECL_ASYNC_ARG_KR
 {
     struct stat	st;
 
