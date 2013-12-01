@@ -3563,10 +3563,11 @@ ml_new_ptr(mfp)
  * return: NULL for failure, pointer to block header otherwise
  */
     static bhdr_T *
-ml_find_line(buf, lnum, action)
+ml_find_line(buf, lnum, action ASYNC_ARG)
     buf_T	*buf;
     linenr_T	lnum;
     int		action;
+    DECL_ASYNC_ARG_KR
 {
     DATA_BL	*dp;
     PTR_BL	*pp;
