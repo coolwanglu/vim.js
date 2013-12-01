@@ -2402,7 +2402,7 @@ print_line_no_prefix(lnum, use_number, list)
 				   "%*ld ", number_width(curwin), (long)lnum);
 	msg_puts_attr(numbuf, hl_attr(HLF_N));	/* Highlight line nrs */
     }
-    msg_prt_line(ml_get(lnum), list);
+    msg_prt_line(ml_get(lnum ASYNC_ARG), list);
 }
 
 /*
