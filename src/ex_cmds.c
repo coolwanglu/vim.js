@@ -6177,7 +6177,7 @@ fix_help_buffer( ASYNC_ARG_ONLY)
     {
 	for (lnum = 1; lnum <= curbuf->b_ml.ml_line_count; ++lnum)
 	{
-	    line = ml_get_buf(curbuf, lnum, FALSE);
+	    line = ml_get_buf(curbuf, lnum, FALSE ASYNC_ARG);
 	    len = (int)STRLEN(line);
 	    if (in_example && len > 0 && !vim_iswhite(line[0]))
 	    {
