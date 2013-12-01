@@ -335,7 +335,7 @@ static void	ex_redraw __ARGS((exarg_T *eap));
 static void	ex_redrawstatus __ARGS((exarg_T *eap));
 static void	close_redir __ARGS((void));
 static void	ex_mkrc __ARGS((exarg_T *eap DECL_ASYNC_ARG));
-static void	ex_mark __ARGS((exarg_T *eap));
+static void	ex_mark __ARGS((exarg_T *eap DECL_ASYNC_ARG));
 #ifdef FEAT_USR_CMDS
 static char_u	*uc_fun_cmd __ARGS((void));
 static char_u	*find_ucmd __ARGS((exarg_T *eap, char_u *p, int *full, expand_T *xp, int *compl));
