@@ -25,7 +25,7 @@ int ml_replace __ARGS((linenr_T lnum, char_u *line, int copy, async_context *_as
 int ml_delete __ARGS((linenr_T lnum, int message, async_context *_async_context));
 void ml_setmarked __ARGS((linenr_T lnum, async_context *_async_context));
 linenr_T ml_firstmarked __ARGS((async_context *_async_context));
-void ml_clearmarked __ARGS((void));
+void ml_clearmarked __ARGS((async_context *_async_context));
 int resolve_symlink __ARGS((char_u *fname, char_u *buf));
 char_u *makeswapname __ARGS((char_u *fname, char_u *ffname, buf_T *buf, char_u *dir_name));
 char_u *get_file_in_dir __ARGS((char_u *fname, char_u *dname));

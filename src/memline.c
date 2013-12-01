@@ -3438,7 +3438,7 @@ ml_flush_line(buf)
 	lnum = buf->b_ml.ml_line_lnum;
 	new_line = buf->b_ml.ml_line_ptr;
 
-	hp = ml_find_line(buf, lnum, ML_FIND);
+	hp = ml_find_line(buf, lnum, ML_FIND ASYNC_ARG);
 	if (hp == NULL)
 	    EMSGN(_("E320: Cannot find line %ld"), lnum);
 	else
