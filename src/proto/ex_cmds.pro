@@ -11,7 +11,7 @@ void do_shell __ARGS((char_u *cmd, int flags, async_context *_async_context));
 char_u *make_filter_cmd __ARGS((char_u *cmd, char_u *itmp, char_u *otmp));
 void append_redir __ARGS((char_u *buf, int buflen, char_u *opt, char_u *fname));
 void do_fixdel __ARGS((exarg_T *eap));
-void print_line_no_prefix __ARGS((linenr_T lnum, int use_number, int list));
+void print_line_no_prefix __ARGS((linenr_T lnum, int use_number, int list, async_context *_async_context));
 void print_line __ARGS((linenr_T lnum, int use_number, int list));
 int rename_buffer __ARGS((char_u *new_fname, async_context *_async_context));
 void ex_file __ARGS((exarg_T *eap, async_context *_async_context));

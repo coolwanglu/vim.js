@@ -2389,10 +2389,11 @@ do_fixdel(eap)
 }
 
     void
-print_line_no_prefix(lnum, use_number, list)
+print_line_no_prefix(lnum, use_number, list ASYNC_ARG)
     linenr_T	lnum;
     int		use_number;
     int		list;
+    DECL_ASYNC_ARG_KR
 {
     char_u	numbuf[30];
 
