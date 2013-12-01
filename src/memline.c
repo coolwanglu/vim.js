@@ -1559,7 +1559,7 @@ ml_recover( ASYNC_ARG_ONLY)
 		    if (line_count != dp->db_line_count)
 		    {
 			ml_append(lnum++, (char_u *)_("??? from here until ???END lines may have been inserted/deleted"),
-							    (colnr_T)0, TRUE);
+							    (colnr_T)0, TRUE ASYNC_ARG);
 			++error;
 			has_error = TRUE;
 		    }
