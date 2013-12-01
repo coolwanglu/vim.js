@@ -8876,7 +8876,7 @@ ins_bs(c, mode, inserted_space_p ASYNC_ARG)
 					   && has_format_option(FO_WHITE_PAR))
 		{
 		    char_u  *ptr = ml_get_buf(curbuf, curwin->w_cursor.lnum,
-									TRUE);
+									TRUE ASYNC_ARG);
 		    int	    len;
 
 		    len = (int)STRLEN(ptr);
