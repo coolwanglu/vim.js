@@ -6802,9 +6802,10 @@ check_timestamps(focus ASYNC_ARG)
  * empty.
  */
     static int
-move_lines(frombuf, tobuf)
+move_lines(frombuf, tobuf ASYNC_ARG)
     buf_T	*frombuf;
     buf_T	*tobuf;
+    DECL_ASYNC_ARG_KR
 {
     buf_T	*tbuf = curbuf;
     int		retval = OK;
