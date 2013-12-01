@@ -9691,7 +9691,7 @@ ins_tab( ASYNC_ARG_ONLY)
 	temp = (int)get_sts_value();
     else			/* otherwise use 'tabstop' */
 	temp = (int)curbuf->b_p_ts;
-    temp -= get_nolist_virtcol() % temp;
+    temp -= get_nolist_virtcol( ASYNC_ARG_ONLY) % temp;
 
     /*
      * Insert the first space with ins_char().	It will delete one char in
