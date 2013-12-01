@@ -2257,7 +2257,7 @@ ml_sync_all(check_file, check_char ASYNC_ARG)
 
 	ml_flush_line(buf);		    /* flush buffered line */
 					    /* flush locked block */
-	(void)ml_find_line(buf, (linenr_T)0, ML_FLUSH);
+	(void)ml_find_line(buf, (linenr_T)0, ML_FLUSH ASYNC_ARG);
 	if (bufIsChanged(buf) && check_file && mf_need_trans(buf->b_ml.ml_mfp)
 						     && buf->b_ffname != NULL)
 	{
