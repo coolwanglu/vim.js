@@ -4457,10 +4457,11 @@ replace_makeprg(eap, p, cmdlinep)
  * Return FAIL for failure, OK otherwise.
  */
     int
-expand_filename(eap, cmdlinep, errormsgp)
+expand_filename(eap, cmdlinep, errormsgp ASYNC_ARG)
     exarg_T	*eap;
     char_u	**cmdlinep;
     char_u	**errormsgp;
+    DECL_ASYNC_ARG_KR
 {
     int		has_wildcards;	/* need to expand wildcards */
     char_u	*repl;
