@@ -1399,9 +1399,10 @@ restore_typeahead(tp)
  * Open a new script file for the ":source!" command.
  */
     void
-openscript(name, directly)
+openscript(name, directly ASYNC_ARG)
     char_u	*name;
     int		directly;	/* when TRUE execute directly */
+    DECL_ASYNC_ARG_KR
 {
     if (curscript + 1 == NSCRIPT)
     {

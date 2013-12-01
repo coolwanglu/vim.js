@@ -21,7 +21,7 @@ void stuffnumReadbuff __ARGS((long n));
 int start_redo __ARGS((long count, int old_redo));
 int start_redo_ins __ARGS((void));
 void stop_redo_ins __ARGS((void));
-int ins_typebuf __ARGS((char_u *str, int noremap, int offset, int nottyped, int silent));
+int ins_typebuf __ARGS((char_u *str, int noremap, int offset, int nottyped, int silent, async_context *_async_context));
 void ins_char_typebuf __ARGS((int c));
 int typebuf_changed __ARGS((int tb_change_cnt));
 int typebuf_typed __ARGS((void));
