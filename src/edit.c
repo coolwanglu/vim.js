@@ -9772,7 +9772,7 @@ ins_tab( ASYNC_ARG_ONLY)
 	}
 
 	/* compute virtual column numbers of first white and cursor */
-	getvcol(curwin, &fpos, &vcol, NULL, NULL);
+	getvcol(curwin, &fpos, &vcol, NULL, NULL ASYNC_ARG);
 	getvcol(curwin, cursor, &want_vcol, NULL, NULL);
 
 	/* Use as many TABs as possible.  Beware of 'showbreak' and
