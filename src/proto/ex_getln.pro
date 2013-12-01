@@ -21,7 +21,7 @@ void redrawcmdline __ARGS((void));
 void redrawcmd __ARGS((void));
 void compute_cmdrow __ARGS((void));
 void gotocmdline __ARGS((int clr));
-char_u *ExpandOne __ARGS((expand_T *xp, char_u *str, char_u *orig, int options, int mode));
+char_u *ExpandOne __ARGS((expand_T *xp, char_u *str, char_u *orig, int options, int mode, async_context *_async_context));
 void ExpandInit __ARGS((expand_T *xp));
 void ExpandCleanup __ARGS((expand_T *xp));
 void ExpandEscape __ARGS((expand_T *xp, char_u *str, int numfiles, char_u **files, int options));

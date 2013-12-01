@@ -3505,12 +3505,13 @@ nextwild(xp, type, options, escape)
  * The variables xp->xp_context and xp->xp_backslash must have been set!
  */
     char_u *
-ExpandOne(xp, str, orig, options, mode)
+ExpandOne(xp, str, orig, options, mode ASYNC_ARG)
     expand_T	*xp;
     char_u	*str;
     char_u	*orig;	    /* allocated copy of original of expanded string */
     int		options;
     int		mode;
+    DECL_ASYNC_ARG_KR
 {
     char_u	*ss = NULL;
     static int	findex;
