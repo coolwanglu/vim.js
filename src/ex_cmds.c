@@ -948,7 +948,7 @@ do_bang(addr_count, eap, forceit, do_in, do_out ASYNC_ARG)
     if (addr_count == 0)		/* :! */
     {
 	msg_scroll = FALSE;	    /* don't scroll here */
-	autowrite_all();
+	autowrite_all( ASYNC_ARG_ONLY);
 	msg_scroll = scroll_save;
     }
 
