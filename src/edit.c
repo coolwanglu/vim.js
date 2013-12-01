@@ -5813,7 +5813,7 @@ insert_special(c, allow_modmask, ctrlv)
 	}
     }
     if (stop_arrow() == OK)
-	insertchar(c, ctrlv ? INSCHAR_CTRLV : 0, -1);
+	insertchar(c, ctrlv ? INSCHAR_CTRLV : 0, -1 ASYNC_ARG);
 }
 
 /*
