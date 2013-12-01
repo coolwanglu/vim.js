@@ -6936,7 +6936,7 @@ ex_stop(eap ASYNC_ARG)
     /*
      * Disallow suspending for "rvim".
      */
-    if (!check_restricted()
+    if (!check_restricted( ASYNC_ARG_ONLY)
 #ifdef WIN3264
 	/*
 	 * Check if external commands are allowed now.
