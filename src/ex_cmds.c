@@ -6185,7 +6185,7 @@ fix_help_buffer( ASYNC_ARG_ONLY)
 		if (line[0] == '<')
 		{
 		    /* blank-out a '<' in the first column */
-		    line = ml_get_buf(curbuf, lnum, TRUE);
+		    line = ml_get_buf(curbuf, lnum, TRUE ASYNC_ARG);
 		    line[0] = ' ';
 		}
 		in_example = FALSE;
