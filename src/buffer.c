@@ -181,7 +181,7 @@ open_buffer(read_stdin, eap, flags ASYNC_ARG)
 	    {
 		/* Delete the binary lines. */
 		while (--line_count >= 0)
-		    ml_delete((linenr_T)1, FALSE);
+		    ml_delete((linenr_T)1, FALSE ASYNC_ARG);
 	    }
 	    else
 	    {
