@@ -2658,7 +2658,7 @@ do_write(eap ASYNC_ARG)
 	}
     }
 
-    if (check_overwrite(eap, curbuf, fname, ffname, other) == OK)
+    if (check_overwrite(eap, curbuf, fname, ffname, other ASYNC_ARG) == OK)
     {
 	if (eap->cmdidx == CMD_saveas && alt_buf != NULL)
 	{
