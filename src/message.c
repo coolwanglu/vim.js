@@ -580,8 +580,9 @@ emsg_not_now()
  * return TRUE if wait_return not called
  */
     int
-emsg(s)
+emsg(s ASYNC_ARG)
     char_u	*s;
+    DECL_ASYNC_ARG_KR
 {
     int		attr;
     char_u	*p;
