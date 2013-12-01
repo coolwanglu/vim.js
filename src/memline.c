@@ -3177,7 +3177,7 @@ ml_delete_int(buf, lnum, message ASYNC_ARG)
     if (mfp == NULL)
 	return FAIL;
 
-    if ((hp = ml_find_line(buf, lnum, ML_DELETE)) == NULL)
+    if ((hp = ml_find_line(buf, lnum, ML_DELETE ASYNC_ARG)) == NULL)
 	return FAIL;
 
     dp = (DATA_BL *)(hp->bh_data);
