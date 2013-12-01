@@ -1751,7 +1751,7 @@ recover_names(fname, list, nr, fname_out)
     if (list)
     {
 	/* use msg() to start the scrolling properly */
-	msg((char_u *)_("Swap files found:"));
+	msg((char_u *)_("Swap files found:") ASYNC_ARG);
 	msg_putchar('\n');
     }
 
