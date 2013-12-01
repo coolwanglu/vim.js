@@ -4706,9 +4706,10 @@ vim_unescape_csi(p)
  * Return FAIL on error, OK otherwise.
  */
     int
-makemap(fd, buf)
+makemap(fd, buf ASYNC_ARG)
     FILE	*fd;
     buf_T	*buf;	    /* buffer for local mappings or NULL */
+    DECL_ASYNC_ARG_KR
 {
     mapblock_T	*mp;
     char_u	c1, c2, c3;

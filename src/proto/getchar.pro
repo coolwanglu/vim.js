@@ -40,7 +40,7 @@ void updatescript __ARGS((int c, async_context *_async_context));
 int vgetc __ARGS((async_context *_async_context));
 int safe_vgetc __ARGS((void));
 int plain_vgetc __ARGS((void));
-int vpeekc __ARGS((void));
+int vpeekc __ARGS((async_context *_async_context));
 int vpeekc_nomap __ARGS((void));
 int vpeekc_any __ARGS((void));
 int char_avail __ARGS((void));
