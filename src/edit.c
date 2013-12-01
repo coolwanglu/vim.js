@@ -227,7 +227,7 @@ static int ins_start_select __ARGS((int c));
 #endif
 static void ins_insert __ARGS((int replaceState));
 static void ins_ctrl_o __ARGS((void));
-static void ins_shift __ARGS((int c, int lastc));
+static void ins_shift __ARGS((int c, int lastc DECL_ASYNC_ARG));
 static void ins_del __ARGS((void));
 static int  ins_bs __ARGS((int c, int mode, int *inserted_space_p));
 #ifdef FEAT_MOUSE
