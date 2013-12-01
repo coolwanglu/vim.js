@@ -5777,10 +5777,11 @@ get_literal()
  * Insert character, taking care of special keys and mod_mask
  */
     static void
-insert_special(c, allow_modmask, ctrlv)
+insert_special(c, allow_modmask, ctrlv ASYNC_ARG)
     int	    c;
     int	    allow_modmask;
     int	    ctrlv;	    /* c was typed after CTRL-V */
+    DECL_ASYNC_ARG_KR
 {
     char_u  *p;
     int	    len;
