@@ -7029,8 +7029,9 @@ ex_exit(eap ASYNC_ARG)
  * ":print", ":list", ":number".
  */
     static void
-ex_print(eap)
+ex_print(eap ASYNC_ARG)
     exarg_T	*eap;
+    DECL_ASYNC_ARG_KR
 {
     if (curbuf->b_ml.ml_flags & ML_EMPTY)
 	EMSG(_(e_emptybuf));
