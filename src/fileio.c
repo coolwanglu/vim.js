@@ -61,7 +61,7 @@ static char_u *check_for_cryptkey __ARGS((char_u *cryptkey, char_u *ptr, long *s
 #ifdef UNIX
 static void set_file_time __ARGS((char_u *fname, time_t atime, time_t mtime));
 #endif
-static int set_rw_fname __ARGS((char_u *fname, char_u *sfname));
+static int set_rw_fname __ARGS((char_u *fname, char_u *sfname DECL_ASYNC_ARG));
 static int msg_add_fileformat __ARGS((int eol_type));
 static void msg_add_eol __ARGS((void));
 static int check_mtime __ARGS((buf_T *buf, struct stat *s DECL_ASYNC_ARG));
