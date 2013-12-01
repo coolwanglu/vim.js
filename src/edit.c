@@ -6573,7 +6573,7 @@ auto_format(trailblank, prev_line ASYNC_ARG)
      * formatted. */
     if (!wasatend && has_format_option(FO_WHITE_PAR))
     {
-	new = ml_get_curline();
+	new = ml_get_curline( ASYNC_ARG_ONLY);
 	len = (colnr_T)STRLEN(new);
 	if (curwin->w_cursor.col == len)
 	{
