@@ -32,7 +32,7 @@ int win_lbr_chartabsize __ARGS((win_T *wp, char_u *s, colnr_T col, int *headp));
 int in_win_border __ARGS((win_T *wp, colnr_T vcol));
 void getvcol __ARGS((win_T *wp, pos_T *pos, colnr_T *start, colnr_T *cursor, colnr_T *end));
 colnr_T getvcol_nolist __ARGS((pos_T *posp));
-void getvvcol __ARGS((win_T *wp, pos_T *pos, colnr_T *start, colnr_T *cursor, colnr_T *end));
+void getvcol __ARGS((win_T *wp, pos_T *pos, colnr_T *start, colnr_T *cursor, colnr_T *end));
 void getvcols __ARGS((win_T *wp, pos_T *pos1, pos_T *pos2, colnr_T *left, colnr_T *right));
 char_u *skipwhite __ARGS((char_u *q));
 char_u *skipdigits __ARGS((char_u *q));

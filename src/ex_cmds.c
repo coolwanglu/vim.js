@@ -2425,8 +2425,7 @@ print_line(lnum, use_number, list)
 }
 
     int
-rename_buffer(new_fname)
-    char_u	*new_fname;
+rename_buffer(char_u *new_fname DECL_ASYNC_ARG)
 {
     char_u	*fname, *sfname, *xfname;
     buf_T	*buf;
@@ -2463,7 +2462,7 @@ rename_buffer(new_fname)
     curbuf->b_flags |= BF_NOTEDITED;
     if (xfname != NULL && *xfname != NUL)
     {
-	buf = buflist_new(fname, xfname, curwin->w_cursor.lnum, 0);
+	buf = buflist_new(fname, xfname, curwin->w_cursor.lnum, 0 ASYNC_ARG);
 	if (buf != NULL && !cmdmod.keepalt)
 	    curwin->w_alt_fnum = buf->b_fnum;
     }
@@ -2481,8 +2480,7 @@ rename_buffer(new_fname)
  * ":file[!] [fname]".
  */
     void
-ex_file(eap)
-    exarg_T	*eap;
+ex_file(exarg_T *eap DECL_ASYNC_ARG)
 {
     /* ":0file" removes the file name.  Check for illegal uses ":3file",
      * "0file name", etc. */
@@ -2497,7 +2495,7 @@ ex_file(eap)
 
     if (*eap->arg != NUL || eap->addr_count == 1)
     {
-	if (rename_buffer(eap->arg) == FAIL)
+	if (rename_buffer(eap->arg ASYNC_ARG) == FAIL)
 	    return;
     }
     /* print full file name if :cd used */
@@ -2508,24 +2506,22 @@ ex_file(eap)
  * ":update".
  */
     void
-ex_update(eap)
-    exarg_T	*eap;
+ex_update(exarg_T *eap DECL_ASYNC_ARG)
 {
     if (curbufIsChanged())
-	(void)do_write(eap);
+	(void)do_write(eap ASYNC_ARG);
 }
 
 /*
  * ":write" and ":saveas".
  */
     void
-ex_write(eap)
-    exarg_T	*eap;
+ex_write(exarg_T *eap DECL_ASYNC_ARG)
 {
     if (eap->usefilter)		/* input lines to shell command */
 	do_bang(1, eap, FALSE, TRUE, FALSE);
     else
-	(void)do_write(eap);
+	(void)do_write(eap ASYNC_ARG);
 }
 
 /*
@@ -2537,8 +2533,7 @@ ex_write(eap)
  * return FAIL for failure, OK otherwise
  */
     int
-do_write(eap)
-    exarg_T	*eap;
+do_write(exarg_T *eap DECL_ASYNC_ARG)
 {
     int		other;
     char_u	*fname = NULL;		/* init to shut up gcc */
@@ -2593,7 +2588,7 @@ do_write(eap)
     {
 	if (vim_strchr(p_cpo, CPO_ALTWRITE) != NULL
 						 || eap->cmdidx == CMD_saveas)
-	    alt_buf = setaltfname(ffname, fname, (linenr_T)1);
+	    alt_buf = setaltfname(ffname, fname, (linenr_T)1 ASYNC_ARG);
 	else
 	    alt_buf = buflist_findname(ffname);
 	if (alt_buf != NULL && alt_buf->b_ml.ml_mfp != NULL)
@@ -2868,8 +2863,7 @@ check_overwrite(eap, buf, fname, ffname, other)
  * Handle ":wnext", ":wNext" and ":wprevious" commands.
  */
     void
-ex_wnext(eap)
-    exarg_T	*eap;
+ex_wnext(exarg_T *eap DECL_ASYNC_ARG)
 {
     int		i;
 
@@ -2879,8 +2873,8 @@ ex_wnext(eap)
 	i = curwin->w_arg_idx - (int)eap->line2;
     eap->line1 = 1;
     eap->line2 = curbuf->b_ml.ml_line_count;
-    if (do_write(eap) != FAIL)
-	do_argfile(eap, i);
+    if (do_write(eap ASYNC_ARG) != FAIL)
+	do_argfile(eap, i ASYNC_ARG);
 }
 
 /*
@@ -3026,13 +3020,7 @@ check_readonly(forceit, buf)
  * 'lnum' is the line number for the cursor in the new file (if non-zero).
  */
     int
-getfile(fnum, ffname, sfname, setpm, lnum, forceit)
-    int		fnum;
-    char_u	*ffname;
-    char_u	*sfname;
-    int		setpm;
-    linenr_T	lnum;
-    int		forceit;
+getfile(int fnum, char_u *ffname, char_u *sfname, int setpm, linenr_T lnum, int forceit DECL_ASYNC_ARG)
 {
     int		other;
     int		retval;
@@ -3087,7 +3075,7 @@ getfile(fnum, ffname, sfname, setpm, lnum, forceit)
     }
     else if (do_ecmd(fnum, ffname, sfname, NULL, lnum,
 		(P_HID(curbuf) ? ECMD_HIDE : 0) + (forceit ? ECMD_FORCEIT : 0),
-		curwin) == OK)
+		curwin ASYNC_ARG) == OK)
 	retval = -1;	/* opened another file */
     else
 	retval = 1;	/* error encountered */
@@ -3126,15 +3114,9 @@ theend:
  *
  * return FAIL for failure, OK otherwise
  */
+/* exarg_T	*eap;			/ * can be NULL! */
     int
-do_ecmd(fnum, ffname, sfname, eap, newlnum, flags, oldwin)
-    int		fnum;
-    char_u	*ffname;
-    char_u	*sfname;
-    exarg_T	*eap;			/* can be NULL! */
-    linenr_T	newlnum;
-    int		flags;
-    win_T	*oldwin;
+do_ecmd(int fnum, char_u *ffname, char_u *sfname, exarg_T *eap, linenr_T newlnum, int flags, win_T *oldwin DECL_ASYNC_ARG)
 {
     int		other_file;		/* TRUE if editing another file */
     int		oldbuf;			/* TRUE if using existing buffer */
@@ -3259,7 +3241,7 @@ do_ecmd(fnum, ffname, sfname, eap, newlnum, flags, oldwin)
 			       | (eap == NULL ? 0 : CCGD_EXCMD)))
     {
 	if (fnum == 0 && other_file && ffname != NULL)
-	    (void)setaltfname(ffname, sfname, newlnum < 0 ? 0 : newlnum);
+	    (void)setaltfname(ffname, sfname, (newlnum < 0 ? 0 : newlnum) ASYNC_ARG);
 	goto theend;
     }
 
@@ -3333,7 +3315,7 @@ do_ecmd(fnum, ffname, sfname, eap, newlnum, flags, oldwin)
 	    }
 #endif
 	    buf = buflist_new(ffname, sfname, 0L,
-		    BLN_CURBUF | ((flags & ECMD_SET_HELP) ? 0 : BLN_LISTED));
+		    (BLN_CURBUF | ((flags & ECMD_SET_HELP) ? 0 : BLN_LISTED)) ASYNC_ARG);
 	}
 	if (buf == NULL)
 	    goto theend;
@@ -3846,7 +3828,7 @@ do_ecmd(fnum, ffname, sfname, eap, newlnum, flags, oldwin)
     }
 
     if (command != NULL)
-	do_cmdline(command, NULL, NULL, DOCMD_VERBOSE);
+	do_cmdline(command, NULL, NULL, DOCMD_VERBOSE ASYNC_ARG);
 
 #ifdef FEAT_KEYMAP
     if (curbuf->b_kmap_state & KEYMAP_INIT)
@@ -4088,7 +4070,7 @@ ex_z(eap)
     exarg_T	*eap;
 {
     char_u	*x;
-    int		bigness;
+    int		bigness = 0;
     char_u	*kind;
     int		minus = 0;
     linenr_T	start, end, curs, i;
@@ -4266,8 +4248,7 @@ static int	global_need_beginline;	/* call beginline() after ":g" */
  * The usual escapes are supported as described in the regexp docs.
  */
     void
-do_sub(eap)
-    exarg_T	*eap;
+do_sub(exarg_T *eap DECL_ASYNC_ARG)
 {
     linenr_T	lnum;
     long	i = 0;
@@ -4714,8 +4695,6 @@ do_sub(eap)
 			goto skip;
 		}
 
-#ifndef FEAT_GUI_BROWSER
-                // Lu Wang: WIP, disable do_ask
 		if (do_ask)
 		{
 		    int typed = 0;
@@ -4761,7 +4740,7 @@ do_sub(eap)
 			    for ( ; i <= (long)ec; ++i)
 				msg_putchar('^');
 
-			    resp = getexmodeline('?', NULL, 0);
+			    resp = getexmodeline('?', NULL, 0 ASYNC_ARG);
 			    if (resp != NULL)
 			    {
 				typed = *resp;
@@ -4923,7 +4902,6 @@ do_sub(eap)
 		    if (got_quit)
 			goto skip;
 		}
-#endif
 
 		/* Move the cursor to the start of the match, so that we can
 		 * use "\=col("."). */
@@ -5355,8 +5333,7 @@ do_sub_msg(count_only)
  * lines we do not know where to search for the next match.
  */
     void
-ex_global(eap)
-    exarg_T	*eap;
+ex_global(exarg_T *eap DECL_ASYNC_ARG)
 {
     linenr_T	lnum;		/* line number according to old situation */
     int		ndone = 0;
@@ -5458,7 +5435,7 @@ ex_global(eap)
 	    smsg((char_u *)_("Pattern not found: %s"), pat);
     }
     else
-	global_exe(cmd);
+	global_exe(cmd ASYNC_ARG);
 
     ml_clearmarked();	   /* clear rest of the marks */
     vim_regfree(regmatch.regprog);
@@ -5468,8 +5445,7 @@ ex_global(eap)
  * Execute "cmd" on lines marked with ml_setmarked().
  */
     void
-global_exe(cmd)
-    char_u	*cmd;
+global_exe(char_u *cmd DECL_ASYNC_ARG)
 {
     linenr_T old_lcount;	/* b_ml.ml_line_count before the command */
     buf_T    *old_buf = curbuf;	/* remember what buffer we started in */
@@ -5495,9 +5471,9 @@ global_exe(cmd)
 	curwin->w_cursor.lnum = lnum;
 	curwin->w_cursor.col = 0;
 	if (*cmd == NUL || *cmd == '\n')
-	    do_cmdline((char_u *)"p", NULL, NULL, DOCMD_NOWAIT);
+	    do_cmdline((char_u *)"p", NULL, NULL, DOCMD_NOWAIT ASYNC_ARG);
 	else
-	    do_cmdline(cmd, NULL, NULL, DOCMD_NOWAIT);
+	    do_cmdline(cmd, NULL, NULL, DOCMD_NOWAIT ASYNC_ARG);
 	ui_breakcheck();
     }
 
@@ -5613,8 +5589,7 @@ prepare_tagpreview(undo_sync)
  * ":help": open a read-only window on a help file
  */
     void
-ex_help(eap)
-    exarg_T	*eap;
+ex_help(exarg_T *eap DECL_ASYNC_ARG)
 {
     char_u	*arg;
     char_u	*tag;
@@ -5790,7 +5765,7 @@ ex_help(eap)
 #else
 			  curwin
 #endif
-		    );
+		    ASYNC_ARG);
 	    if (!cmdmod.keepalt)
 		curwin->w_alt_fnum = alt_fnum;
 	    empty_fnum = curbuf->b_fnum;
@@ -6372,20 +6347,18 @@ fix_help_buffer()
  * ":exusage"
  */
     void
-ex_exusage(eap)
-    exarg_T	*eap UNUSED;
+ex_exusage(exarg_T *eap UNUSED DECL_ASYNC_ARG)
 {
-    do_cmdline_cmd((char_u *)"help ex-cmd-index");
+    do_cmdline_cmd((char_u *)"help ex-cmd-index" ASYNC_ARG);
 }
 
 /*
  * ":viusage"
  */
     void
-ex_viusage(eap)
-    exarg_T	*eap UNUSED;
+ex_viusage(exarg_T *eap UNUSED DECL_ASYNC_ARG)
 {
-    do_cmdline_cmd((char_u *)"help normal-index");
+    do_cmdline_cmd((char_u *)"help normal-index" ASYNC_ARG);
 }
 
 #if defined(FEAT_EX_EXTRA) || defined(PROTO)
@@ -7602,8 +7575,7 @@ set_context_in_sign_cmd(xp, arg)
  * the argument list is redefined.
  */
     void
-ex_drop(eap)
-    exarg_T	*eap;
+ex_drop(exarg_T *eap DECL_ASYNC_ARG)
 {
     int		split = FALSE;
     win_T	*wp;
@@ -7686,7 +7658,7 @@ ex_drop(eap)
 	}
 	else
 	    eap->cmdidx = CMD_first;
-	ex_rewind(eap);
+	ex_rewind(eap ASYNC_ARG);
     }
 }
 #endif

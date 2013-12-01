@@ -44,8 +44,6 @@ int fex_format __ARGS((linenr_T lnum, long count, int c));
 void format_lines __ARGS((linenr_T line_count, int avoid_fex));
 int paragraph_start __ARGS((linenr_T lnum));
 int do_addsub __ARGS((int command, linenr_T Prenum1));
-int read_viminfo_register __ARGS((vir_T *virp, int force));
-void write_viminfo_registers __ARGS((FILE *fp));
 void clip_free_selection __ARGS((VimClipboard *cbd));
 void clip_get_selection __ARGS((VimClipboard *cbd));
 void clip_yank_selection __ARGS((int type, char_u *str, long len, VimClipboard *cbd));

@@ -19,7 +19,9 @@ static int	ex_pressedreturn = FALSE;
 # define ex_hardcopy	ex_ni
 #endif
 
-#ifdef FEAT_USR_CMDS
+// Lu Wang: debug
+//#ifdef FEAT_USR_CMDS
+#if defined(FEAT_USR_CMDS) || defined(PROTO)
 typedef struct ucmd
 {
     char_u	*uc_name;	/* The command name */
@@ -56,9 +58,9 @@ static char_u *get_user_command_name __ARGS((int idx));
 #endif
 
 #ifdef FEAT_EVAL
-static char_u	*do_one_cmd __ARGS((char_u **, int, struct condstack *, char_u *(*fgetline)(int, void *, int), void *cookie));
+static char_u	*do_one_cmd __ARGS((char_u **, int, struct condstack *, char_u *(*fgetline)(int, void *, int), void *cookie DECL_ASYNC_ARG));
 #else
-static char_u	*do_one_cmd __ARGS((char_u **, int, char_u *(*fgetline)(int, void *, int), void *cookie));
+static char_u	*do_one_cmd __ARGS((char_u **, int, char_u *(*fgetline)(int, void *, int), void *cookie DECL_ASYNC_ARG));
 static int	if_level = 0;		/* depth in :if */
 #endif
 static void	append_command __ARGS((char_u *cmd));
@@ -185,7 +187,7 @@ static void	ex_pedit __ARGS((exarg_T *eap));
 #endif
 static void	ex_hide __ARGS((exarg_T *eap));
 static void	ex_stop __ARGS((exarg_T *eap));
-static void	ex_exit __ARGS((exarg_T *eap));
+static void	ex_exit __ARGS((exarg_T *eap DECL_ASYNC_ARG));
 static void	ex_print __ARGS((exarg_T *eap));
 #ifdef FEAT_BYTEOFF
 static void	ex_goto __ARGS((exarg_T *eap));
@@ -203,9 +205,9 @@ static void	ex_recover __ARGS((exarg_T *eap));
 #endif
 static void	ex_mode __ARGS((exarg_T *eap));
 static void	ex_wrongmodifier __ARGS((exarg_T *eap));
-static void	ex_find __ARGS((exarg_T *eap));
-static void	ex_open __ARGS((exarg_T *eap));
-static void	ex_edit __ARGS((exarg_T *eap));
+static void	ex_find __ARGS((exarg_T *eap DECL_ASYNC_ARG));
+static void	ex_open __ARGS((exarg_T *eap DECL_ASYNC_ARG));
+static void	ex_edit __ARGS((exarg_T *eap DECL_ASYNC_ARG));
 #if !defined(FEAT_GUI) && !defined(FEAT_CLIENTSERVER)
 # define ex_drop		ex_ni
 #endif
@@ -297,10 +299,10 @@ static void	ex_popup __ARGS((exarg_T *eap));
 #endif
 static void	ex_swapname __ARGS((exarg_T *eap));
 static void	ex_syncbind __ARGS((exarg_T *eap));
-static void	ex_read __ARGS((exarg_T *eap));
+static void	ex_read __ARGS((exarg_T *eap DECL_ASYNC_ARG));
 static void	ex_pwd __ARGS((exarg_T *eap));
 static void	ex_equal __ARGS((exarg_T *eap));
-static void	ex_sleep __ARGS((exarg_T *eap));
+static void	ex_sleep __ARGS((exarg_T *eap DECL_ASYNC_ARG));
 static void	do_exmap __ARGS((exarg_T *eap, int isabbrev));
 static void	ex_winsize __ARGS((exarg_T *eap));
 #ifdef FEAT_WINDOWS
@@ -317,7 +319,7 @@ static void	ex_operators __ARGS((exarg_T *eap));
 static void	ex_put __ARGS((exarg_T *eap));
 static void	ex_copymove __ARGS((exarg_T *eap));
 static void	ex_may_print __ARGS((exarg_T *eap));
-static void	ex_submagic __ARGS((exarg_T *eap));
+static void	ex_submagic __ARGS((exarg_T *eap DECL_ASYNC_ARG));
 static void	ex_join __ARGS((exarg_T *eap));
 static void	ex_at __ARGS((exarg_T *eap));
 static void	ex_bang __ARGS((exarg_T *eap));
@@ -622,9 +624,9 @@ restore_dbg_stuff(dsp)
  * do_exmode(): Repeatedly get commands for the "Ex" mode, until the ":vi"
  * command is given.
  */
+/*    int		improved;	    / * TRUE for "improved Ex" mode */
     void
-do_exmode(improved)
-    int		improved;	    /* TRUE for "improved Ex" mode */
+do_exmode(int improved DECL_ASYNC_ARG)
 {
     int		save_msg_scroll;
     int		prev_msg_row;
@@ -677,10 +679,10 @@ do_exmode(improved)
 	if (improved)
 	{
 	    cmdline_row = msg_row;
-	    do_cmdline(NULL, getexline, NULL, 0);
+	    do_cmdline(NULL, getexline, NULL, 0 ASYNC_ARG);
 	}
 	else
-	    do_cmdline(NULL, getexmodeline, NULL, DOCMD_NOWAIT);
+	    do_cmdline(NULL, getexmodeline, NULL, DOCMD_NOWAIT ASYNC_ARG);
 	lines_left = Rows - 1;
 
 	if ((prev_line != curwin->w_cursor.lnum
@@ -726,11 +728,10 @@ do_exmode(improved)
  * Execute a simple command line.  Used for translated commands like "*".
  */
     int
-do_cmdline_cmd(cmd)
-    char_u	*cmd;
+do_cmdline_cmd(char_u *cmd DECL_ASYNC_ARG)
 {
     return do_cmdline(cmd, NULL, NULL,
-				   DOCMD_VERBOSE|DOCMD_NOWAIT|DOCMD_KEYTYPED);
+				   DOCMD_VERBOSE|DOCMD_NOWAIT|DOCMD_KEYTYPED ASYNC_ARG);
 }
 
 /*
@@ -752,12 +753,9 @@ do_cmdline_cmd(cmd)
  *
  * return FAIL if cmdline could not be executed, OK otherwise
  */
+/*   void	*cookie;		/ * argument for fgetline() */
     int
-do_cmdline(cmdline, fgetline, cookie, flags)
-    char_u	*cmdline;
-    char_u	*(*fgetline) __ARGS((int, void *, int));
-    void	*cookie;		/* argument for fgetline() */
-    int		flags;
+do_cmdline(char_u *cmdline, char_u *(*fgetline)(int, void *, int), void *cookie, int flags DECL_ASYNC_ARG)
 {
     char_u	*next_cmdline;		/* next cmd to execute */
     char_u	*cmdline_copy = NULL;	/* copy of cmd line */
@@ -1128,7 +1126,7 @@ do_cmdline(cmdline, fgetline, cookie, flags)
 #ifdef FEAT_EVAL
 				&cstack,
 #endif
-				cmd_getline, cmd_cookie);
+				cmd_getline, cmd_cookie ASYNC_ARG);
 	--recursive;
 
 #ifdef FEAT_EVAL
@@ -1692,6 +1690,7 @@ getline_cookie(fgetline, cookie)
  *
  * This function may be called recursively!
  */
+/* void		*cookie;		/ * argument for fgetline() */
 #if (_MSC_VER == 1200)
 /*
  * Avoid optimisation bug in VC++ version 6.0
@@ -1699,18 +1698,12 @@ getline_cookie(fgetline, cookie)
  #pragma optimize( "g", off )
 #endif
     static char_u *
-do_one_cmd(cmdlinep, sourcing,
+do_one_cmd(char_u **cmdlinep, int sourcing,
 #ifdef FEAT_EVAL
-			    cstack,
+			    struct condstack *cstack,
 #endif
-				    fgetline, cookie)
-    char_u		**cmdlinep;
-    int			sourcing;
-#ifdef FEAT_EVAL
-    struct condstack	*cstack;
-#endif
-    char_u		*(*fgetline) __ARGS((int, void *, int));
-    void		*cookie;		/* argument for fgetline() */
+    char_u		*(*fgetline) __ARGS((int, void *, int)),
+    void *cookie DECL_ASYNC_ARG)
 {
     char_u		*p;
     linenr_T		lnum;
@@ -2692,7 +2685,7 @@ do_one_cmd(cmdlinep, sourcing,
 	 * Call the function to execute the command.
 	 */
 	ea.errmsg = NULL;
-	(cmdnames[ea.cmdidx].cmd_func)(&ea);
+	(cmdnames[ea.cmdidx].cmd_func)(&ea ASYNC_ARG);
 	if (ea.errmsg != NULL)
 	    errormsg = (char_u *)_(ea.errmsg);
     }
@@ -6955,8 +6948,7 @@ ex_stop(eap)
  * ":exit", ":xit" and ":wq": Write file and exit Vim.
  */
     static void
-ex_exit(eap)
-    exarg_T	*eap;
+ex_exit(exarg_T *eap DECL_ASYNC_ARG)
 {
 #ifdef FEAT_CMDWIN
     if (cmdwin_type != 0)
@@ -6986,7 +6978,7 @@ ex_exit(eap)
 	exiting = TRUE;
     if (       ((eap->cmdidx == CMD_wq
 		    || curbufIsChanged())
-		&& do_write(eap) == FAIL)
+		&& do_write(eap ASYNC_ARG) == FAIL)
 	    || check_more(TRUE, eap->forceit) == FAIL
 	    || (only_one_window() && check_changed_any(eap->forceit)))
     {
@@ -7261,13 +7253,14 @@ alist_expand(fnum_list, fnum_len)
  * Takes over the allocated files[] and the allocated fnames in it.
  */
     void
-alist_set(al, count, files, use_curbuf, fnum_list, fnum_len)
+alist_set(al, count, files, use_curbuf, fnum_list, fnum_len ASYNC_ARG)
     alist_T	*al;
     int		count;
     char_u	**files;
     int		use_curbuf;
     int		*fnum_list;
     int		fnum_len;
+    DECL_ASYNC_ARG1;
 {
     int		i;
 
@@ -7290,7 +7283,7 @@ alist_set(al, count, files, use_curbuf, fnum_list, fnum_len)
 	    if (fnum_list != NULL && i < fnum_len)
 		buf_set_name(fnum_list[i], files[i]);
 
-	    alist_add(al, files[i], use_curbuf ? 2 : 1);
+	    alist_add(al, files[i], use_curbuf ? 2 : 1 ASYNC_ARG);
 	    ui_breakcheck();
 	}
 	vim_free(files);
@@ -7307,11 +7300,9 @@ alist_set(al, count, files, use_curbuf, fnum_list, fnum_len)
  * Add file "fname" to argument list "al".
  * "fname" must have been allocated and "al" must have been checked for room.
  */
+/*    int		set_fnum;	/ * 1: set buffer number; 2: re-use curbuf */
     void
-alist_add(al, fname, set_fnum)
-    alist_T	*al;
-    char_u	*fname;
-    int		set_fnum;	/* 1: set buffer number; 2: re-use curbuf */
+alist_add(alist_T *al, char_u *fname, int set_fnum DECL_ASYNC_ARG)
 {
     if (fname == NULL)		/* don't add NULL file names */
 	return;
@@ -7321,7 +7312,7 @@ alist_add(al, fname, set_fnum)
     AARGLIST(al)[al->al_ga.ga_len].ae_fname = fname;
     if (set_fnum > 0)
 	AARGLIST(al)[al->al_ga.ga_len].ae_fnum =
-	    buflist_add(fname, BLN_LISTED | (set_fnum == 2 ? BLN_CURBUF : 0));
+	    buflist_add(fname, BLN_LISTED | (set_fnum == 2 ? BLN_CURBUF : 0) ASYNC_ARG);
     ++al->al_ga.ga_len;
 }
 
@@ -7734,8 +7725,9 @@ ex_resize(eap)
  * ":find [+command] <file>" command.
  */
     static void
-ex_find(eap)
+ex_find(eap ASYNC_ARG)
     exarg_T	*eap;
+    DECL_ASYNC_ARG1;
 {
 #ifdef FEAT_SEARCHPATH
     char_u	*fname;
@@ -7760,7 +7752,7 @@ ex_find(eap)
     {
 	eap->arg = fname;
 #endif
-	do_exedit(eap, NULL);
+	do_exedit(eap, NULL ASYNC_ARG);
 #ifdef FEAT_SEARCHPATH
 	vim_free(fname);
     }
@@ -7771,8 +7763,9 @@ ex_find(eap)
  * ":open" simulation: for now just work like ":visual".
  */
     static void
-ex_open(eap)
+ex_open(eap ASYNC_ARG)
     exarg_T	*eap;
+    DECL_ASYNC_ARG1;
 {
     regmatch_T	regmatch;
     char_u	*p;
@@ -7802,26 +7795,26 @@ ex_open(eap)
     check_cursor();
 
     eap->cmdidx = CMD_visual;
-    do_exedit(eap, NULL);
+    do_exedit(eap, NULL ASYNC_ARG);
 }
 
 /*
  * ":edit", ":badd", ":visual".
  */
     static void
-ex_edit(eap)
+ex_edit(eap ASYNC_ARG)
     exarg_T	*eap;
+    DECL_ASYNC_ARG1;
 {
-    do_exedit(eap, NULL);
+    do_exedit(eap, NULL ASYNC_ARG);
 }
 
 /*
  * ":edit <file>" command and alikes.
  */
+/* win_T	*old_curwin;	    / * curwin before doing a split or NULL */
     void
-do_exedit(eap, old_curwin)
-    exarg_T	*eap;
-    win_T	*old_curwin;	    /* curwin before doing a split or NULL */
+do_exedit(exarg_T *eap, win_T *old_curwin DECL_ASYNC_ARG)
 {
     int		n;
 #ifdef FEAT_WINDOWS
@@ -7890,7 +7883,7 @@ do_exedit(eap, old_curwin)
 	setpcmark();
 	(void)do_ecmd(0, NULL, NULL, eap, ECMD_ONE,
 		      ECMD_HIDE + (eap->forceit ? ECMD_FORCEIT : 0),
-		      old_curwin == NULL ? curwin : NULL);
+		      old_curwin == NULL ? curwin : NULL ASYNC_ARG);
     }
     else if ((eap->cmdidx != CMD_split
 #ifdef FEAT_VERTSPLIT
@@ -7927,7 +7920,7 @@ do_exedit(eap, old_curwin)
 #ifdef FEAT_LISTCMDS
 		    + (eap->cmdidx == CMD_badd ? ECMD_ADDBUF : 0 )
 #endif
-		    , old_curwin == NULL ? curwin : NULL) == FAIL)
+		    , old_curwin == NULL ? curwin : NULL ASYNC_ARG) == FAIL ASYNC_ARG)
 	{
 	    /* Editing the file failed.  If the window was split, close it. */
 #ifdef FEAT_WINDOWS
@@ -7971,7 +7964,7 @@ do_exedit(eap, old_curwin)
     else
     {
 	if (eap->do_ecmd_cmd != NULL)
-	    do_cmdline_cmd(eap->do_ecmd_cmd);
+	    do_cmdline_cmd(eap->do_ecmd_cmd ASYNC_ARG);
 #ifdef FEAT_TITLE
 	n = curwin->w_arg_idx_invalid;
 #endif
@@ -8120,8 +8113,9 @@ ex_syncbind(eap)
 
 
     static void
-ex_read(eap)
+ex_read(eap ASYNC_ARG)
     exarg_T	*eap;
+    DECL_ASYNC_ARG1;
 {
     int		i;
     int		empty = (curbuf->b_ml.ml_flags & ML_EMPTY);
@@ -8162,7 +8156,7 @@ ex_read(eap)
 	else
 	{
 	    if (vim_strchr(p_cpo, CPO_ALTREAD) != NULL)
-		(void)setaltfname(eap->arg, eap->arg, (linenr_T)1);
+		(void)setaltfname(eap->arg, eap->arg, (linenr_T)1 ASYNC_ARG);
 	    i = readfile(eap->arg, NULL,
 			  eap->line2, (linenr_T)0, (linenr_T)MAXLNUM, eap, 0);
 
@@ -8354,8 +8348,9 @@ ex_equal(eap)
 }
 
     static void
-ex_sleep(eap)
+ex_sleep(eap ASYNC_ARG)
     exarg_T	*eap;
+    DECL_ASYNC_ARG1;
 {
     int		n;
     long	len;
@@ -8374,15 +8369,16 @@ ex_sleep(eap)
 	case NUL: len *= 1000L; break;
 	default: EMSG2(_(e_invarg2), eap->arg); return;
     }
-    do_sleep(len);
+    do_sleep(len ASYNC_ARG);
 }
 
 /*
  * Sleep for "msec" milliseconds, but keep checking for a CTRL-C every second.
  */
     void
-do_sleep(msec)
+do_sleep(msec ASYNC_ARG)
     long	msec;
+    DECL_ASYNC_ARG1;
 {
     long	done;
 
@@ -8390,9 +8386,7 @@ do_sleep(msec)
     out_flush();
     for (done = 0; !got_int && done < msec; done += 1000L)
     {
-#ifndef FEAT_GUI_BROWSER
-	ui_delay(msec - done > 1000L ? 1000L : msec - done, TRUE);
-#endif
+	ui_delay(msec - done > 1000L ? 1000L : msec - done, TRUE ASYNC_ARG);
 	ui_breakcheck();
 #ifdef FEAT_NETBEANS_INTG
 	/* Process the netbeans messages that may have been received in the
@@ -8684,13 +8678,14 @@ ex_may_print(eap)
  * ":smagic" and ":snomagic".
  */
     static void
-ex_submagic(eap)
+ex_submagic(eap ASYNC_ARG)
     exarg_T	*eap;
+    DECL_ASYNC_ARG1;
 {
     int		magic_save = p_magic;
 
     p_magic = (eap->cmdidx == CMD_smagic);
-    do_sub(eap);
+    do_sub(eap ASYNC_ARG);
     p_magic = magic_save;
 }
 
@@ -8722,8 +8717,9 @@ ex_join(eap)
  * ":[addr]@r" or ":[addr]*r": execute register
  */
     static void
-ex_at(eap)
+ex_at(eap ASYNC_ARG)
     exarg_T	*eap;
+    DECL_ASYNC_ARG1;
 {
     int		c;
     int		prev_len = typebuf.tb_len;
@@ -8756,7 +8752,7 @@ ex_at(eap)
 	 * have been consumed.
 	 */
 	while (!stuff_empty() || typebuf.tb_len > prev_len)
-	    (void)do_cmdline(NULL, getexline, NULL, DOCMD_NOWAIT|DOCMD_VERBOSE);
+	    (void)do_cmdline(NULL, getexline, NULL, DOCMD_NOWAIT|DOCMD_VERBOSE ASYNC_ARG);
 
 	exec_from_reg = save_efr;
     }

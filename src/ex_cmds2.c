@@ -14,9 +14,11 @@
 #include "vim.h"
 #include "version.h"
 
-static void	cmd_source __ARGS((char_u *fname, exarg_T *eap));
+static void	cmd_source __ARGS((char_u *fname, exarg_T *eap DECL_ASYNC_ARG));
 
-#ifdef FEAT_EVAL
+// Lu Wang: debug
+//#ifdef FEAT_EVAL
+#if defined(FEAT_EVAL) || defined(PROTO)
 /* Growarray to store info about already sourced scripts.
  * For Unix also store the dev/ino, so that we don't have to stat() each
  * script when going through the list. */
@@ -2105,8 +2107,7 @@ check_arg_idx(win)
  * ":args", ":argslocal" and ":argsglobal".
  */
     void
-ex_args(eap)
-    exarg_T	*eap;
+ex_args(exarg_T *eap DECL_ASYNC_ARG)
 {
     int		i;
 
@@ -2130,7 +2131,7 @@ ex_args(eap)
 	 * ":args file ..": define new argument list, handle like ":next"
 	 * Also for ":argslocal file .." and ":argsglobal file ..".
 	 */
-	ex_next(eap);
+	ex_next(eap ASYNC_ARG);
     }
     else
 #if defined(FEAT_WINDOWS) && defined(FEAT_LISTCMDS)
@@ -2182,42 +2183,38 @@ ex_args(eap)
  * ":previous", ":sprevious", ":Next" and ":sNext".
  */
     void
-ex_previous(eap)
-    exarg_T	*eap;
+ex_previous(exarg_T *eap DECL_ASYNC_ARG)
 {
     /* If past the last one already, go to the last one. */
     if (curwin->w_arg_idx - (int)eap->line2 >= ARGCOUNT)
-	do_argfile(eap, ARGCOUNT - 1);
+	do_argfile(eap, ARGCOUNT - 1 ASYNC_ARG);
     else
-	do_argfile(eap, curwin->w_arg_idx - (int)eap->line2);
+	do_argfile(eap, curwin->w_arg_idx - (int)eap->line2 ASYNC_ARG);
 }
 
 /*
  * ":rewind", ":first", ":sfirst" and ":srewind".
  */
     void
-ex_rewind(eap)
-    exarg_T	*eap;
+ex_rewind(exarg_T *eap DECL_ASYNC_ARG)
 {
-    do_argfile(eap, 0);
+    do_argfile(eap, 0 ASYNC_ARG);
 }
 
 /*
  * ":last" and ":slast".
  */
     void
-ex_last(eap)
-    exarg_T	*eap;
+ex_last(exarg_T *eap DECL_ASYNC_ARG)
 {
-    do_argfile(eap, ARGCOUNT - 1);
+    do_argfile(eap, ARGCOUNT - 1 ASYNC_ARG);
 }
 
 /*
  * ":argument" and ":sargument".
  */
     void
-ex_argument(eap)
-    exarg_T	*eap;
+ex_argument(exarg_T *eap DECL_ASYNC_ARG)
 {
     int		i;
 
@@ -2225,16 +2222,14 @@ ex_argument(eap)
 	i = eap->line2 - 1;
     else
 	i = curwin->w_arg_idx;
-    do_argfile(eap, i);
+    do_argfile(eap, i ASYNC_ARG);
 }
 
 /*
  * Edit file "argn" of the argument lists.
  */
     void
-do_argfile(eap, argn)
-    exarg_T	*eap;
-    int		argn;
+do_argfile(exarg_T *eap, int argn DECL_ASYNC_ARG)
 {
     int		other;
     char_u	*p;
@@ -2300,7 +2295,7 @@ do_argfile(eap, argn)
 	if (do_ecmd(0, alist_name(&ARGLIST[curwin->w_arg_idx]), NULL,
 		      eap, ECMD_LAST,
 		      (P_HID(curwin->w_buffer) ? ECMD_HIDE : 0)
-			 + (eap->forceit ? ECMD_FORCEIT : 0), curwin) == FAIL)
+			 + (eap->forceit ? ECMD_FORCEIT : 0), curwin ASYNC_ARG) == FAIL)
 	    curwin->w_arg_idx = old_arg_idx;
 	/* like Vi: set the mark where the cursor is in the file. */
 	else if (eap->cmdidx != CMD_argdo)
@@ -2312,8 +2307,7 @@ do_argfile(eap, argn)
  * ":next", and commands that behave like it.
  */
     void
-ex_next(eap)
-    exarg_T	*eap;
+ex_next(exarg_T *eap DECL_ASYNC_ARG)
 {
     int		i;
 
@@ -2335,7 +2329,7 @@ ex_next(eap)
 	}
 	else
 	    i = curwin->w_arg_idx + (int)eap->line2;
-	do_argfile(eap, i);
+	do_argfile(eap, i ASYNC_ARG);
     }
 }
 
@@ -2713,20 +2707,17 @@ ex_compiler(eap)
  * ":runtime {name}"
  */
     void
-ex_runtime(eap)
-    exarg_T	*eap;
+ex_runtime(exarg_T *eap DECL_ASYNC_ARG)
 {
-    source_runtime(eap->arg, eap->forceit);
+    source_runtime(eap->arg, eap->forceit ASYNC_ARG);
 }
 
-static void source_callback __ARGS((char_u *fname, void *cookie));
+static void source_callback __ARGS((char_u *fname, void *cookie DECL_ASYNC_ARG));
 
     static void
-source_callback(fname, cookie)
-    char_u	*fname;
-    void	*cookie UNUSED;
+source_callback(char_u *fname, void *cookie UNUSED DECL_ASYNC_ARG)
 {
-    (void)do_source(fname, FALSE, DOSO_NONE);
+    (void)do_source(fname, FALSE, DOSO_NONE ASYNC_ARG);
 }
 
 /*
@@ -2736,11 +2727,9 @@ source_callback(fname, cookie)
  * return FAIL when no file could be sourced, OK otherwise.
  */
     int
-source_runtime(name, all)
-    char_u	*name;
-    int		all;
+source_runtime(char_u *name, int all DECL_ASYNC_ARG)
 {
-    return do_in_runtimepath(name, all, source_callback, NULL);
+    return do_in_runtimepath(name, all, source_callback, NULL ASYNC_ARG);
 }
 
 /*
@@ -2755,11 +2744,7 @@ source_runtime(name, all)
  * has done its job.
  */
     int
-do_in_runtimepath(name, all, callback, cookie)
-    char_u	*name;
-    int		all;
-    void	(*callback)__ARGS((char_u *fname, void *ck));
-    void	*cookie;
+do_in_runtimepath(char_u *name, int all, void	(*callback)__ARGS((char_u *fname, void *ck DECL_ASYNC_ARG)), void *cookie DECL_ASYNC_ARG)
 {
     char_u	*rtp;
     char_u	*np;
@@ -2800,7 +2785,7 @@ do_in_runtimepath(name, all, callback, cookie)
 	    copy_option_part(&rtp, buf, MAXPATHL, ",");
 	    if (name == NULL)
 	    {
-		(*callback)(buf, (void *) &cookie);
+		(*callback)(buf, (void *) &cookie ASYNC_ARG);
 		if (!did_one)
 		    did_one = (cookie == NULL);
 	    }
@@ -2830,7 +2815,7 @@ do_in_runtimepath(name, all, callback, cookie)
 		    {
 			for (i = 0; i < num_files; ++i)
 			{
-			    (*callback)(files[i], cookie);
+			    (*callback)(files[i], cookie ASYNC_ARG);
 			    did_one = TRUE;
 			    if (!all)
 				break;
@@ -2862,10 +2847,9 @@ do_in_runtimepath(name, all, callback, cookie)
  * ":options"
  */
     void
-ex_options(eap)
-    exarg_T	*eap UNUSED;
+ex_options(exarg_T *eap UNUSED DECL_ASYNC_ARG)
 {
-    cmd_source((char_u *)SYS_OPTWIN_FILE, NULL);
+    cmd_source((char_u *)SYS_OPTWIN_FILE, NULL ASYNC_ARG);
 }
 #endif
 
@@ -2873,8 +2857,7 @@ ex_options(eap)
  * ":source {fname}"
  */
     void
-ex_source(eap)
-    exarg_T	*eap;
+ex_source(exarg_T *eap DECL_ASYNC_ARG)
 {
 #ifdef FEAT_BROWSE
     if (cmdmod.browse)
@@ -2891,13 +2874,11 @@ ex_source(eap)
     }
     else
 #endif
-	cmd_source(eap->arg, eap);
+	cmd_source(eap->arg, eap ASYNC_ARG);
 }
 
     static void
-cmd_source(fname, eap)
-    char_u	*fname;
-    exarg_T	*eap;
+cmd_source(char_u *fname, exarg_T *eap DECL_ASYNC_ARG)
 {
     if (*fname == NUL)
 	EMSG(_(e_argreq));
@@ -2918,7 +2899,7 @@ cmd_source(fname, eap)
 						 );
 
     /* ":source" read ex commands */
-    else if (do_source(fname, FALSE, DOSO_NONE) == FAIL)
+    else if (do_source(fname, FALSE, DOSO_NONE ASYNC_ARG) == FAIL)
 	EMSG2(_(e_notopen), fname);
 }
 
@@ -3026,11 +3007,12 @@ fopen_noinh_readbin(filename)
  *
  * return FAIL if file could not be opened, OK otherwise
  */
+/*
+    int		check_other;	    / * check for .vimrc and _vimrc * /
+    int		is_vimrc;	    / * DOSO_ value * /
+*/
     int
-do_source(fname, check_other, is_vimrc)
-    char_u	*fname;
-    int		check_other;	    /* check for .vimrc and _vimrc */
-    int		is_vimrc;	    /* DOSO_ value */
+do_source(char_u *fname, int check_other, int is_vimrc DECL_ASYNC_ARG)
 {
     struct source_cookie    cookie;
     char_u		    *save_sourcing_name;
@@ -3310,7 +3292,7 @@ do_source(fname, check_other, is_vimrc)
      * Call do_cmdline, which will call getsourceline() to get the lines.
      */
     do_cmdline(firstline, getsourceline, (void *)&cookie,
-				     DOCMD_VERBOSE|DOCMD_NOWAIT|DOCMD_REPEAT);
+				     DOCMD_VERBOSE|DOCMD_NOWAIT|DOCMD_REPEAT ASYNC_ARG);
     retval = OK;
 
 #ifdef FEAT_PROFILE

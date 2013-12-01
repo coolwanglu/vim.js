@@ -6,7 +6,6 @@ int add_termcap_entry __ARGS((char_u *name, int force));
 int term_is_8bit __ARGS((char_u *name));
 int term_is_gui __ARGS((char_u *name));
 char_u *tltoa __ARGS((unsigned long i));
-char *tgoto __ARGS((char *cm, int x, int y));
 void termcapinit __ARGS((char_u *name));
 void out_flush __ARGS((void));
 void out_flush_check __ARGS((void));

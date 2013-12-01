@@ -1,8 +1,7 @@
 /* ui.c */
-void ui_write __ARGS((char_u *s, int len));
+void ui_write __ARGS((char_u *s, int len, async_context *_async_context));
 void ui_inchar_undo __ARGS((char_u *s, int len));
 int ui_inchar __ARGS((char_u *buf, int maxlen, long wtime, int tb_change_cnt, async_context *_async_context));
-int DEFINE_ASYNC_CALLBACK __ARGS((int ui_inchar__cb1));
 int ui_char_avail __ARGS((void));
 void ui_delay __ARGS((long msec, int ignoreinput, async_context *_async_context));
 void ui_suspend __ARGS((void));

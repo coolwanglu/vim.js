@@ -1768,7 +1768,9 @@ struct file_buffer
 };
 
 
-#ifdef FEAT_DIFF
+// Lu Wang: debug
+//#ifdef FEAT_DIFF
+#if defined(FEAT_DIFF) || defined(PROTO)
 /*
  * Stuff for diff mode.
  */

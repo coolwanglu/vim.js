@@ -51,7 +51,6 @@ void beep_flush __ARGS((void));
 void vim_beep __ARGS((void));
 void init_homedir __ARGS((void));
 void free_homedir __ARGS((void));
-void free_users __ARGS((void));
 char_u *expand_env_save __ARGS((char_u *src));
 char_u *expand_env_save_opt __ARGS((char_u *src, int one));
 void expand_env __ARGS((char_u *src, char_u *dst, int dstlen));

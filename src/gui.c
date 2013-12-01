@@ -2932,7 +2932,7 @@ gui_wait_for_chars(long wtime DECL_ASYNC_ARG)
     }
 
     gui_mch_stop_blink();
-    ASYNC_RETURN(retval);
+    return retval;
 }
 
 /*

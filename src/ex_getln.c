@@ -2152,7 +2152,6 @@ correct_cmdspos(idx, cells)
 }
 #endif
 
-DEFINE_ASYNC_CALLBACK(getexline__cb1);
 /*
  * Get an Ex command line for the ":" command.
  */
@@ -2167,8 +2166,7 @@ getexline(int c, void *cookie UNUSED, int indent DECL_ASYNC_ARG)
     /* When executing a register, remove ':' that's in front of each line. */
     if (exec_from_reg && vpeekc() == ':')
         (void)vgetc(ASYNC_ARG1);
-    char_u * ret = getcmdline(c, 1L, indent);
-    ASYNC_RETURN_P_(ret, 0);
+    return getcmdline(c, 1L, indent);
 }
 
 /*
@@ -2246,39 +2244,7 @@ getexmodeline(int promptc, void *cookie UNUSED, int indent DECL_ASYNC_ARG)
         /* Get one character at a time.  Don't use inchar(), it can't handle
          * special characters. */
         prev_char = c1;
-#ifndef FEAT_GUI_BROWSER
         c1 = vgetc();
-#else 
-        // refresh local variables
-        ASYNC_CLEAR_DATA; 
-        ASYNC_PUT_ALL_GETEXMODELINE;
-
-        ASYNC_PUSH(getexmodeline__cb3);
-        vgetc(ASYNC_ARG1);
-        return 0;
-    }
-label_break:
-    // do not pop, keep line_ga for __cb2
-    ASYNC_CLEAR_DATA; 
-    ASYNC_PUT_ALL_GETEXMODELINE;
-    getexmodeline__cb2(ASYNC_ARG1);
-    return 0;
-}
-DEFINE_ASYNC_CALLBACK(getexmodeline__cb3)
-{
-    ASYNC_CHECK(getexmodeline__cb3);
-    int _c1 = ASYNC_RETVAL;
-    // pop and retrive variables from __cb1
-    ASYNC_POP;
-    ASYNC_CHECK(getexmodeline__cb1);
-    ASYNC_GET_ALL_GETEXMODELINE;
-
-    c1 = _c1;
-    char_u * p;
-
-    while (!got_int)
-    {
-#endif
 
         /*
          * Handle line editing.
@@ -2288,11 +2254,7 @@ DEFINE_ASYNC_CALLBACK(getexmodeline__cb3)
         if (got_int)
         {
             msg_putchar('\n');
-#ifndef FEAT_GUI_BROWSER
             break;
-#else
-            goto label_break;
-#endif
         }
 
         if (!escaped)
@@ -2309,11 +2271,7 @@ DEFINE_ASYNC_CALLBACK(getexmodeline__cb3)
                     --line_ga.ga_len;
                     goto redraw;
                 }
-#ifndef FEAT_GUI_BROWSER
                 continue;
-#else
-                goto label_continue;
-#endif
             }
 
             if (c1 == Ctrl_U)
@@ -2321,11 +2279,7 @@ DEFINE_ASYNC_CALLBACK(getexmodeline__cb3)
                 msg_col = startcol;
                 msg_clr_eos();
                 line_ga.ga_len = 0;
-#ifndef FEAT_GUI_BROWSER
                 continue;
-#else
-                goto label_continue;
-#endif
             }
 
             if (c1 == Ctrl_T)
@@ -2368,11 +2322,7 @@ redraw:
                 }
                 msg_clr_eos();
                 windgoto(msg_row, msg_col);
-#ifndef FEAT_GUI_BROWSER
                 continue;
-#else
-                goto label_continue;
-#endif
             }
 
             if (c1 == Ctrl_D)
@@ -2406,20 +2356,12 @@ redraw:
             if (c1 == Ctrl_V || c1 == Ctrl_Q)
             {
                 escaped = TRUE;
-#ifndef FEAT_GUI_BROWSER
                 continue;
-#else
-                goto label_continue;
-#endif
             }
 
             /* Ignore special key codes: mouse movement, K_IGNORE, etc. */
             if (IS_SPECIAL(c1))
-#ifndef FEAT_GUI_BROWSER
                 continue;
-#else
-                goto label_continue;
-#endif
         }
 
         if (IS_SPECIAL(c1))
@@ -2470,38 +2412,10 @@ redraw:
                 --line_ga.ga_len;
                 --pend;
                 *pend = NUL;
-#ifndef FEAT_GUI_BROWSER
                 break;
-#else           
-                goto label_break;
-#endif
             }
         }
     }
-#ifdef FEAT_GUI_BROWSER
-label_continue:
-    // refresh line_ga
-    ASYNC_CLEAR_DATA; 
-    ASYNC_PUT_ALL_GETEXMODELINE;
-    getexmodeline__cb1(ASYNC_ARG1);
-    return 0;
-label_break:
-    ASYNC_CLEAR_DATA; 
-    ASYNC_PUT_ALL_GETEXMODELINE;
-    // do not pop, keep line_ga for __cb2
-    getexmodeline__cb2(ASYNC_ARG1);
-    return 0;
-}
-DEFINE_ASYNC_CALLBACK(getexmodeline__cb2)
-{
-    // still using entry of __cb1 for line_ga
-    ASYNC_CHECK(getexmodeline__cb1);
-    ASYNC_GET_ALL_GETEXMODELINE;
-    ASYNC_POP;
-
-#undef ASYNC_PUT_ALL_GETEXMODELINE
-#undef ASYNC_GET_ALL_GETEXMODELINE
-#endif
     --no_mapping;
     --allow_keys;
 
@@ -2512,12 +2426,10 @@ DEFINE_ASYNC_CALLBACK(getexmodeline__cb2)
 	++msg_row;
     emsg_on_display = FALSE;		/* don't want ui_delay() */
 
-#ifndef FEAT_GUI_BROWSER
     if (got_int)
 	ga_clear(&line_ga);
-#endif
 
-    ASYNC_RETURN_P_(((char_u *)line_ga.ga_data), 0);
+    return (char_u *)line_ga.ga_data);
 }
 
 # if defined(MCH_CURSOR_SHAPE) || defined(FEAT_GUI) \

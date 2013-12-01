@@ -1788,11 +1788,11 @@ vgetc()
  * directly from the user (ignoring typeahead).
  */
     int
-safe_vgetc()
+safe_vgetc(DECL_ASYNC_ARG1)
 {
     int	c;
 
-    c = vgetc();
+    c = vgetc(ASYNC_ARG1);
     if (c == NUL)
 	c = get_keystroke();
     return c;

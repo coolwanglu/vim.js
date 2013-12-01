@@ -309,11 +309,9 @@ static int	did_add_space = FALSE;	/* auto_format() added an extra space
  *
  * Return TRUE if a CTRL-O command caused the return (insert mode pending).
  */
+/* int		startln;	/ * if set, insert at start of line */
     int
-edit(cmdchar, startln, count)
-    int		cmdchar;
-    int		startln;	/* if set, insert at start of line */
-    long	count;
+edit(int cmdchar, int startln, long count DECL_ASYNC_ARG)
 {
     int		c = 0;
     char_u	*ptr;
@@ -8209,12 +8207,11 @@ ins_reg()
 #endif
 }
 
-DEFINE_ASYNC_CALLBACK(ins_ctrl_g__cb1);
 /*
  * CTRL-G commands in Insert mode.
  */
     static void
-ins_ctrl_g(DECL_ASYNC_ARG1)
+ins_ctrl_g()
 {
     int		c;
 
@@ -8229,16 +8226,6 @@ ins_ctrl_g(DECL_ASYNC_ARG1)
      */
     ++no_mapping;
     c = plain_vgetc();
-    ASYNC_PUSH(ins_ctrl_g__cb1);
-    plain_vgetc(ASYNC_ARG1);
-    return;
-}
-DEFINE_ASYNC_CALLBACK(ins_ctrl_g__cb1)
-{
-    ASYNC_CHECK(ins_ctrl_g__cb1);
-    int c = ASYNC_RETVAL;
-    ASYNC_POP;
-#endif
     --no_mapping;
     switch (c)
     {
@@ -8266,7 +8253,6 @@ DEFINE_ASYNC_CALLBACK(ins_ctrl_g__cb1)
 	/* Unknown CTRL-G command, reserved for future expansion. */
 	default:  vim_beep();
     }
-    ASYNC_RETURN(0);
 }
 
 /*

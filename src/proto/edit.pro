@@ -1,5 +1,5 @@
 /* edit.c */
-int edit __ARGS((int cmdchar, int startln, long count));
+int edit __ARGS((int cmdchar, int startln, long count, async_context *_async_context));
 void edit_putchar __ARGS((int c, int highlight));
 void edit_unputchar __ARGS((void));
 void display_dollar __ARGS((colnr_T col));
@@ -37,7 +37,6 @@ void fixthisline __ARGS((int (*get_the_indent)(void)));
 void fix_indent __ARGS((void));
 int in_cinkeys __ARGS((int keytyped, int when, int line_is_empty));
 int hkmap __ARGS((int c));
-int DEFINE_ASYNC_CALLBACK __ARGS((int ins_ctrl_g__cb1));
 void ins_scroll __ARGS((void));
 void ins_horscroll __ARGS((void));
 int ins_copychar __ARGS((linenr_T lnum));
