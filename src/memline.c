@@ -2350,7 +2350,7 @@ ml_preserve(buf, message ASYNC_ARG)
 	    CHECK(buf->b_ml.ml_locked_low != lnum, "low != lnum");
 	    lnum = buf->b_ml.ml_locked_high + 1;
 	}
-	(void)ml_find_line(buf, (linenr_T)0, ML_FLUSH);	/* flush locked block */
+	(void)ml_find_line(buf, (linenr_T)0, ML_FLUSH ASYNC_ARG);	/* flush locked block */
 	/* sync the updated pointer blocks */
 	if (mf_sync(mfp, MFS_ALL | MFS_FLUSH) == FAIL)
 	    status = FAIL;
