@@ -738,7 +738,7 @@ do_marks(eap)
     if (arg != NULL && *arg == NUL)
 	arg = NULL;
 
-    show_one_mark('\'', arg, &curwin->w_pcmark, NULL, TRUE);
+    show_one_mark('\'', arg, &curwin->w_pcmark, NULL, TRUE ASYNC_ARG);
     for (i = 0; i < NMARKS; ++i)
 	show_one_mark(i + 'a', arg, &curbuf->b_namedm[i], NULL, TRUE);
     for (i = 0; i < NMARKS + EXTRA_MARKS; ++i)
