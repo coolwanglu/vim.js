@@ -1418,7 +1418,8 @@ autowrite(buf, forceit)
  * flush all buffers, except the ones that are readonly
  */
     void
-autowrite_all()
+autowrite_all( ASYNC_ARG_ONLY)
+    DECL_ASYNC_ARG_KR
 {
     buf_T	*buf;
 
