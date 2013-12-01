@@ -4826,7 +4826,7 @@ do_sub(eap ASYNC_ARG)
 					len_change = (int)STRLEN(new_line)
 						     - (int)STRLEN(orig_line);
 					curwin->w_cursor.col += len_change;
-					ml_replace(lnum, new_line, FALSE);
+					ml_replace(lnum, new_line, FALSE ASYNC_ARG);
 				    }
 				}
 			    }
