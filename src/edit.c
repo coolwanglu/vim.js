@@ -250,7 +250,7 @@ static void ins_pagedown __ARGS((void));
 #ifdef FEAT_DND
 static void ins_drop __ARGS((void));
 #endif
-static int  ins_tab __ARGS((void));
+static int  ins_tab __ARGS(( DECL_ASYNC_ARG_ONLY));
 static int  ins_eol __ARGS((int c));
 #ifdef FEAT_DIGRAPHS
 static int  ins_digraph __ARGS((void));
