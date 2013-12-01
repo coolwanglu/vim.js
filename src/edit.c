@@ -192,7 +192,7 @@ static void ins_redraw __ARGS((int ready));
 static void ins_ctrl_v __ARGS(( DECL_ASYNC_ARG_ONLY));
 static void undisplay_dollar __ARGS((void));
 static void insert_special __ARGS((int, int, int DECL_ASYNC_ARG));
-static void internal_format __ARGS((int textwidth, int second_indent, int flags, int format_only, int c));
+static void internal_format __ARGS((int textwidth, int second_indent, int flags, int format_only, int c DECL_ASYNC_ARG));
 static void check_auto_format __ARGS((int));
 static void redo_literal __ARGS((int c));
 static void start_arrow __ARGS((pos_T *end_insert_pos));
