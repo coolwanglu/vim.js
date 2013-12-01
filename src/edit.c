@@ -969,7 +969,7 @@ do_intr:
 	    {
 		if (got_int)
 		{
-		    (void)vgetc();		/* flush all buffers */
+		    (void)vgetc( ASYNC_ARG_ONLY);		/* flush all buffers */
 		    got_int = FALSE;
 		}
 		else
