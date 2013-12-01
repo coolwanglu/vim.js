@@ -2752,9 +2752,10 @@ source_callback(fname, cookie ASYNC_ARG)
  * return FAIL when no file could be sourced, OK otherwise.
  */
     int
-source_runtime(name, all)
+source_runtime(name, all ASYNC_ARG)
     char_u	*name;
     int		all;
+    DECL_ASYNC_ARG_KR
 {
     return do_in_runtimepath(name, all, source_callback, NULL ASYNC_ARG);
 }
