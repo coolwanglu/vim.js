@@ -10196,11 +10196,12 @@ match_file_list(list, sfname, ffname)
  * Returns NULL when out of memory.
  */
     char_u *
-file_pat_to_reg_pat(pat, pat_end, allow_dirs, no_bslash)
+file_pat_to_reg_pat(pat, pat_end, allow_dirs, no_bslash ASYNC_ARG)
     char_u	*pat;
     char_u	*pat_end;	/* first char after pattern or NULL */
     char	*allow_dirs;	/* Result passed back out in here */
     int		no_bslash UNUSED; /* Don't use a backward slash as pathsep */
+    DECL_ASYNC_ARG_KR
 {
     int		size;
     char_u	*endp;
