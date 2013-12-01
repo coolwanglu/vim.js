@@ -5005,8 +5005,9 @@ ex_abbreviate(eap ASYNC_ARG)
  * ":map" and friends.
  */
     static void
-ex_map(eap)
+ex_map(eap ASYNC_ARG)
     exarg_T	*eap;
+    DECL_ASYNC_ARG_KR
 {
     /*
      * If we are sourcing .exrc or .vimrc in current directory we
