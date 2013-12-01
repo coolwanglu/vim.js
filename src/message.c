@@ -519,8 +519,9 @@ get_emsg_lnum()
  * is only displayed if it changed.
  */
     void
-msg_source(attr)
+msg_source(attr ASYNC_ARG)
     int		attr;
+    DECL_ASYNC_ARG_KR
 {
     char_u	*p;
 

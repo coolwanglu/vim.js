@@ -6,7 +6,7 @@ int msg_attr_keep __ARGS((char_u *s, int attr, int keep, async_context *_async_c
 char_u *msg_strtrunc __ARGS((char_u *s, int force));
 void trunc_string __ARGS((char_u *s, char_u *buf, int room, int buflen));
 void reset_last_sourcing __ARGS((void));
-void msg_source __ARGS((int attr));
+void msg_source __ARGS((int attr, async_context *_async_context));
 int emsg_not_now __ARGS((void));
 int emsg __ARGS((char_u *s));
 int emsg2 __ARGS((char_u *s, char_u *a1));
