@@ -888,7 +888,7 @@ getcmdline(firstc, count, indent ASYNC_ARG)
 							       firstc != '@' ASYNC_ARG);
 			else if (wim_flags[wim_index] & WIM_FULL)
 			    nextwild(&xpc, WILD_NEXT, WILD_NO_BEEP,
-							       firstc != '@');
+							       firstc != '@' ASYNC_ARG);
 		    }
 		    else
 			vim_beep();
