@@ -2531,7 +2531,7 @@ ml_append(lnum, line, len, newfile ASYNC_ARG)
 
     if (curbuf->b_ml.ml_line_lnum != 0)
 	ml_flush_line(curbuf);
-    return ml_append_int(curbuf, lnum, line, len, newfile, FALSE);
+    return ml_append_int(curbuf, lnum, line, len, newfile, FALSE ASYNC_ARG);
 }
 
 #if defined(FEAT_SPELL) || defined(PROTO)
