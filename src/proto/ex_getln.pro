@@ -2,7 +2,7 @@
 char_u *getcmdline __ARGS((int firstc, long count, int indent, async_context *_async_context));
 char_u *getcmdline_prompt __ARGS((int firstc, char_u *prompt, int attr, int xp_context, char_u *xp_arg));
 int text_locked __ARGS((void));
-void text_locked_msg __ARGS((void));
+void text_locked_msg __ARGS((async_context *_async_context));
 int curbuf_locked __ARGS((void));
 int allbuf_locked __ARGS((void));
 char_u *getexline __ARGS((int c, void *cookie, int indent, async_context *_async_context));

@@ -2031,7 +2031,8 @@ text_locked()
  * window is open or editing the cmdline in another way.
  */
     void
-text_locked_msg()
+text_locked_msg( ASYNC_ARG_ONLY)
+    DECL_ASYNC_ARG_KR
 {
 #ifdef FEAT_CMDWIN
     if (cmdwin_type != 0)
