@@ -749,7 +749,7 @@ ml_open_file(buf ASYNC_ARG)
 	/* There is a small chance that between choosing the swap file name
 	 * and creating it, another Vim creates the file.  In that case the
 	 * creation will fail and we will use another directory. */
-	fname = findswapname(buf, &dirp, NULL); /* allocates fname */
+	fname = findswapname(buf, &dirp, NULL ASYNC_ARG); /* allocates fname */
 	if (dirp == NULL)
 	    break;  /* out of memory */
 	if (fname == NULL)
