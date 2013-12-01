@@ -1054,7 +1054,8 @@ add_b0_fenc(b0p, buf)
  * Try to recover curbuf from the .swp file.
  */
     void
-ml_recover()
+ml_recover( ASYNC_ARG_ONLY)
+    DECL_ASYNC_ARG_KR
 {
     buf_T	*buf = NULL;
     memfile_T	*mfp = NULL;
