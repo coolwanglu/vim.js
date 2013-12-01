@@ -2894,8 +2894,9 @@ buf_set_name(fnum, name)
  * changed.
  */
     void
-buf_name_changed(buf)
+buf_name_changed(buf ASYNC_ARG)
     buf_T	*buf;
+    DECL_ASYNC_ARG_KR
 {
     /*
      * If the file name changed, also change the name of the swapfile
