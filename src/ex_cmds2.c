@@ -1405,7 +1405,7 @@ autowrite(buf, forceit)
 #endif
 	    || (!forceit && buf->b_p_ro) || buf->b_ffname == NULL)
 	return FAIL;
-    r = buf_write_all(buf, forceit);
+    r = buf_write_all(buf, forceit ASYNC_ARG);
 
     /* Writing may succeed but the buffer still changed, e.g., when there is a
      * conversion error.  We do want to return FAIL then. */
@@ -1427,7 +1427,7 @@ autowrite_all()
     for (buf = firstbuf; buf; buf = buf->b_next)
 	if (bufIsChanged(buf) && !buf->b_p_ro)
 	{
-	    (void)buf_write_all(buf, FALSE);
+	    (void)buf_write_all(buf, FALSE ASYNC_ARG);
 #ifdef FEAT_AUTOCMD
 	    /* an autocommand may have deleted the buffer */
 	    if (!buf_valid(buf))
