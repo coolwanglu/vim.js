@@ -1133,7 +1133,7 @@ doESCkey:
 		goto docomplete;
 # endif
 	    did_backspace = ins_bs(c, BACKSPACE_LINE, &inserted_space);
-	    auto_format(FALSE, TRUE);
+	    auto_format(FALSE, TRUE ASYNC_ARG);
 	    inserted_space = FALSE;
 	    break;
 
