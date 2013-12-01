@@ -6369,7 +6369,7 @@ fix_help_buffer()
 					vim_free(cp);
 #else
 				    ml_append(lnum, IObuff, (colnr_T)0,
-								   FALSE);
+								   FALSE ASYNC_ARG);
 #endif
 				    ++lnum;
 				}
