@@ -6195,7 +6195,7 @@ fix_help_buffer( ASYNC_ARG_ONLY)
 		if (line[len - 1] == '>' && (len == 1 || line[len - 2] == ' '))
 		{
 		    /* blank-out a '>' in the last column (start of example) */
-		    line = ml_get_buf(curbuf, lnum, TRUE);
+		    line = ml_get_buf(curbuf, lnum, TRUE ASYNC_ARG);
 		    line[len - 1] = ' ';
 		    in_example = TRUE;
 		}
