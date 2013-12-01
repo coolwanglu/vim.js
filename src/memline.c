@@ -1543,7 +1543,7 @@ ml_recover( ASYNC_ARG_ONLY)
 		    if (page_count * mfp->mf_page_size != dp->db_txt_end)
 		    {
 			ml_append(lnum++, (char_u *)_("??? from here until ???END lines may be messed up"),
-							    (colnr_T)0, TRUE);
+							    (colnr_T)0, TRUE ASYNC_ARG);
 			++error;
 			has_error = TRUE;
 			dp->db_txt_end = page_count * mfp->mf_page_size;
