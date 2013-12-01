@@ -6024,7 +6024,7 @@ insertchar(c, flags, second_indent ASYNC_ARG)
 	 * - running into the 'textwidth' boundary
 	 * - need to check for abbreviation: A non-word char after a word-char
 	 */
-	while (	   (c = vpeekc()) != NUL
+	while (	   (c = vpeekc( ASYNC_ARG_ONLY)) != NUL
 		&& !ISSPECIAL(c)
 #ifdef FEAT_MBYTE
 		&& (!has_mbyte || MB_BYTE2LEN_CHECK(c) == 1)
