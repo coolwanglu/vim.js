@@ -2561,7 +2561,7 @@ do_write(eap ASYNC_ARG)
 #endif
     buf_T	*alt_buf = NULL;
 
-    if (not_writing())		/* check 'write' option */
+    if (not_writing( ASYNC_ARG_ONLY))		/* check 'write' option */
 	return FAIL;
 
     ffname = eap->arg;
