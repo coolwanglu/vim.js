@@ -7019,8 +7019,9 @@ add_char2buf(c, s)
  * if flags & BL_FIX	don't leave the cursor on a NUL.
  */
     void
-beginline(flags)
+beginline(flags ASYNC_ARG)
     int		flags;
+    DECL_ASYNC_ARG_KR
 {
     if ((flags & BL_SOL) && !p_sol)
 	coladvance(curwin->w_curswant);
