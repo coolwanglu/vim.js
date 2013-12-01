@@ -1624,7 +1624,7 @@ ml_recover( ASYNC_ARG_ONLY)
 	for (idx = 1; idx <= lnum; ++idx)
 	{
 	    /* Need to copy one line, fetching the other one may flush it. */
-	    p = vim_strsave(ml_get(idx));
+	    p = vim_strsave(ml_get(idx ASYNC_ARG));
 	    i = STRCMP(p, ml_get(idx + lnum));
 	    vim_free(p);
 	    if (i != 0)
