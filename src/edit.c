@@ -5909,7 +5909,7 @@ insertchar(c, flags, second_indent ASYNC_ARG)
 	}
 	if (do_internal)
 #endif
-	    internal_format(textwidth, second_indent, flags, c == NUL, c);
+	    internal_format(textwidth, second_indent, flags, c == NUL, c ASYNC_ARG);
     }
 
     if (c == NUL)	    /* only formatting was wanted */
