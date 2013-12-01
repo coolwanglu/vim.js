@@ -1831,12 +1831,13 @@ undisplay_dollar()
  * if round is TRUE, round the indent to 'shiftwidth' (only with _INC and _Dec).
  */
     void
-change_indent(type, amount, round, replaced, call_changed_bytes)
+change_indent(type, amount, round, replaced, call_changed_bytes ASYNC_ARG)
     int		type;
     int		amount;
     int		round;
     int		replaced;	/* replaced character, put on replace stack */
     int		call_changed_bytes;	/* call changed_bytes() */
+    DECL_ASYNC_ARG_KR
 {
     int		vcol;
     int		last_vcol;
