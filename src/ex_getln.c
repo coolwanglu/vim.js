@@ -870,7 +870,7 @@ getcmdline(firstc, count, indent ASYNC_ARG)
 			    p_wmnu = 0;
 #endif
 			    /* remove match */
-			    nextwild(&xpc, WILD_PREV, 0, firstc != '@');
+			    nextwild(&xpc, WILD_PREV, 0, firstc != '@' ASYNC_ARG);
 #ifdef FEAT_WILDMENU
 			    p_wmnu = p_wmnu_save;
 #endif
