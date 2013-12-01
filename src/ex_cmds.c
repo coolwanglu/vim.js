@@ -7640,7 +7640,7 @@ ex_drop(eap ASYNC_ARG)
      * This also ignores wildcards, since it is very unlikely the user is
      * editing a file name with a wildcard character.
      */
-    set_arglist(eap->arg);
+    set_arglist(eap->arg ASYNC_ARG);
 
     /*
      * Expanding wildcards may result in an empty argument list.  E.g. when

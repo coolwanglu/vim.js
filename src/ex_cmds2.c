@@ -1783,9 +1783,10 @@ check_fname()
  * return FAIL for failure, OK otherwise
  */
     int
-buf_write_all(buf, forceit)
+buf_write_all(buf, forceit ASYNC_ARG)
     buf_T	*buf;
     int		forceit;
+    DECL_ASYNC_ARG_KR
 {
     int	    retval;
 #ifdef FEAT_AUTOCMD
@@ -1794,7 +1795,7 @@ buf_write_all(buf, forceit)
 
     retval = (buf_write(buf, buf->b_ffname, buf->b_fname,
 				   (linenr_T)1, buf->b_ml.ml_line_count, NULL,
-						  FALSE, forceit, TRUE, FALSE));
+						  FALSE, forceit, TRUE, FALSE ASYNC_ARG));
 #ifdef FEAT_AUTOCMD
     if (curbuf != old_curbuf)
     {
