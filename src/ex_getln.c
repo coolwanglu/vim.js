@@ -3352,11 +3352,12 @@ sort_func_compare(s1, s2)
  * normal character (instead of being expanded).  This allows :s/^I^D etc.
  */
     static int
-nextwild(xp, type, options, escape)
+nextwild(xp, type, options, escape ASYNC_ARG)
     expand_T	*xp;
     int		type;
     int		options;	/* extra options for ExpandOne() */
     int		escape;		/* if TRUE, escape the returned matches */
+    DECL_ASYNC_ARG_KR
 {
     int		i, j;
     char_u	*p1;
