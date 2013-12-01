@@ -2731,7 +2731,7 @@ ex_compiler(eap)
 ex_runtime(eap)
     exarg_T	*eap;
 {
-    source_runtime(eap->arg, eap->forceit);
+    source_runtime(eap->arg, eap->forceit ASYNC_ARG);
 }
 
 static void source_callback __ARGS((char_u *fname, void *cookie DECL_ASYNC_ARG));
