@@ -5092,9 +5092,10 @@ do_modelines(flags)
  * Return FAIL if an error encountered.
  */
     static int
-chk_modeline(lnum, flags)
+chk_modeline(lnum, flags ASYNC_ARG)
     linenr_T	lnum;
     int		flags;		/* Same as for do_modelines(). */
+    DECL_ASYNC_ARG_KR
 {
     char_u	*s;
     char_u	*e;
