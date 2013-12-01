@@ -841,7 +841,7 @@ getcmdline(firstc, count, indent ASYNC_ARG)
 		{
 		    (void)vpeekc();	/* remove <C-C> from input stream */
 		    got_int = FALSE;	/* don't abandon the command line */
-		    (void)ExpandOne(&xpc, NULL, NULL, 0, WILD_FREE);
+		    (void)ExpandOne(&xpc, NULL, NULL, 0, WILD_FREE ASYNC_ARG);
 #ifdef FEAT_WILDMENU
 		    xpc.xp_context = EXPAND_NOTHING;
 #endif
