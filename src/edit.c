@@ -6707,7 +6707,7 @@ start_arrow(end_insert_pos)
     if (!arrow_used)	    /* something has been inserted */
     {
 	AppendToRedobuff(ESC_STR);
-	stop_insert(end_insert_pos, FALSE, FALSE);
+	stop_insert(end_insert_pos, FALSE, FALSE ASYNC_ARG);
 	arrow_used = TRUE;	/* this means we stopped the current insert */
     }
 #ifdef FEAT_SPELL
