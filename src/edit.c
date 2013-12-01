@@ -9507,8 +9507,9 @@ ins_s_right()
 }
 
     static void
-ins_up(startcol)
+ins_up(startcol ASYNC_ARG)
     int		startcol;	/* when TRUE move to Insstart.col */
+    DECL_ASYNC_ARG_KR
 {
     pos_T	tpos;
     linenr_T	old_topline = curwin->w_topline;
