@@ -549,7 +549,7 @@ edit(cmdchar, startln, count ASYNC_ARG)
 	update_curswant();
 	if (((ins_at_eol && curwin->w_cursor.lnum == o_lnum)
 		    || curwin->w_curswant > curwin->w_virtcol)
-		&& *(ptr = ml_get_curline() + curwin->w_cursor.col) != NUL)
+		&& *(ptr = ml_get_curline( ASYNC_ARG_ONLY) + curwin->w_cursor.col) != NUL)
 	{
 	    if (ptr[1] == NUL)
 		++curwin->w_cursor.col;
