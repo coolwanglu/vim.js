@@ -3765,7 +3765,7 @@ error_noblock:
      * inserted/deleted after all.
      */
     if (action == ML_DELETE)
-	ml_lineadd(buf, 1);
+	ml_lineadd(buf, 1 ASYNC_ARG);
     else if (action == ML_INSERT)
 	ml_lineadd(buf, -1);
     buf->b_ml.ml_stack_top = 0;
