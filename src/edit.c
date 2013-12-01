@@ -1477,7 +1477,7 @@ normalchar:
 #endif
 		if (Insstart_blank_vcol == MAXCOL
 			&& curwin->w_cursor.lnum == Insstart.lnum)
-		    Insstart_blank_vcol = get_nolist_virtcol();
+		    Insstart_blank_vcol = get_nolist_virtcol( ASYNC_ARG_ONLY);
 	    }
 
 	    /* Insert a normal character and check for abbreviations on a
