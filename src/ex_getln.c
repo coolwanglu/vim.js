@@ -3392,7 +3392,7 @@ nextwild(xp, type, options, escape)
 	/*
 	 * Get next/previous match for a previous expanded pattern.
 	 */
-	p2 = ExpandOne(xp, NULL, NULL, 0, type);
+	p2 = ExpandOne(xp, NULL, NULL, 0, type ASYNC_ARG);
     }
     else
     {
