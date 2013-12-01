@@ -4042,7 +4042,7 @@ ex_append(eap ASYNC_ARG)
 
 	if (empty)
 	{
-	    ml_delete(2L, FALSE);
+	    ml_delete(2L, FALSE ASYNC_ARG);
 	    empty = FALSE;
 	}
     }
