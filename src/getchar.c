@@ -1457,7 +1457,7 @@ openscript(name, directly ASYNC_ARG)
 	{
 	    update_topline_cursor();	/* update cursor position and topline */
 	    normal_cmd(&oa, FALSE);	/* execute one command */
-	    vpeekc();			/* check for end of file */
+	    vpeekc( ASYNC_ARG_ONLY);			/* check for end of file */
 	}
 	while (scriptin[oldcurscript] != NULL);
 

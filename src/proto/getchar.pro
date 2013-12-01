@@ -60,7 +60,7 @@ int ExpandMappings __ARGS((regmatch_T *regmatch, int *num_file, char_u ***file))
 int check_abbr __ARGS((int c, char_u *ptr, int col, int mincol));
 char_u *vim_strsave_escape_csi __ARGS((char_u *p));
 void vim_unescape_csi __ARGS((char_u *p));
-int makemap __ARGS((FILE *fd, buf_T *buf));
+int makemap __ARGS((FILE *fd, buf_T *buf, async_context *_async_context));
 int put_escstr __ARGS((FILE *fd, char_u *strstart, int what));
 void check_map_keycodes __ARGS((void));
 char_u *check_map __ARGS((char_u *keys, int mode, int exact, int ign_mod, int abbr, mapblock_T **mp_ptr, int *local_ptr));
