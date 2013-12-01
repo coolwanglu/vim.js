@@ -239,7 +239,7 @@ static time_t swapfile_info __ARGS((char_u *));
 static int recov_file_names __ARGS((char_u **, char_u *, int prepend_dot));
 static int ml_append_int __ARGS((buf_T *, linenr_T, char_u *, colnr_T, int, int DECL_ASYNC_ARG));
 static int ml_delete_int __ARGS((buf_T *, linenr_T, int DECL_ASYNC_ARG));
-static char_u *findswapname __ARGS((buf_T *, char_u **, char_u *));
+static char_u *findswapname __ARGS((buf_T *, char_u **, char_u * DECL_ASYNC_ARG));
 static void ml_flush_line __ARGS((buf_T * DECL_ASYNC_ARG));
 static bhdr_T *ml_new_data __ARGS((memfile_T *, int, int));
 static bhdr_T *ml_new_ptr __ARGS((memfile_T *));
