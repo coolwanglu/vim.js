@@ -1068,7 +1068,7 @@ doESCkey:
 
 	case Ctrl_R:	/* insert the contents of a register */
 	    ins_reg();
-	    auto_format(FALSE, TRUE);
+	    auto_format(FALSE, TRUE ASYNC_ARG);
 	    inserted_space = FALSE;
 	    break;
 
