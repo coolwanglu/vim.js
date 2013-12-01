@@ -2860,7 +2860,7 @@ setfname(buf, ffname, sfname, message ASYNC_ARG)
     buf->b_shortname = FALSE;
 #endif
 
-    buf_name_changed(buf);
+    buf_name_changed(buf ASYNC_ARG);
     return OK;
 }
 
