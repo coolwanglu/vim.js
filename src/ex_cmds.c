@@ -4253,7 +4253,8 @@ check_restricted( ASYNC_ARG_ONLY)
  * Otherwise, return FALSE.
  */
     int
-check_secure()
+check_secure( ASYNC_ARG_ONLY)
+    DECL_ASYNC_ARG_KR
 {
     if (secure)
     {
