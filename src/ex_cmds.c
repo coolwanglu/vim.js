@@ -3828,7 +3828,7 @@ do_ecmd(fnum, ffname, sfname, eap, newlnum, flags, oldwin ASYNC_ARG)
 	{
 	    if (exmode_active)
 		curwin->w_cursor.lnum = curbuf->b_ml.ml_line_count;
-	    beginline(BL_WHITE | BL_FIX);
+	    beginline(BL_WHITE | BL_FIX ASYNC_ARG);
 	}
     }
 
