@@ -2262,7 +2262,7 @@ ml_sync_all(check_file, check_char)
 		    || st.st_mtime != buf->b_mtime_read
 		    || st.st_size != buf->b_orig_size)
 	    {
-		ml_preserve(buf, FALSE);
+		ml_preserve(buf, FALSE ASYNC_ARG);
 		did_check_timestamps = FALSE;
 		need_check_timestamps = TRUE;	/* give message later */
 	    }
