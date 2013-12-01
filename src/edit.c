@@ -5806,7 +5806,7 @@ insert_special(c, allow_modmask, ctrlv ASYNC_ARG)
 	c = p[len - 1];
 	if (len > 2)
 	{
-	    if (stop_arrow() == FAIL)
+	    if (stop_arrow( ASYNC_ARG_ONLY) == FAIL)
 		return;
 	    p[len - 1] = NUL;
 	    ins_str(p);
