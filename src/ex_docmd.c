@@ -129,7 +129,7 @@ static int	getargopt __ARGS((exarg_T *eap));
 # define ex_cexpr		ex_ni
 #endif
 
-static int	check_more __ARGS((int, int));
+static int	check_more __ARGS((int, int DECL_ASYNC_ARG));
 static linenr_T get_address __ARGS((char_u **, int skip, int to_other_file DECL_ASYNC_ARG));
 static void	get_flags __ARGS((exarg_T *eap));
 #if !defined(FEAT_PERL) \
