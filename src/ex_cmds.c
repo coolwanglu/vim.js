@@ -4030,7 +4030,7 @@ ex_append(eap ASYNC_ARG)
 	    theline[0] = NUL;
 
 	did_undo = TRUE;
-	ml_append(lnum, theline, (colnr_T)0, FALSE);
+	ml_append(lnum, theline, (colnr_T)0, FALSE ASYNC_ARG);
 	appended_lines_mark(lnum, 1L);
 
 	vim_free(theline);
