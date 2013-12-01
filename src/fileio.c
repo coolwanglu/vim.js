@@ -2129,7 +2129,7 @@ rewind_retry:
 		    {
 			*ptr = NUL;	    /* end of line */
 			len = (colnr_T) (ptr - line_start + 1);
-			if (ml_append(lnum, line_start, len, newfile) == FAIL)
+			if (ml_append(lnum, line_start, len, newfile ASYNC_ARG) == FAIL)
 			{
 			    error = TRUE;
 			    break;
