@@ -11411,8 +11411,9 @@ ex_setfiletype(eap)
 #endif
 
     static void
-ex_digraphs(eap)
+ex_digraphs(eap ASYNC_ARG)
     exarg_T	*eap UNUSED;
+    DECL_ASYNC_ARG_KR
 {
 #ifdef FEAT_DIGRAPHS
     if (*eap->arg != NUL)
