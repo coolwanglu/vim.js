@@ -2382,8 +2382,9 @@ theend:
  * having to check for error everywhere).
  */
     char_u  *
-ml_get(lnum)
+ml_get(lnum ASYNC_ARG)
     linenr_T	lnum;
+    DECL_ASYNC_ARG_KR
 {
     return ml_get_buf(curbuf, lnum, FALSE ASYNC_ARG);
 }
