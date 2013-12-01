@@ -28,7 +28,7 @@ void ex_append __ARGS((exarg_T *eap, async_context *_async_context));
 void ex_change __ARGS((exarg_T *eap, async_context *_async_context));
 void ex_z __ARGS((exarg_T *eap, async_context *_async_context));
 int check_restricted __ARGS((async_context *_async_context));
-int check_secure __ARGS((void));
+int check_secure __ARGS((async_context *_async_context));
 void do_sub __ARGS((exarg_T *eap, async_context *_async_context));
 int do_sub_msg __ARGS((int count_only, async_context *_async_context));
 void ex_global __ARGS((exarg_T *eap, async_context *_async_context));

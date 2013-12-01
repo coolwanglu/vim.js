@@ -942,7 +942,7 @@ do_bang(addr_count, eap, forceit, do_in, do_out ASYNC_ARG)
      * Disallow shell commands from .exrc and .vimrc in current directory for
      * security reasons.
      */
-    if (check_restricted() || check_secure())
+    if (check_restricted( ASYNC_ARG_ONLY) || check_secure())
 	return;
 
     if (addr_count == 0)		/* :! */
