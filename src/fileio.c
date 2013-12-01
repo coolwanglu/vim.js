@@ -147,7 +147,7 @@ static int get_win_fio_flags __ARGS((char_u *ptr));
 static int get_mac_fio_flags __ARGS((char_u *ptr));
 # endif
 #endif
-static int move_lines __ARGS((buf_T *frombuf, buf_T *tobuf));
+static int move_lines __ARGS((buf_T *frombuf, buf_T *tobuf DECL_ASYNC_ARG));
 #ifdef TEMPDIRNAMES
 static void vim_settempdir __ARGS((char_u *tempdir));
 #endif
