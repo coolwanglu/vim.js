@@ -2105,8 +2105,9 @@ check_arg_idx(win)
  * ":args", ":argslocal" and ":argsglobal".
  */
     void
-ex_args(eap)
+ex_args(eap ASYNC_ARG)
     exarg_T	*eap;
+    DECL_ASYNC_ARG2
 {
     int		i;
 
@@ -2130,7 +2131,7 @@ ex_args(eap)
 	 * ":args file ..": define new argument list, handle like ":next"
 	 * Also for ":argslocal file .." and ":argsglobal file ..".
 	 */
-	ex_next(eap);
+	ex_next(eap ASYNC_ARG);
     }
     else
 #if defined(FEAT_WINDOWS) && defined(FEAT_LISTCMDS)
@@ -2182,42 +2183,46 @@ ex_args(eap)
  * ":previous", ":sprevious", ":Next" and ":sNext".
  */
     void
-ex_previous(eap)
+ex_previous(eap ASYNC_ARG)
     exarg_T	*eap;
+    DECL_ASYNC_ARG2
 {
     /* If past the last one already, go to the last one. */
     if (curwin->w_arg_idx - (int)eap->line2 >= ARGCOUNT)
-	do_argfile(eap, ARGCOUNT - 1);
+	do_argfile(eap, ARGCOUNT - 1 ASYNC_ARG);
     else
-	do_argfile(eap, curwin->w_arg_idx - (int)eap->line2);
+	do_argfile(eap, curwin->w_arg_idx - (int)eap->line2 ASYNC_ARG);
 }
 
 /*
  * ":rewind", ":first", ":sfirst" and ":srewind".
  */
     void
-ex_rewind(eap)
+ex_rewind(eap ASYNC_ARG)
     exarg_T	*eap;
+    DECL_ASYNC_ARG2
 {
-    do_argfile(eap, 0);
+    do_argfile(eap, 0 ASYNC_ARG);
 }
 
 /*
  * ":last" and ":slast".
  */
     void
-ex_last(eap)
+ex_last(eap ASYNC_ARG)
     exarg_T	*eap;
+    DECL_ASYNC_ARG2
 {
-    do_argfile(eap, ARGCOUNT - 1);
+    do_argfile(eap, ARGCOUNT - 1 ASYNC_ARG);
 }
 
 /*
  * ":argument" and ":sargument".
  */
     void
-ex_argument(eap)
+ex_argument(eap ASYNC_ARG)
     exarg_T	*eap;
+    DECL_ASYNC_ARG2
 {
     int		i;
 
@@ -2225,16 +2230,17 @@ ex_argument(eap)
 	i = eap->line2 - 1;
     else
 	i = curwin->w_arg_idx;
-    do_argfile(eap, i);
+    do_argfile(eap, i ASYNC_ARG);
 }
 
 /*
  * Edit file "argn" of the argument lists.
  */
     void
-do_argfile(eap, argn)
+do_argfile(eap, argn ASYNC_ARG)
     exarg_T	*eap;
     int		argn;
+    DECL_ASYNC_ARG2
 {
     int		other;
     char_u	*p;
@@ -2300,7 +2306,7 @@ do_argfile(eap, argn)
 	if (do_ecmd(0, alist_name(&ARGLIST[curwin->w_arg_idx]), NULL,
 		      eap, ECMD_LAST,
 		      (P_HID(curwin->w_buffer) ? ECMD_HIDE : 0)
-			 + (eap->forceit ? ECMD_FORCEIT : 0), curwin) == FAIL)
+			 + (eap->forceit ? ECMD_FORCEIT : 0), curwin ASYNC_ARG) == FAIL)
 	    curwin->w_arg_idx = old_arg_idx;
 	/* like Vi: set the mark where the cursor is in the file. */
 	else if (eap->cmdidx != CMD_argdo)
@@ -2312,8 +2318,9 @@ do_argfile(eap, argn)
  * ":next", and commands that behave like it.
  */
     void
-ex_next(eap)
+ex_next(eap ASYNC_ARG)
     exarg_T	*eap;
+    DECL_ASYNC_ARG2
 {
     int		i;
 
@@ -2335,7 +2342,7 @@ ex_next(eap)
 	}
 	else
 	    i = curwin->w_arg_idx + (int)eap->line2;
-	do_argfile(eap, i);
+	do_argfile(eap, i ASYNC_ARG);
     }
 }
 

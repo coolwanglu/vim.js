@@ -1,4 +1,4 @@
-/* vi:set ts=8 sts=4 sw=4:
+/* vi:set ts=9 sts=4 sw=4:
  *
  * VIM - Vi IMproved	by Bram Moolenaar
  *
@@ -190,8 +190,56 @@
 # endif
 #endif
 
+#ifdef FEAT_GUI_BROWSER
+#define NO_CONSOLE
+/*
+ * Disable some functions not supported by emscripten
+ * need to do this before including feature.h
+ */
+#ifdef HAVE_TGETENT
+#  undef HAVE_TGETENT
+#endif
+#ifdef HAVE_SIGSTACK
+#  undef HAVE_SIGSTACK
+#endif
+#ifdef HAVE_SIGALTSTACK
+#  undef HAVE_SIGALTSTACK
+#endif
+#ifdef HAVE_SIGSET
+#  undef HAVE_SIGSET
+#endif
+#ifdef HAVE_SYSINFO
+#  undef HAVE_SYSINFO
+#endif
+// emscripten's select does not work with a parameter
+#ifdef HAVE_SELECT
+#  undef HAVE_SECECT
+#endif
+// always use async sleep
+#ifdef HAVE_NANOSEELP
+#  undef HAVE_NANOSEELP
+#endif
+#ifdef HAVE_USLEEP
+#  undef HAVE_USLEEP
+#endif
+#ifdef FEAT_NEATBEANS_INTG
+#  undef FEAT_NEATBEANS_INTG
+#endif
+#ifdef HAVE_PTHREAD_NP_H
+#  undef HAVE_PTHREAD_NP_H
+#endif
+#endif // FEAT_GUI_BROWSER
+
+#include "async.h"
+
 
 #include "feature.h"	/* #defines for optionals and features */
+
+/*
+ * WIP: some features are not supported by FEAT_GUI_BROWSER yet
+ */
+#ifdef FEAT_GUI_BROWSER
+#endif
 
 /* +x11 is only enabled when it's both available and wanted. */
 #if defined(HAVE_X11) && defined(WANT_X11)
@@ -305,7 +353,8 @@
  * glibc-2.2.5 has them in their system headers.
  */
 #if !defined(__cplusplus) && defined(UNIX) \
-  && !defined(MACOS_X) /* MACOS_X doesn't yet support osdef.h */
+  && !defined(MACOS_X) /* MACOS_X doesn't yet support osdef.h */ \
+  && !defined(FEAT_GUI_BROWSER)
 # include "auto/osdef.h"	/* bring missing declarations in */
 #endif
 
@@ -1958,7 +2007,8 @@ typedef int VimClipboard;	/* This is required for the prototypes. */
  * been seen at that stage.  But it must be before globals.h, where error_ga
  * is declared. */
 #if !defined(FEAT_GUI_W32) && !defined(FEAT_GUI_X11) \
-	&& !defined(FEAT_GUI_GTK) && !defined(FEAT_GUI_MAC)
+	&& !defined(FEAT_GUI_GTK) && !defined(FEAT_GUI_MAC) \
+         && !defined(FEAT_GUI_BROWSER)
 # define mch_errmsg(str)	fprintf(stderr, "%s", (str))
 # define display_errors()	fflush(stderr)
 # define mch_msg(str)		printf("%s", (str))
@@ -2196,7 +2246,7 @@ typedef int VimClipboard;	/* This is required for the prototypes. */
 /* values for vim_handle_signal() that are not a signal */
 #define SIGNAL_BLOCK	-1
 #define SIGNAL_UNBLOCK  -2
-#if !defined(UNIX) && !defined(VMS) && !defined(OS2)
+#if (!defined(UNIX) && !defined(VMS) && !defined(OS2)) || defined(FEAT_GUI_BROWSER)
 # define vim_handle_signal(x) 0
 #endif
 

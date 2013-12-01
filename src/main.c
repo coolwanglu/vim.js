@@ -2486,8 +2486,9 @@ scripterror:
  * When starting in Ex mode and commands come from a file, set Silent mode.
  */
     static void
-check_tty(parmp)
+check_tty(parmp ASYNC_ARG)
     mparm_T	*parmp;
+    DECL_ASYNC_ARG2
 {
     int		input_isatty;		/* is active input a terminal? */
 
@@ -2524,7 +2525,7 @@ check_tty(parmp)
 	    mch_errmsg(_("Vim: Warning: Input is not from a terminal\n"));
 	out_flush();
 	if (scriptin[0] == NULL)
-	    ui_delay(2000L, TRUE);
+	    ui_delay(2000L, TRUE ASYNC_ARG);
 	TIME_MSG("Warning delay");
     }
 }

@@ -19,7 +19,9 @@ static int	ex_pressedreturn = FALSE;
 # define ex_hardcopy	ex_ni
 #endif
 
-#ifdef FEAT_USR_CMDS
+// Lu Wang: fix proto
+//#ifdef FEAT_USR_CMDS
+#if defined(FEAT_USR_CMDS) || defined(PROTO)
 typedef struct ucmd
 {
     char_u	*uc_name;	/* The command name */
@@ -56,9 +58,9 @@ static char_u *get_user_command_name __ARGS((int idx));
 #endif
 
 #ifdef FEAT_EVAL
-static char_u	*do_one_cmd __ARGS((char_u **, int, struct condstack *, char_u *(*fgetline)(int, void *, int), void *cookie));
+static char_u	*do_one_cmd __ARGS((char_u **, int, struct condstack *, char_u *(*fgetline)(int, void *, int), void *cookie DECL_ASYNC_ARG));
 #else
-static char_u	*do_one_cmd __ARGS((char_u **, int, char_u *(*fgetline)(int, void *, int), void *cookie));
+static char_u	*do_one_cmd __ARGS((char_u **, int, char_u *(*fgetline)(int, void *, int), void *cookie DECL_ASYNC_ARG));
 static int	if_level = 0;		/* depth in :if */
 #endif
 static void	append_command __ARGS((char_u *cmd));
@@ -753,11 +755,12 @@ do_cmdline_cmd(cmd)
  * return FAIL if cmdline could not be executed, OK otherwise
  */
     int
-do_cmdline(cmdline, fgetline, cookie, flags)
+do_cmdline(cmdline, fgetline, cookie, flags ASYNC_ARG)
     char_u	*cmdline;
     char_u	*(*fgetline) __ARGS((int, void *, int));
     void	*cookie;		/* argument for fgetline() */
     int		flags;
+    DECL_ASYNC_ARG2
 {
     char_u	*next_cmdline;		/* next cmd to execute */
     char_u	*cmdline_copy = NULL;	/* copy of cmd line */
@@ -1128,7 +1131,7 @@ do_cmdline(cmdline, fgetline, cookie, flags)
 #ifdef FEAT_EVAL
 				&cstack,
 #endif
-				cmd_getline, cmd_cookie);
+				cmd_getline, cmd_cookie ASYNC_ARG);
 	--recursive;
 
 #ifdef FEAT_EVAL
@@ -1703,7 +1706,7 @@ do_one_cmd(cmdlinep, sourcing,
 #ifdef FEAT_EVAL
 			    cstack,
 #endif
-				    fgetline, cookie)
+				    fgetline, cookie ASYNC_ARG)
     char_u		**cmdlinep;
     int			sourcing;
 #ifdef FEAT_EVAL
@@ -1711,6 +1714,7 @@ do_one_cmd(cmdlinep, sourcing,
 #endif
     char_u		*(*fgetline) __ARGS((int, void *, int));
     void		*cookie;		/* argument for fgetline() */
+    DECL_ASYNC_ARG2
 {
     char_u		*p;
     linenr_T		lnum;
@@ -2692,7 +2696,7 @@ do_one_cmd(cmdlinep, sourcing,
 	 * Call the function to execute the command.
 	 */
 	ea.errmsg = NULL;
-	(cmdnames[ea.cmdidx].cmd_func)(&ea);
+	(cmdnames[ea.cmdidx].cmd_func)(&ea ASYNC_ARG);
 	if (ea.errmsg != NULL)
 	    errormsg = (char_u *)_(ea.errmsg);
     }
@@ -6955,8 +6959,9 @@ ex_stop(eap)
  * ":exit", ":xit" and ":wq": Write file and exit Vim.
  */
     static void
-ex_exit(eap)
+ex_exit(eap ASYNC_ARG)
     exarg_T	*eap;
+    DECL_ASYNC_ARG2
 {
 #ifdef FEAT_CMDWIN
     if (cmdwin_type != 0)
@@ -6986,7 +6991,7 @@ ex_exit(eap)
 	exiting = TRUE;
     if (       ((eap->cmdidx == CMD_wq
 		    || curbufIsChanged())
-		&& do_write(eap) == FAIL)
+		&& do_write(eap ASYNC_ARG) == FAIL)
 	    || check_more(TRUE, eap->forceit) == FAIL
 	    || (only_one_window() && check_changed_any(eap->forceit)))
     {
@@ -7321,7 +7326,7 @@ alist_add(al, fname, set_fnum)
     AARGLIST(al)[al->al_ga.ga_len].ae_fname = fname;
     if (set_fnum > 0)
 	AARGLIST(al)[al->al_ga.ga_len].ae_fnum =
-	    buflist_add(fname, BLN_LISTED | (set_fnum == 2 ? BLN_CURBUF : 0));
+	    buflist_add(fname, BLN_LISTED | (set_fnum == 2 ? BLN_CURBUF : 0) ASYNC_ARG);
     ++al->al_ga.ga_len;
 }
 
@@ -7819,9 +7824,10 @@ ex_edit(eap)
  * ":edit <file>" command and alikes.
  */
     void
-do_exedit(eap, old_curwin)
+do_exedit(eap, old_curwin ASYNC_ARG)
     exarg_T	*eap;
     win_T	*old_curwin;	    /* curwin before doing a split or NULL */
+    DECL_ASYNC_ARG2
 {
     int		n;
 #ifdef FEAT_WINDOWS
@@ -7890,7 +7896,7 @@ do_exedit(eap, old_curwin)
 	setpcmark();
 	(void)do_ecmd(0, NULL, NULL, eap, ECMD_ONE,
 		      ECMD_HIDE + (eap->forceit ? ECMD_FORCEIT : 0),
-		      old_curwin == NULL ? curwin : NULL);
+		      old_curwin == NULL ? curwin : NULL ASYNC_ARG);
     }
     else if ((eap->cmdidx != CMD_split
 #ifdef FEAT_VERTSPLIT
@@ -7927,7 +7933,7 @@ do_exedit(eap, old_curwin)
 #ifdef FEAT_LISTCMDS
 		    + (eap->cmdidx == CMD_badd ? ECMD_ADDBUF : 0 )
 #endif
-		    , old_curwin == NULL ? curwin : NULL) == FAIL)
+		    , old_curwin == NULL ? curwin : NULL ASYNC_ARG) == FAIL)
 	{
 	    /* Editing the file failed.  If the window was split, close it. */
 #ifdef FEAT_WINDOWS

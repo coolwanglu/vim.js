@@ -2,7 +2,6 @@
 int set_termname __ARGS((char_u *term));
 void set_mouse_termcode __ARGS((int n, char_u *s));
 void del_mouse_termcode __ARGS((int n));
-void getlinecol __ARGS((long *cp, long *rp));
 int add_termcap_entry __ARGS((char_u *name, int force));
 int term_is_8bit __ARGS((char_u *name));
 int term_is_gui __ARGS((char_u *name));

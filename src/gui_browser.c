@@ -8,6 +8,7 @@
  * See README.txt for an overview of the Vim source code.
  */
 
+#ifdef FEAT_GUI_BROWSER
 #include "vim.h"
 
      void
@@ -302,7 +303,7 @@ gui_mch_update(void)
  * or FAIL otherwise.
  */
     int
-gui_mch_wait_for_chars(int wtime)
+gui_mch_wait_for_chars(int wtime DECL_ASYNC_ARG)
 {
     return FAIL;
 }
@@ -680,3 +681,4 @@ gui_mch_set_curtab(nr)
 }
 
 #endif // FEAT_GUI_TABLINE
+#endif //FEAT_GUI_BROWSER

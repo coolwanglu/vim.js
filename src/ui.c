@@ -245,16 +245,17 @@ ui_char_avail()
  * cancel the delay if a key is hit.
  */
     void
-ui_delay(msec, ignoreinput)
+ui_delay(msec, ignoreinput ASYNC_ARG)
     long	msec;
     int		ignoreinput;
+    DECL_ASYNC_ARG2
 {
 #ifdef FEAT_GUI
     if (gui.in_use && !ignoreinput)
 	gui_wait_for_chars(msec);
     else
 #endif
-	mch_delay(msec, ignoreinput);
+	mch_delay(msec, ignoreinput ASYNC_ARG);
 }
 
 /*

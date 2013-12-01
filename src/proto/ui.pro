@@ -3,7 +3,7 @@ void ui_write __ARGS((char_u *s, int len));
 void ui_inchar_undo __ARGS((char_u *s, int len));
 int ui_inchar __ARGS((char_u *buf, int maxlen, long wtime, int tb_change_cnt));
 int ui_char_avail __ARGS((void));
-void ui_delay __ARGS((long msec, int ignoreinput));
+void ui_delay __ARGS((long msec, int ignoreinput, async_context *_async_context));
 void ui_suspend __ARGS((void));
 void suspend_shell __ARGS((void));
 int ui_get_shellsize __ARGS((void));

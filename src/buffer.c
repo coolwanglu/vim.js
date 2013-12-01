@@ -1614,11 +1614,12 @@ do_autochdir()
 static int  top_file_num = 1;		/* highest file number */
 
     buf_T *
-buflist_new(ffname, sfname, lnum, flags)
+buflist_new(ffname, sfname, lnum, flags ASYNC_ARG)
     char_u	*ffname;	/* full path of fname or relative */
     char_u	*sfname;	/* short fname or NULL */
     linenr_T	lnum;		/* preferred cursor line */
     int		flags;		/* BLN_ defines */
+    DECL_ASYNC_ARG2
 {
     buf_T	*buf;
 #ifdef UNIX
@@ -1789,7 +1790,7 @@ buflist_new(ffname, sfname, lnum, flags)
 	    if (emsg_silent == 0)
 	    {
 		out_flush();
-		ui_delay(3000L, TRUE);	/* make sure it is noticed */
+		ui_delay(3000L, TRUE ASYNC_ARG);	/* make sure it is noticed */
 	    }
 	    top_file_num = 1;
 	}
@@ -1963,11 +1964,12 @@ free_buf_options(buf, free_p_ff)
  * return FAIL for failure, OK for success
  */
     int
-buflist_getfile(n, lnum, options, forceit)
+buflist_getfile(n, lnum, options, forceit ASYNC_ARG)
     int		n;
     linenr_T	lnum;
     int		options;
     int		forceit;
+    DECL_ASYNC_ARG2
 {
     buf_T	*buf;
 #ifdef FEAT_WINDOWS
@@ -2036,7 +2038,7 @@ buflist_getfile(n, lnum, options, forceit)
 
     ++RedrawingDisabled;
     if (getfile(buf->b_fnum, NULL, NULL, (options & GETF_SETMARK),
-							  lnum, forceit) <= 0)
+							  lnum, forceit ASYNC_ARG) <= 0)
     {
 	--RedrawingDisabled;
 
@@ -2916,15 +2918,16 @@ buf_name_changed(buf)
  * Return the buffer.
  */
     buf_T *
-setaltfname(ffname, sfname, lnum)
+setaltfname(ffname, sfname, lnum ASYNC_ARG)
     char_u	*ffname;
     char_u	*sfname;
     linenr_T	lnum;
+    DECL_ASYNC_ARG2
 {
     buf_T	*buf;
 
     /* Create a buffer.  'buflisted' is not set if it's a new buffer */
-    buf = buflist_new(ffname, sfname, lnum, 0);
+    buf = buflist_new(ffname, sfname, lnum, 0 ASYNC_ARG);
     if (buf != NULL && !cmdmod.keepalt)
 	curwin->w_alt_fnum = buf->b_fnum;
     return buf;
@@ -2957,13 +2960,14 @@ getaltfname(errmsg)
  * used by qf_init(), main() and doarglist()
  */
     int
-buflist_add(fname, flags)
+buflist_add(fname, flags ASYNC_ARG)
     char_u	*fname;
     int		flags;
+    DECL_ASYNC_ARG2
 {
     buf_T	*buf;
 
-    buf = buflist_new(fname, NULL, (linenr_T)0, flags);
+    buf = buflist_new(fname, NULL, (linenr_T)0, flags ASYNC_ARG);
     if (buf != NULL)
 	return buf->b_fnum;
     return 0;
@@ -5760,8 +5764,9 @@ set_buflisted(on)
  * Return TRUE if it changed or this could not be checked.
  */
     int
-buf_contents_changed(buf)
+buf_contents_changed(buf ASYNC_ARG)
     buf_T	*buf;
+    DECL_ASYNC_ARG2
 {
     buf_T	*newbuf;
     int		differ = TRUE;
@@ -5770,7 +5775,7 @@ buf_contents_changed(buf)
     exarg_T	ea;
 
     /* Allocate a buffer without putting it in the buffer list. */
-    newbuf = buflist_new(NULL, NULL, (linenr_T)1, BLN_DUMMY);
+    newbuf = buflist_new(NULL, NULL, (linenr_T)1, BLN_DUMMY ASYNC_ARG);
     if (newbuf == NULL)
 	return TRUE;
 

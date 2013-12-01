@@ -27,7 +27,6 @@ int curwin_col_off2 __ARGS((void));
 void curs_columns __ARGS((int may_scroll));
 void scrolldown __ARGS((long line_count, int byfold));
 void scrollup __ARGS((long line_count, int byfold));
-void check_topfill __ARGS((win_T *wp, int down));
 void scrolldown_clamp __ARGS((void));
 void scrollup_clamp __ARGS((void));
 void scroll_cursor_top __ARGS((int min_scroll, int always));

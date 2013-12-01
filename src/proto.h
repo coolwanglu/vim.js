@@ -67,6 +67,9 @@ extern int _stricoll __ARGS((char *a, char *b));
 # ifdef __QNX__
 #  include "os_qnx.pro"
 # endif
+# ifdef FEAT_GUI_BROWSER
+#  include "os_browser.pro" 
+# endif
 
 # ifdef FEAT_CRYPT
 #  include "blowfish.pro"
@@ -240,6 +243,9 @@ extern char *vim_SelFile __ARGS((Widget toplevel, char *prompt, char *init_path,
 #  endif
 #  ifdef FEAT_GUI_MAC
 #   include "gui_mac.pro"
+#  endif
+#  ifdef FEAT_GUI_BROWSER
+#   include "gui_browser.pro"
 #  endif
 #  ifdef FEAT_GUI_X11
 #   include "gui_x11.pro"

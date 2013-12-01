@@ -76,7 +76,7 @@ typedef struct exarg exarg_T;
 #ifdef DO_DECLARE_EXCMD
 # define EX(a, b, c, d)  {(char_u *)b, c, (long_u)(d)}
 
-typedef void (*ex_func_T) __ARGS((exarg_T *eap));
+typedef void (*ex_func_T) __ARGS((exarg_T *eap DECL_ASYNC_ARG));
 
 static struct cmdname
 {
