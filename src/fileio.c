@@ -2247,7 +2247,7 @@ failed:
 	    curbuf->b_p_eol = FALSE;
 	*ptr = NUL;
 	len = (colnr_T)(ptr - line_start + 1);
-	if (ml_append(lnum, line_start, len, newfile) == FAIL)
+	if (ml_append(lnum, line_start, len, newfile ASYNC_ARG) == FAIL)
 	    error = TRUE;
 	else
 	{
