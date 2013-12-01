@@ -1491,7 +1491,7 @@ normalchar:
 #endif
 		       c) && c != Ctrl_RSB))
 	    {
-		insert_special(c, FALSE, FALSE);
+		insert_special(c, FALSE, FALSE ASYNC_ARG);
 #ifdef FEAT_RIGHTLEFT
 		revins_legal++;
 		revins_chars++;
