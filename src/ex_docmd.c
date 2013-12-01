@@ -186,7 +186,7 @@ static void	ex_pedit __ARGS((exarg_T *eap));
 # define ex_pedit		ex_ni
 #endif
 static void	ex_hide __ARGS((exarg_T *eap));
-static void	ex_stop __ARGS((exarg_T *eap));
+static void	ex_stop __ARGS((exarg_T *eap DECL_ASYNC_ARG));
 static void	ex_exit __ARGS((exarg_T *eap DECL_ASYNC_ARG));
 static void	ex_print __ARGS((exarg_T *eap));
 #ifdef FEAT_BYTEOFF
