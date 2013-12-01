@@ -7400,7 +7400,7 @@ ex_recover(eap ASYNC_ARG)
 			     | CCGD_EXCMD ASYNC_ARG)
 
 	    && (*eap->arg == NUL
-			     || setfname(curbuf, eap->arg, NULL, TRUE) == OK))
+			     || setfname(curbuf, eap->arg, NULL, TRUE ASYNC_ARG) == OK))
 	ml_recover( ASYNC_ARG_ONLY);
     recoverymode = FALSE;
 }
