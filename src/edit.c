@@ -431,7 +431,7 @@ edit(cmdchar, startln, count ASYNC_ARG)
 	if (startln)
 	    Insstart.col = 0;
     }
-    Insstart_textlen = (colnr_T)linetabsize(ml_get_curline());
+    Insstart_textlen = (colnr_T)linetabsize(ml_get_curline( ASYNC_ARG_ONLY));
     Insstart_blank_vcol = MAXCOL;
     if (!did_ai)
 	ai_col = 0;
