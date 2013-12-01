@@ -8228,7 +8228,8 @@ ins_reg()
  * CTRL-G commands in Insert mode.
  */
     static void
-ins_ctrl_g()
+ins_ctrl_g( ASYNC_ARG_ONLY)
+    DECL_ASYNC_ARG_KR
 {
     int		c;
 
