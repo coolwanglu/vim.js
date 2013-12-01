@@ -300,7 +300,7 @@ set_indent(size, flags)
     /* Replace the line (unless undo fails). */
     if (!(flags & SIN_UNDO) || u_savesub(curwin->w_cursor.lnum) == OK)
     {
-	ml_replace(curwin->w_cursor.lnum, newline, FALSE);
+	ml_replace(curwin->w_cursor.lnum, newline, FALSE ASYNC_ARG);
 	if (flags & SIN_CHANGED)
 	    changed_bytes(curwin->w_cursor.lnum, 0);
 	/* Correct saved cursor position if it is in this line. */

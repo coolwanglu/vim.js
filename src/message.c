@@ -421,7 +421,6 @@ smsg(DECL_ASYNC_ARG_FIRST char_u *s, ...)
 _RTLENTRYF
 #endif
 smsg_attr(DECL_ASYNC_ARG_FIRST int attr, char_u *s, ...)
-    DECL_ASYNC_ARG_KR
 {
     va_list arglist;
 
@@ -529,13 +528,13 @@ msg_source(attr)
     p = get_emsg_source();
     if (p != NULL)
     {
-	msg_attr(p, attr);
+	msg_attr(p, attr ASYNC_ARG);
 	vim_free(p);
     }
     p = get_emsg_lnum();
     if (p != NULL)
     {
-	msg_attr(p, hl_attr(HLF_N));
+	msg_attr(p, hl_attr(HLF_N) ASYNC_ARG);
 	vim_free(p);
 	last_sourcing_lnum = sourcing_lnum;  /* only once for each line */
     }
@@ -684,7 +683,7 @@ emsg(s)
      * Display the error message itself.
      */
     msg_nowait = FALSE;			/* wait for this msg */
-    return msg_attr(s, attr);
+    return msg_attr(s, attr ASYNC_ARG);
 }
 
 /*
@@ -726,7 +725,7 @@ msg_trunc_attr(s, force, attr)
     s = msg_may_trunc(force, s);
 
     msg_hist_off = TRUE;
-    n = msg_attr(s, attr);
+    n = msg_attr(s, attr ASYNC_ARG);
     msg_hist_off = FALSE;
 
     if (n)
@@ -852,11 +851,11 @@ ex_messages(eap)
     if (s != NULL && *s != NUL)
 	msg_attr((char_u *)
 		_("Messages maintainer: Bram Moolenaar <Bram@vim.org>"),
-		hl_attr(HLF_T));
+		hl_attr(HLF_T) ASYNC_ARG);
 
     for (p = first_msg_hist; p != NULL && !got_int; p = p->next)
 	if (p->msg != NULL)
-	    msg_attr(p->msg, p->attr);
+	    msg_attr(p->msg, p->attr ASYNC_ARG);
 
     msg_hist_off = FALSE;
 }
@@ -3310,7 +3309,7 @@ give_warning(message, hl)
 	keep_msg_attr = hl_attr(HLF_W);
     else
 	keep_msg_attr = 0;
-    if (msg_attr(message, keep_msg_attr) && msg_scrolled == 0)
+    if (msg_attr(message, keep_msg_attr ASYNC_ARG) && msg_scrolled == 0)
 	set_keep_msg(message, keep_msg_attr);
     msg_didout = FALSE;	    /* overwrite this message */
     msg_nowait = TRUE;	    /* don't wait for this message */
