@@ -1364,7 +1364,7 @@ ml_recover( ASYNC_ARG_ONLY)
      * contents of the current buffer.
      */
     while (!(curbuf->b_ml.ml_flags & ML_EMPTY))
-	ml_delete((linenr_T)1, FALSE);
+	ml_delete((linenr_T)1, FALSE ASYNC_ARG);
 
     /*
      * Try reading the original file to obtain the values of 'fileformat',
