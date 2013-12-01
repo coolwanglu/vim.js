@@ -4994,7 +4994,7 @@ do_sub(eap ASYNC_ARG)
 		    p1 = sub_firstline;
 		else
 		{
-		    p1 = ml_get(sub_firstlnum + nmatch - 1);
+		    p1 = ml_get(sub_firstlnum + nmatch - 1 ASYNC_ARG);
 		    nmatch_tl += nmatch - 1;
 		}
 		copy_len = regmatch.startpos[0].col - copycol;
