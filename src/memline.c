@@ -609,7 +609,7 @@ ml_setname(buf ASYNC_ARG)
 	 * For help files we will make a swap file now.
 	 */
 	if (p_uc != 0)
-	    ml_open_file(buf);	    /* create a swap file */
+	    ml_open_file(buf ASYNC_ARG);	    /* create a swap file */
 	return;
     }
 
