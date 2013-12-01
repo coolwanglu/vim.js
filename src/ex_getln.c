@@ -834,7 +834,7 @@ getcmdline(firstc, count, indent ASYNC_ARG)
 							       firstc != '@' ASYNC_ARG);
 		else
 		    res = nextwild(&xpc, WILD_EXPAND_KEEP, WILD_NO_BEEP,
-							       firstc != '@');
+							       firstc != '@' ASYNC_ARG);
 
 		/* if interrupted while completing, behave like it failed */
 		if (got_int)
