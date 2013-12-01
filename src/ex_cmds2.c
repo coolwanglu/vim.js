@@ -1609,9 +1609,10 @@ dialog_changed(buf, checkall)
  * hidden, autowriting it or unloading it.
  */
     int
-can_abandon(buf, forceit)
+can_abandon(buf, forceit ASYNC_ARG)
     buf_T	*buf;
     int		forceit;
+    DECL_ASYNC_ARG_KR
 {
     return (	   P_HID(buf)
 		|| !bufIsChanged(buf)
