@@ -10040,8 +10040,9 @@ ins_digraph()
  * Returns the char to be inserted, or NUL if none found.
  */
     int
-ins_copychar(lnum)
+ins_copychar(lnum ASYNC_ARG)
     linenr_T	lnum;
+    DECL_ASYNC_ARG_KR
 {
     int	    c;
     int	    temp;
