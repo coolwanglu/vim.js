@@ -96,7 +96,7 @@ open_buffer(read_stdin, eap, flags ASYNC_ARG)
 					&& (curbuf->b_flags & BF_NEVERLOADED))
 	curbuf->b_p_ro = TRUE;
 
-    if (ml_open(curbuf) == FAIL)
+    if (ml_open(curbuf ASYNC_ARG) == FAIL)
     {
 	/*
 	 * There MUST be a memfile, otherwise we can't do anything

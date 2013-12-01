@@ -4114,7 +4114,7 @@ vim_snprintf(char *str, size_t str_m, char *fmt, ...)
 }
 
     int
-vim_vsnprintf(str, str_m, fmt, ap, tvs)
+vim_vsnprintf(ASYNC_ARG_FIRST str, str_m, fmt, ap, tvs)
 # else
     /* clumsy way to work around missing va_list */
 #  define get_a_arg(i) (++i, i == 2 ? a1 : i == 3 ? a2 : i == 4 ? a3 : i == 5 ? a4 : i == 6 ? a5 : i == 7 ? a6 : i == 8 ? a7 : i == 9 ? a8 : i == 10 ? a9 : a10)
@@ -4124,8 +4124,9 @@ vim_vsnprintf(str, str_m, fmt, ap, tvs)
 #ifdef __BORLANDC__
 _RTLENTRYF
 #endif
-vim_snprintf(str, str_m, fmt, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10)
+vim_snprintf(ASYNC_ARG_FIRST str, str_m, fmt, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10)
 # endif
+    DECL_ASYNC_ARG_KR
     char	*str;
     size_t	str_m;
     char	*fmt;
