@@ -3109,9 +3109,10 @@ ml_replace(lnum, line, copy ASYNC_ARG)
  * return FAIL for failure, OK otherwise
  */
     int
-ml_delete(lnum, message)
+ml_delete(lnum, message ASYNC_ARG)
     linenr_T	lnum;
     int		message;
+    DECL_ASYNC_ARG_KR
 {
     ml_flush_line(curbuf);
     return ml_delete_int(curbuf, lnum, message ASYNC_ARG);
