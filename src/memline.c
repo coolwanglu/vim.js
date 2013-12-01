@@ -2519,7 +2519,7 @@ ml_append(lnum, line, len, newfile)
     int		newfile;	/* flag, see above */
 {
     /* When starting up, we might still need to create the memfile */
-    if (curbuf->b_ml.ml_mfp == NULL && open_buffer(FALSE, NULL, 0) == FAIL)
+    if (curbuf->b_ml.ml_mfp == NULL && open_buffer(FALSE, NULL, 0 ASYNC_ARG) == FAIL)
 	return FAIL;
 
     if (curbuf->b_ml.ml_line_lnum != 0)
