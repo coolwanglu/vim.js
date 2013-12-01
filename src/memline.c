@@ -2288,9 +2288,10 @@ ml_sync_all(check_file, check_char)
  * when message is TRUE the success of preserving is reported
  */
     void
-ml_preserve(buf, message)
+ml_preserve(buf, message ASYNC_ARG)
     buf_T	*buf;
     int		message;
+    DECL_ASYNC_ARG_KR
 {
     bhdr_T	*hp;
     linenr_T	lnum;

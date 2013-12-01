@@ -12,7 +12,7 @@ void ml_timestamp __ARGS((buf_T *buf));
 void ml_recover __ARGS((async_context *_async_context));
 int recover_names __ARGS((char_u *fname, int list, int nr, char_u **fname_out, async_context *_async_context));
 void ml_sync_all __ARGS((int check_file, int check_char));
-void ml_preserve __ARGS((buf_T *buf, int message));
+void ml_preserve __ARGS((buf_T *buf, int message, async_context *_async_context));
 char_u *ml_get __ARGS((linenr_T lnum));
 char_u *ml_get_pos __ARGS((pos_T *pos));
 char_u *ml_get_curline __ARGS((void));
