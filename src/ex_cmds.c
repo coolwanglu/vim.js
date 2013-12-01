@@ -4812,7 +4812,7 @@ do_sub(eap ASYNC_ARG)
 				 * really update the line, it would change
 				 * what matches.  Temporarily replace the line
 				 * and change it back afterwards. */
-				orig_line = vim_strsave(ml_get(lnum));
+				orig_line = vim_strsave(ml_get(lnum ASYNC_ARG));
 				if (orig_line != NULL)
 				{
 				    char_u *new_line = concat_str(new_start,
