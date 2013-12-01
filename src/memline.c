@@ -3119,7 +3119,7 @@ ml_delete(lnum, message ASYNC_ARG)
     int		message;
     DECL_ASYNC_ARG_KR
 {
-    ml_flush_line(curbuf);
+    ml_flush_line(curbuf ASYNC_ARG);
     return ml_delete_int(curbuf, lnum, message ASYNC_ARG);
 }
 
