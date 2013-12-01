@@ -2236,9 +2236,10 @@ end:
  * always sync at least one block.
  */
     void
-ml_sync_all(check_file, check_char)
+ml_sync_all(check_file, check_char ASYNC_ARG)
     int	    check_file;
     int	    check_char;
+    DECL_ASYNC_ARG_KR
 {
     buf_T		*buf;
     struct stat		st;
