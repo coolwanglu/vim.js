@@ -1281,7 +1281,7 @@ ml_recover( ASYNC_ARG_ONLY)
 	    msg_outtrans_attr(mfp->mf_fname, attr | MSG_HIST);
 	    MSG_PUTS_ATTR(_(" has been damaged (page size is smaller than minimum value).\n"),
 			attr | MSG_HIST);
-	    msg_end();
+	    msg_end( ASYNC_ARG_ONLY);
 	    goto theend;
 	}
 	if ((size = lseek(mfp->mf_fd, (off_t)0L, SEEK_END)) <= 0)
