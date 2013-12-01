@@ -1312,7 +1312,7 @@ ml_recover( ASYNC_ARG_ONLY)
     if (directly)
     {
 	expand_env(b0p->b0_fname, NameBuff, MAXPATHL);
-	if (setfname(curbuf, NameBuff, NULL, TRUE) == FAIL)
+	if (setfname(curbuf, NameBuff, NULL, TRUE ASYNC_ARG) == FAIL)
 	    goto theend;
     }
 

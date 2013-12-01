@@ -8,7 +8,7 @@ void check_need_swap __ARGS((int newfile));
 void ml_close __ARGS((buf_T *buf, int del_file));
 void ml_close_all __ARGS((int del_file));
 void ml_close_notmod __ARGS((void));
-void ml_timestamp __ARGS((buf_T *buf));
+void ml_timestamp __ARGS((buf_T *buf, async_context *_async_context));
 void ml_recover __ARGS((async_context *_async_context));
 int recover_names __ARGS((char_u *fname, int list, int nr, char_u **fname_out, async_context *_async_context));
 void ml_sync_all __ARGS((int check_file, int check_char, async_context *_async_context));
