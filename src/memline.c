@@ -3319,7 +3319,8 @@ ml_setmarked(lnum ASYNC_ARG)
  * find the first line with its B_MARKED flag set
  */
     linenr_T
-ml_firstmarked()
+ml_firstmarked( ASYNC_ARG_ONLY)
+    DECL_ASYNC_ARG_KR
 {
     bhdr_T	*hp;
     DATA_BL	*dp;
