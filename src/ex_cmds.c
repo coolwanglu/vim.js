@@ -2969,7 +2969,8 @@ do_wqall(eap ASYNC_ARG)
  * Return TRUE and give a message when it's not st.
  */
     int
-not_writing()
+not_writing( ASYNC_ARG_ONLY)
+    DECL_ASYNC_ARG_KR
 {
     if (p_write)
 	return FALSE;
