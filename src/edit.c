@@ -944,7 +944,7 @@ edit(cmdchar, startln, count ASYNC_ARG)
 	switch (c)
 	{
 	case ESC:	/* End input mode */
-	    if (echeck_abbr(ESC + ABBR_OFF))
+	    if (echeck_abbr(ESC + ABBR_OFF ASYNC_ARG))
 		break;
 	    /*FALLTHROUGH*/
 
