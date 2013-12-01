@@ -4879,7 +4879,7 @@ do_sub(eap ASYNC_ARG)
 
 			    /* restore the line */
 			    if (orig_line != NULL)
-				ml_replace(lnum, orig_line, FALSE);
+				ml_replace(lnum, orig_line, FALSE ASYNC_ARG);
 			}
 
 			need_wait_return = FALSE; /* no hit-return prompt */
