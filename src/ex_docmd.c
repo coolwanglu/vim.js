@@ -7371,8 +7371,9 @@ alist_slash_adjust()
  * ":preserve".
  */
     static void
-ex_preserve(eap)
+ex_preserve(eap ASYNC_ARG)
     exarg_T	*eap UNUSED;
+    DECL_ASYNC_ARG_KR
 {
     curbuf->b_flags |= BF_PRESERVED;
     ml_preserve(curbuf, TRUE ASYNC_ARG);
