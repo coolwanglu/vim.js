@@ -67,7 +67,7 @@ static void	append_command __ARGS((char_u *cmd));
 static char_u	*find_command __ARGS((exarg_T *eap, int *full));
 
 static void	ex_abbreviate __ARGS((exarg_T *eap DECL_ASYNC_ARG));
-static void	ex_map __ARGS((exarg_T *eap));
+static void	ex_map __ARGS((exarg_T *eap DECL_ASYNC_ARG));
 static void	ex_unmap __ARGS((exarg_T *eap));
 static void	ex_mapclear __ARGS((exarg_T *eap));
 static void	ex_abclear __ARGS((exarg_T *eap));
