@@ -6481,9 +6481,10 @@ internal_format(textwidth, second_indent, flags, format_only, c)
  * saved here.
  */
     void
-auto_format(trailblank, prev_line)
+auto_format(trailblank, prev_line ASYNC_ARG)
     int		trailblank;	/* when TRUE also format with trailing blank */
     int		prev_line;	/* may start in previous line */
+    DECL_ASYNC_ARG_KR
 {
     pos_T	pos;
     colnr_T	len;
