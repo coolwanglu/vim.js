@@ -1367,7 +1367,7 @@ ml_recover( ASYNC_ARG_ONLY)
      */
     if (curbuf->b_ffname != NULL)
 	orig_file_status = readfile(curbuf->b_ffname, NULL, (linenr_T)0,
-			      (linenr_T)0, (linenr_T)MAXLNUM, NULL, READ_NEW);
+			      (linenr_T)0, (linenr_T)MAXLNUM, NULL, READ_NEW ASYNC_ARG);
 
 #ifdef FEAT_CRYPT
     if (b0_cm >= 0)
