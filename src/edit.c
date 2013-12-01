@@ -1646,7 +1646,8 @@ ins_redraw(ready)
  * Handle a CTRL-V or CTRL-Q typed in Insert mode.
  */
     static void
-ins_ctrl_v()
+ins_ctrl_v( ASYNC_ARG_ONLY)
+    DECL_ASYNC_ARG_KR
 {
     int		c;
     int		did_putchar = FALSE;
