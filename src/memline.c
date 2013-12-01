@@ -704,7 +704,7 @@ ml_open_files()
 
     for (buf = firstbuf; buf != NULL; buf = buf->b_next)
 	if (!buf->b_p_ro || buf->b_changed)
-	    ml_open_file(buf);
+	    ml_open_file(buf ASYNC_ARG);
 }
 
 /*
