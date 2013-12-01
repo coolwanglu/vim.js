@@ -5092,7 +5092,7 @@ nofail:
 	    mch_memmove(IObuff, errnum, (size_t)numlen);
 	}
 	STRCAT(IObuff, errmsg);
-	emsg(IObuff);
+	emsg(IObuff ASYNC_ARG);
 	if (errmsg_allocated)
 	    vim_free(errmsg);
 
