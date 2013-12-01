@@ -1489,7 +1489,7 @@ normalchar:
 			 * what check_abbr() expects. */
 			(has_mbyte && c >= 0x100) ? (c + ABBR_OFF) :
 #endif
-		       c) && c != Ctrl_RSB))
+		       c ASYNC_ARG) && c != Ctrl_RSB))
 	    {
 		insert_special(c, FALSE, FALSE ASYNC_ARG);
 #ifdef FEAT_RIGHTLEFT
