@@ -8746,10 +8746,11 @@ ins_bs_one(vcolp ASYNC_ARG)
  * Return TRUE when backspace was actually used.
  */
     static int
-ins_bs(c, mode, inserted_space_p)
+ins_bs(c, mode, inserted_space_p ASYNC_ARG)
     int		c;
     int		mode;
     int		*inserted_space_p;
+    DECL_ASYNC_ARG_KR
 {
     linenr_T	lnum;
     int		cc;
