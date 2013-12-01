@@ -698,7 +698,8 @@ ml_setname(buf ASYNC_ARG)
  * Used when 'updatecount' changes from zero to non-zero.
  */
     void
-ml_open_files()
+ml_open_files( ASYNC_ARG_ONLY)
+    DECL_ASYNC_ARG_KR
 {
     buf_T	*buf;
 
