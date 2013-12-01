@@ -3364,7 +3364,8 @@ ml_firstmarked( ASYNC_ARG_ONLY)
  * clear all DB_MARKED flags
  */
     void
-ml_clearmarked()
+ml_clearmarked( ASYNC_ARG_ONLY)
+    DECL_ASYNC_ARG_KR
 {
     bhdr_T	*hp;
     DATA_BL	*dp;
