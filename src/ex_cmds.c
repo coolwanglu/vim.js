@@ -3822,7 +3822,7 @@ do_ecmd(fnum, ffname, sfname, eap, newlnum, flags, oldwin ASYNC_ARG)
 		curwin->w_set_curswant = TRUE;
 	    }
 	    else
-		beginline(BL_SOL | BL_FIX);
+		beginline(BL_SOL | BL_FIX ASYNC_ARG);
 	}
 	else			/* no line number, go to last line in Ex mode */
 	{
