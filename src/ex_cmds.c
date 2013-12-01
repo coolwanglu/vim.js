@@ -6202,7 +6202,7 @@ fix_help_buffer( ASYNC_ARG_ONLY)
 		else if (line[len - 1] == '~')
 		{
 		    /* blank-out a '~' at the end of line (header marker) */
-		    line = ml_get_buf(curbuf, lnum, TRUE);
+		    line = ml_get_buf(curbuf, lnum, TRUE ASYNC_ARG);
 		    line[len - 1] = ' ';
 		}
 	    }
