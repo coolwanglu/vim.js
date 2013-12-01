@@ -156,10 +156,11 @@ sort_func_compare __ARGS((const void *s1, const void *s2));
  * otherwise.
  */
     char_u *
-getcmdline(firstc, count, indent)
+getcmdline(firstc, count, indent ASYNC_ARG)
     int		firstc;
     long	count UNUSED;	/* only used for incremental search */
     int		indent;		/* indent for inside conditionals */
+    DECL_ASYNC_ARG_KR
 {
     int		c;
     int		i;
@@ -2156,15 +2157,16 @@ correct_cmdspos(idx, cells)
  * Get an Ex command line for the ":" command.
  */
     char_u *
-getexline(c, cookie, indent)
+getexline(c, cookie, indent ASYNC_ARG)
     int		c;		/* normally ':', NUL for ":append" */
     void	*cookie UNUSED;
     int		indent;		/* indent for inside conditionals */
+    DECL_ASYNC_ARG_KR
 {
     /* When executing a register, remove ':' that's in front of each line. */
     if (exec_from_reg && vpeekc() == ':')
 	(void)vgetc();
-    return getcmdline(c, 1L, indent);
+    return getcmdline(c, 1L, indent ASYNC_ARG);
 }
 
 /*

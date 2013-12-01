@@ -1,6 +1,6 @@
 /* ex_docmd.c */
-void do_exmode __ARGS((int improved));
-int do_cmdline_cmd __ARGS((char_u *cmd));
+void do_exmode __ARGS((int improved, async_context *_async_context));
+int do_cmdline_cmd __ARGS((char_u *cmd, async_context *_async_context));
 int do_cmdline __ARGS((char_u *cmdline, char_u *(*fgetline)(int, void *, int), void *cookie, int flags, async_context *_async_context));
 int getline_equal __ARGS((char_u *(*fgetline)(int, void *, int), void *cookie, char_u *(*func)(int, void *, int)));
 void *getline_cookie __ARGS((char_u *(*fgetline)(int, void *, int), void *cookie));
@@ -32,14 +32,14 @@ void alist_init __ARGS((alist_T *al));
 void alist_unlink __ARGS((alist_T *al));
 void alist_new __ARGS((void));
 void alist_expand __ARGS((int *fnum_list, int fnum_len));
-void alist_set __ARGS((alist_T *al, int count, char_u **files, int use_curbuf, int *fnum_list, int fnum_len));
-void alist_add __ARGS((alist_T *al, char_u *fname, int set_fnum));
+void alist_set __ARGS((alist_T *al, int count, char_u **files, int use_curbuf, int *fnum_list, int fnum_len, async_context *_async_context));
+void alist_add __ARGS((alist_T *al, char_u *fname, int set_fnum, async_context *_async_context));
 void alist_slash_adjust __ARGS((void));
 void do_exedit __ARGS((exarg_T *eap, win_T *old_curwin, async_context *_async_context));
 void free_cd_dir __ARGS((void));
 void post_chdir __ARGS((int local));
-void ex_cd __ARGS((exarg_T *eap));
-void do_sleep __ARGS((long msec));
+void ex_cd __ARGS((exarg_T *eap, async_context *_async_context));
+void do_sleep __ARGS((long msec, async_context *_async_context));
 int vim_mkdir_emsg __ARGS((char_u *name, int prot));
 FILE *open_exfile __ARGS((char_u *fname, int forceit, char *mode));
 void update_topline_cursor __ARGS((void));

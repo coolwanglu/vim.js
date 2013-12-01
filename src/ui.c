@@ -248,7 +248,7 @@ ui_char_avail()
 ui_delay(msec, ignoreinput ASYNC_ARG)
     long	msec;
     int		ignoreinput;
-    DECL_ASYNC_ARG2
+    DECL_ASYNC_ARG_KR
 {
 #ifdef FEAT_GUI
     if (gui.in_use && !ignoreinput)

@@ -2488,7 +2488,7 @@ scripterror:
     static void
 check_tty(parmp ASYNC_ARG)
     mparm_T	*parmp;
-    DECL_ASYNC_ARG2
+    DECL_ASYNC_ARG_KR
 {
     int		input_isatty;		/* is active input a terminal? */
 

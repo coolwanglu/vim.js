@@ -13,7 +13,9 @@
 
 #include "vim.h"
 
-#ifdef FEAT_INS_EXPAND
+// Lu Wang: fix proto
+//#ifdef FEAT_INS_EXPAND
+#if defined(FEAT_INS_EXPAND) || defined(PROTO)
 /*
  * definitions used for CTRL-X submode
  */
@@ -216,7 +218,7 @@ static int cindent_on __ARGS((void));
 static void ins_reg __ARGS((void));
 static void ins_ctrl_g __ARGS((void));
 static void ins_ctrl_hat __ARGS((void));
-static int  ins_esc __ARGS((long *count, int cmdchar, int nomove));
+static int  ins_esc __ARGS((long *count, int cmdchar, int nomove DECL_ASYNC_ARG));
 #ifdef FEAT_RIGHTLEFT
 static void ins_ctrl_ __ARGS((void));
 #endif
@@ -310,10 +312,11 @@ static int	did_add_space = FALSE;	/* auto_format() added an extra space
  * Return TRUE if a CTRL-O command caused the return (insert mode pending).
  */
     int
-edit(cmdchar, startln, count)
+edit(cmdchar, startln, count ASYNC_ARG)
     int		cmdchar;
     int		startln;	/* if set, insert at start of line */
     long	count;
+    DECL_ASYNC_ARG_KR
 {
     int		c = 0;
     char_u	*ptr;
@@ -648,7 +651,7 @@ edit(cmdchar, startln, count)
 	{
 	    did_check_timestamps = FALSE;
 	    if (need_check_timestamps)
-		check_timestamps(FALSE);
+		check_timestamps(FALSE ASYNC_ARG);
 	}
 
 	/*
@@ -982,7 +985,7 @@ doESCkey:
 	    if (ins_at_eol && gchar_cursor() == NUL)
 		o_lnum = curwin->w_cursor.lnum;
 
-	    if (ins_esc(&count, cmdchar, nomove))
+	    if (ins_esc(&count, cmdchar, nomove ASYNC_ARG))
 	    {
 #ifdef FEAT_AUTOCMD
 		if (cmdchar != 'r' && cmdchar != 'v')
@@ -8315,10 +8318,11 @@ ins_ctrl_hat()
  * insert.
  */
     static int
-ins_esc(count, cmdchar, nomove)
+ins_esc(count, cmdchar, nomove ASYNC_ARG)
     long	*count;
     int		cmdchar;
     int		nomove;	    /* don't move cursor */
+    DECL_ASYNC_ARG_KR
 {
     int		temp;
     static int	disabled_redraw = FALSE;

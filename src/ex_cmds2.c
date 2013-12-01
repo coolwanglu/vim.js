@@ -14,9 +14,10 @@
 #include "vim.h"
 #include "version.h"
 
-static void	cmd_source __ARGS((char_u *fname, exarg_T *eap));
+static void	cmd_source __ARGS((char_u *fname, exarg_T *eap DECL_ASYNC_ARG));
 
-#ifdef FEAT_EVAL
+// Lu Wang: fix proto
+#if defined(FEAT_EVAL) || defined(PROTO)
 /* Growarray to store info about already sourced scripts.
  * For Unix also store the dev/ino, so that we don't have to stat() each
  * script when going through the list. */
@@ -1641,8 +1642,9 @@ add_bufnum(bufnrs, bufnump, nr)
  * That changed buffer becomes the current buffer.
  */
     int
-check_changed_any(hidden)
+check_changed_any(hidden ASYNC_ARG)
     int		hidden;		/* Only check hidden buffers */
+    DECL_ASYNC_ARG_KR
 {
     int		ret = FALSE;
     buf_T	*buf;
@@ -1727,7 +1729,7 @@ check_changed_any(hidden)
 	{
 	    save = no_wait_return;
 	    no_wait_return = FALSE;
-	    wait_return(FALSE);
+	    wait_return(FALSE ASYNC_ARG);
 	    no_wait_return = save;
 	}
     }
@@ -1753,7 +1755,7 @@ buf_found:
 
     /* Open the changed buffer in the current window. */
     if (buf != curbuf)
-	set_curbuf(buf, DOBUF_GOTO);
+	set_curbuf(buf, DOBUF_GOTO ASYNC_ARG);
 
 theend:
     vim_free(bufnrs);
@@ -1808,7 +1810,7 @@ buf_write_all(buf, forceit)
  */
 
 static char_u	*do_one_arg __ARGS((char_u *str));
-static int	do_arglist __ARGS((char_u *str, int what, int after));
+static int	do_arglist __ARGS((char_u *str, int what, int after DECL_ASYNC_ARG));
 static void	alist_check_arg_idx __ARGS((void));
 static int	editing_arg_idx __ARGS((win_T *win));
 #ifdef FEAT_LISTCMDS
@@ -1916,10 +1918,11 @@ get_arglist_exp(str, fcountp, fnamesp, wig)
  * Redefine the argument list.
  */
     void
-set_arglist(str)
+set_arglist(str ASYNC_ARG)
     char_u	*str;
+    DECL_ASYNC_ARG_KR
 {
-    do_arglist(str, AL_SET, 0);
+    do_arglist(str, AL_SET, 0 ASYNC_ARG);
 }
 #endif
 
@@ -1931,10 +1934,11 @@ set_arglist(str)
  * Return FAIL for failure, OK otherwise.
  */
     static int
-do_arglist(str, what, after)
+do_arglist(str, what, after ASYNC_ARG)
     char_u	*str;
     int		what UNUSED;
     int		after UNUSED;		/* 0 means before first one */
+    DECL_ASYNC_ARG_KR
 {
     garray_T	new_ga;
     int		exp_count;
@@ -2019,7 +2023,7 @@ do_arglist(str, what, after)
 	}
 	else /* what == AL_SET */
 #endif
-	    alist_set(ALIST(curwin), exp_count, exp_files, FALSE, NULL, 0);
+	    alist_set(ALIST(curwin), exp_count, exp_files, FALSE, NULL, 0 ASYNC_ARG);
     }
 
     alist_check_arg_idx();
@@ -2107,7 +2111,7 @@ check_arg_idx(win)
     void
 ex_args(eap ASYNC_ARG)
     exarg_T	*eap;
-    DECL_ASYNC_ARG2
+    DECL_ASYNC_ARG_KR
 {
     int		i;
 
@@ -2185,7 +2189,7 @@ ex_args(eap ASYNC_ARG)
     void
 ex_previous(eap ASYNC_ARG)
     exarg_T	*eap;
-    DECL_ASYNC_ARG2
+    DECL_ASYNC_ARG_KR
 {
     /* If past the last one already, go to the last one. */
     if (curwin->w_arg_idx - (int)eap->line2 >= ARGCOUNT)
@@ -2200,7 +2204,7 @@ ex_previous(eap ASYNC_ARG)
     void
 ex_rewind(eap ASYNC_ARG)
     exarg_T	*eap;
-    DECL_ASYNC_ARG2
+    DECL_ASYNC_ARG_KR
 {
     do_argfile(eap, 0 ASYNC_ARG);
 }
@@ -2211,7 +2215,7 @@ ex_rewind(eap ASYNC_ARG)
     void
 ex_last(eap ASYNC_ARG)
     exarg_T	*eap;
-    DECL_ASYNC_ARG2
+    DECL_ASYNC_ARG_KR
 {
     do_argfile(eap, ARGCOUNT - 1 ASYNC_ARG);
 }
@@ -2222,7 +2226,7 @@ ex_last(eap ASYNC_ARG)
     void
 ex_argument(eap ASYNC_ARG)
     exarg_T	*eap;
-    DECL_ASYNC_ARG2
+    DECL_ASYNC_ARG_KR
 {
     int		i;
 
@@ -2240,7 +2244,7 @@ ex_argument(eap ASYNC_ARG)
 do_argfile(eap, argn ASYNC_ARG)
     exarg_T	*eap;
     int		argn;
-    DECL_ASYNC_ARG2
+    DECL_ASYNC_ARG_KR
 {
     int		other;
     char_u	*p;
@@ -2320,7 +2324,7 @@ do_argfile(eap, argn ASYNC_ARG)
     void
 ex_next(eap ASYNC_ARG)
     exarg_T	*eap;
-    DECL_ASYNC_ARG2
+    DECL_ASYNC_ARG_KR
 {
     int		i;
 
@@ -2336,7 +2340,7 @@ ex_next(eap ASYNC_ARG)
     {
 	if (*eap->arg != NUL)		    /* redefine file list */
 	{
-	    if (do_arglist(eap->arg, AL_SET, 0) == FAIL)
+	    if (do_arglist(eap->arg, AL_SET, 0 ASYNC_ARG) == FAIL)
 		return;
 	    i = 0;
 	}
@@ -2726,14 +2730,15 @@ ex_runtime(eap)
     source_runtime(eap->arg, eap->forceit);
 }
 
-static void source_callback __ARGS((char_u *fname, void *cookie));
+static void source_callback __ARGS((char_u *fname, void *cookie DECL_ASYNC_ARG));
 
     static void
-source_callback(fname, cookie)
+source_callback(fname, cookie ASYNC_ARG)
     char_u	*fname;
     void	*cookie UNUSED;
+    DECL_ASYNC_ARG_KR
 {
-    (void)do_source(fname, FALSE, DOSO_NONE);
+    (void)do_source(fname, FALSE, DOSO_NONE ASYNC_ARG);
 }
 
 /*
@@ -2880,8 +2885,9 @@ ex_options(eap)
  * ":source {fname}"
  */
     void
-ex_source(eap)
+ex_source(eap ASYNC_ARG)
     exarg_T	*eap;
+    DECL_ASYNC_ARG_KR
 {
 #ifdef FEAT_BROWSE
     if (cmdmod.browse)
@@ -2898,13 +2904,14 @@ ex_source(eap)
     }
     else
 #endif
-	cmd_source(eap->arg, eap);
+	cmd_source(eap->arg, eap ASYNC_ARG);
 }
 
     static void
-cmd_source(fname, eap)
+cmd_source(fname, eap ASYNC_ARG)
     char_u	*fname;
     exarg_T	*eap;
+    DECL_ASYNC_ARG_KR
 {
     if (*fname == NUL)
 	EMSG(_(e_argreq));
@@ -2925,7 +2932,7 @@ cmd_source(fname, eap)
 						 );
 
     /* ":source" read ex commands */
-    else if (do_source(fname, FALSE, DOSO_NONE) == FAIL)
+    else if (do_source(fname, FALSE, DOSO_NONE ASYNC_ARG) == FAIL)
 	EMSG2(_(e_notopen), fname);
 }
 
@@ -3034,10 +3041,11 @@ fopen_noinh_readbin(filename)
  * return FAIL if file could not be opened, OK otherwise
  */
     int
-do_source(fname, check_other, is_vimrc)
+do_source(fname, check_other, is_vimrc ASYNC_ARG)
     char_u	*fname;
     int		check_other;	    /* check for .vimrc and _vimrc */
     int		is_vimrc;	    /* DOSO_ value */
+    DECL_ASYNC_ARG_KR
 {
     struct source_cookie    cookie;
     char_u		    *save_sourcing_name;
@@ -3317,7 +3325,7 @@ do_source(fname, check_other, is_vimrc)
      * Call do_cmdline, which will call getsourceline() to get the lines.
      */
     do_cmdline(firstline, getsourceline, (void *)&cookie,
-				     DOCMD_VERBOSE|DOCMD_NOWAIT|DOCMD_REPEAT);
+				     DOCMD_VERBOSE|DOCMD_NOWAIT|DOCMD_REPEAT ASYNC_ARG);
     retval = OK;
 
 #ifdef FEAT_PROFILE

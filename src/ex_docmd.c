@@ -130,7 +130,7 @@ static int	getargopt __ARGS((exarg_T *eap));
 #endif
 
 static int	check_more __ARGS((int, int));
-static linenr_T get_address __ARGS((char_u **, int skip, int to_other_file));
+static linenr_T get_address __ARGS((char_u **, int skip, int to_other_file DECL_ASYNC_ARG));
 static void	get_flags __ARGS((exarg_T *eap));
 #if !defined(FEAT_PERL) \
 	|| !defined(FEAT_PYTHON) || !defined(FEAT_PYTHON3) \
@@ -147,11 +147,11 @@ static void	correct_range __ARGS((exarg_T *eap));
 static char_u	*replace_makeprg __ARGS((exarg_T *eap, char_u *p, char_u **cmdlinep));
 #endif
 static char_u	*repl_cmdline __ARGS((exarg_T *eap, char_u *src, int srclen, char_u *repl, char_u **cmdlinep));
-static void	ex_highlight __ARGS((exarg_T *eap));
-static void	ex_colorscheme __ARGS((exarg_T *eap));
-static void	ex_quit __ARGS((exarg_T *eap));
+static void	ex_highlight __ARGS((exarg_T *eap DECL_ASYNC_ARG));
+static void	ex_colorscheme __ARGS((exarg_T *eap DECL_ASYNC_ARG));
+static void	ex_quit __ARGS((exarg_T *eap DECL_ASYNC_ARG));
 static void	ex_cquit __ARGS((exarg_T *eap));
-static void	ex_quit_all __ARGS((exarg_T *eap));
+static void	ex_quit_all __ARGS((exarg_T *eap DECL_ASYNC_ARG));
 #ifdef FEAT_WINDOWS
 static void	ex_close __ARGS((exarg_T *eap));
 static void	ex_win_close __ARGS((int forceit, win_T *win, tabpage_T *tp));
@@ -187,14 +187,14 @@ static void	ex_pedit __ARGS((exarg_T *eap));
 #endif
 static void	ex_hide __ARGS((exarg_T *eap));
 static void	ex_stop __ARGS((exarg_T *eap));
-static void	ex_exit __ARGS((exarg_T *eap));
+static void	ex_exit __ARGS((exarg_T *eap DECL_ASYNC_ARG));
 static void	ex_print __ARGS((exarg_T *eap));
 #ifdef FEAT_BYTEOFF
 static void	ex_goto __ARGS((exarg_T *eap));
 #else
 # define ex_goto		ex_ni
 #endif
-static void	ex_shell __ARGS((exarg_T *eap));
+static void	ex_shell __ARGS((exarg_T *eap DECL_ASYNC_ARG));
 static void	ex_preserve __ARGS((exarg_T *eap));
 static void	ex_recover __ARGS((exarg_T *eap));
 #ifndef FEAT_LISTCMDS
@@ -205,9 +205,9 @@ static void	ex_recover __ARGS((exarg_T *eap));
 #endif
 static void	ex_mode __ARGS((exarg_T *eap));
 static void	ex_wrongmodifier __ARGS((exarg_T *eap));
-static void	ex_find __ARGS((exarg_T *eap));
-static void	ex_open __ARGS((exarg_T *eap));
-static void	ex_edit __ARGS((exarg_T *eap));
+static void	ex_find __ARGS((exarg_T *eap DECL_ASYNC_ARG));
+static void	ex_open __ARGS((exarg_T *eap DECL_ASYNC_ARG));
+static void	ex_edit __ARGS((exarg_T *eap DECL_ASYNC_ARG));
 #if !defined(FEAT_GUI) && !defined(FEAT_CLIENTSERVER)
 # define ex_drop		ex_ni
 #endif
@@ -297,12 +297,12 @@ static void	ex_popup __ARGS((exarg_T *eap));
 #ifndef FEAT_KEYMAP
 # define ex_loadkeymap		ex_ni
 #endif
-static void	ex_swapname __ARGS((exarg_T *eap));
+static void	ex_swapname __ARGS((exarg_T *eap DECL_ASYNC_ARG));
 static void	ex_syncbind __ARGS((exarg_T *eap));
-static void	ex_read __ARGS((exarg_T *eap));
-static void	ex_pwd __ARGS((exarg_T *eap));
+static void	ex_read __ARGS((exarg_T *eap DECL_ASYNC_ARG));
+static void	ex_pwd __ARGS((exarg_T *eap DECL_ASYNC_ARG));
 static void	ex_equal __ARGS((exarg_T *eap));
-static void	ex_sleep __ARGS((exarg_T *eap));
+static void	ex_sleep __ARGS((exarg_T *eap DECL_ASYNC_ARG));
 static void	do_exmap __ARGS((exarg_T *eap, int isabbrev));
 static void	ex_winsize __ARGS((exarg_T *eap));
 #ifdef FEAT_WINDOWS
@@ -311,18 +311,18 @@ static void	ex_wincmd __ARGS((exarg_T *eap));
 # define ex_wincmd	    ex_ni
 #endif
 #if defined(FEAT_GUI) || defined(UNIX) || defined(VMS) || defined(MSWIN)
-static void	ex_winpos __ARGS((exarg_T *eap));
+static void	ex_winpos __ARGS((exarg_T *eap DECL_ASYNC_ARG));
 #else
 # define ex_winpos	    ex_ni
 #endif
 static void	ex_operators __ARGS((exarg_T *eap));
 static void	ex_put __ARGS((exarg_T *eap));
-static void	ex_copymove __ARGS((exarg_T *eap));
+static void	ex_copymove __ARGS((exarg_T *eap DECL_ASYNC_ARG));
 static void	ex_may_print __ARGS((exarg_T *eap));
-static void	ex_submagic __ARGS((exarg_T *eap));
+static void	ex_submagic __ARGS((exarg_T *eap DECL_ASYNC_ARG));
 static void	ex_join __ARGS((exarg_T *eap));
-static void	ex_at __ARGS((exarg_T *eap));
-static void	ex_bang __ARGS((exarg_T *eap));
+static void	ex_at __ARGS((exarg_T *eap DECL_ASYNC_ARG));
+static void	ex_bang __ARGS((exarg_T *eap DECL_ASYNC_ARG));
 static void	ex_undo __ARGS((exarg_T *eap));
 #ifdef FEAT_PERSISTENT_UNDO
 static void	ex_wundo __ARGS((exarg_T *eap));
@@ -625,8 +625,9 @@ restore_dbg_stuff(dsp)
  * command is given.
  */
     void
-do_exmode(improved)
+do_exmode(improved ASYNC_ARG)
     int		improved;	    /* TRUE for "improved Ex" mode */
+    DECL_ASYNC_ARG_KR
 {
     int		save_msg_scroll;
     int		prev_msg_row;
@@ -679,10 +680,10 @@ do_exmode(improved)
 	if (improved)
 	{
 	    cmdline_row = msg_row;
-	    do_cmdline(NULL, getexline, NULL, 0);
+	    do_cmdline(NULL, getexline, NULL, 0 ASYNC_ARG);
 	}
 	else
-	    do_cmdline(NULL, getexmodeline, NULL, DOCMD_NOWAIT);
+	    do_cmdline(NULL, getexmodeline, NULL, DOCMD_NOWAIT ASYNC_ARG);
 	lines_left = Rows - 1;
 
 	if ((prev_line != curwin->w_cursor.lnum
@@ -728,11 +729,12 @@ do_exmode(improved)
  * Execute a simple command line.  Used for translated commands like "*".
  */
     int
-do_cmdline_cmd(cmd)
+do_cmdline_cmd(cmd ASYNC_ARG)
     char_u	*cmd;
+    DECL_ASYNC_ARG_KR
 {
     return do_cmdline(cmd, NULL, NULL,
-				   DOCMD_VERBOSE|DOCMD_NOWAIT|DOCMD_KEYTYPED);
+				   DOCMD_VERBOSE|DOCMD_NOWAIT|DOCMD_KEYTYPED ASYNC_ARG);
 }
 
 /*
@@ -760,7 +762,7 @@ do_cmdline(cmdline, fgetline, cookie, flags ASYNC_ARG)
     char_u	*(*fgetline) __ARGS((int, void *, int));
     void	*cookie;		/* argument for fgetline() */
     int		flags;
-    DECL_ASYNC_ARG2
+    DECL_ASYNC_ARG_KR
 {
     char_u	*next_cmdline;		/* next cmd to execute */
     char_u	*cmdline_copy = NULL;	/* copy of cmd line */
@@ -1532,7 +1534,7 @@ do_cmdline(cmdline, fgetline, cookie, flags ASYNC_ARG)
 	     * doing that.
 	     */
 	    msg_didout |= msg_didout_before_start;
-	    wait_return(FALSE);
+	    wait_return(FALSE ASYNC_ARG);
 	}
     }
 
@@ -1714,7 +1716,7 @@ do_one_cmd(cmdlinep, sourcing,
 #endif
     char_u		*(*fgetline) __ARGS((int, void *, int));
     void		*cookie;		/* argument for fgetline() */
-    DECL_ASYNC_ARG2
+    DECL_ASYNC_ARG_KR
 {
     char_u		*p;
     linenr_T		lnum;
@@ -2020,7 +2022,7 @@ do_one_cmd(cmdlinep, sourcing,
 	ea.line1 = ea.line2;
 	ea.line2 = curwin->w_cursor.lnum;   /* default is current line number */
 	ea.cmd = skipwhite(ea.cmd);
-	lnum = get_address(&ea.cmd, ea.skip, ea.addr_count == 0);
+	lnum = get_address(&ea.cmd, ea.skip, ea.addr_count == 0 ASYNC_ARG);
 	if (ea.cmd == NULL)		    /* error detected */
 	    goto doend;
 	if (lnum == MAXLNUM)
@@ -2040,11 +2042,11 @@ do_one_cmd(cmdlinep, sourcing,
 		++ea.cmd;
 		if (!ea.skip)
 		{
-		    fp = getmark('<', FALSE);
+		    fp = getmark('<', FALSE ASYNC_ARG);
 		    if (check_mark(fp) == FAIL)
 			goto doend;
 		    ea.line1 = fp->lnum;
-		    fp = getmark('>', FALSE);
+		    fp = getmark('>', FALSE ASYNC_ARG);
 		    if (check_mark(fp) == FAIL)
 			goto doend;
 		    ea.line2 = fp->lnum;
@@ -4074,10 +4076,11 @@ skip_range(cmd, ctx)
  * Return MAXLNUM when no Ex address was found.
  */
     static linenr_T
-get_address(ptr, skip, to_other_file)
+get_address(ptr, skip, to_other_file ASYNC_ARG)
     char_u	**ptr;
     int		skip;	    /* only skip the address, don't use it */
     int		to_other_file;  /* flag: may jump to other file */
+    DECL_ASYNC_ARG_KR
 {
     int		c;
     int		i;
@@ -4115,7 +4118,7 @@ get_address(ptr, skip, to_other_file)
 			{
 			    /* Only accept a mark in another file when it is
 			     * used by itself: ":'M". */
-			    fp = getmark(*cmd, to_other_file && cmd[1] == NUL);
+			    fp = getmark(*cmd, to_other_file && cmd[1] == NUL ASYNC_ARG);
 			    ++cmd;
 			    if (fp == (pos_T *)-1)
 				/* Jumped to another file. */
@@ -6487,8 +6490,9 @@ parse_compl_arg(value, vallen, complp, argt, compl_arg)
 #endif
 
     static void
-ex_colorscheme(eap)
+ex_colorscheme(eap ASYNC_ARG)
     exarg_T	*eap;
+    DECL_ASYNC_ARG_KR
 {
     if (*eap->arg == NUL)
     {
@@ -6519,8 +6523,9 @@ ex_colorscheme(eap)
 }
 
     static void
-ex_highlight(eap)
+ex_highlight(eap ASYNC_ARG)
     exarg_T	*eap;
+    DECL_ASYNC_ARG_KR
 {
     if (*eap->arg == NUL && eap->cmd[2] == '!')
 	MSG(_("Greetings, Vim user!"));
@@ -6543,8 +6548,9 @@ not_exiting()
  * ":quit": quit current window, quit Vim if closed the last window.
  */
     static void
-ex_quit(eap)
+ex_quit(eap ASYNC_ARG)
     exarg_T	*eap;
+    DECL_ASYNC_ARG_KR
 {
 #ifdef FEAT_CMDWIN
     if (cmdwin_type != 0)
@@ -6581,7 +6587,7 @@ ex_quit(eap)
 				       | (eap->forceit ? CCGD_FORCEIT : 0)
 				       | CCGD_EXCMD))
 	    || check_more(TRUE, eap->forceit) == FAIL
-	    || (only_one_window() && check_changed_any(eap->forceit)))
+	    || (only_one_window() && check_changed_any(eap->forceit ASYNC_ARG)))
     {
 	not_exiting();
     }
@@ -6616,8 +6622,9 @@ ex_cquit(eap)
  * ":qall": try to quit all windows
  */
     static void
-ex_quit_all(eap)
+ex_quit_all(eap ASYNC_ARG)
     exarg_T	*eap;
+    DECL_ASYNC_ARG_KR
 {
 # ifdef FEAT_CMDWIN
     if (cmdwin_type != 0)
@@ -6645,7 +6652,7 @@ ex_quit_all(eap)
 #endif
 
     exiting = TRUE;
-    if (eap->forceit || !check_changed_any(FALSE))
+    if (eap->forceit || !check_changed_any(FALSE ASYNC_ARG))
 	getout(0);
     not_exiting();
 }
@@ -6961,7 +6968,7 @@ ex_stop(eap)
     static void
 ex_exit(eap ASYNC_ARG)
     exarg_T	*eap;
-    DECL_ASYNC_ARG2
+    DECL_ASYNC_ARG_KR
 {
 #ifdef FEAT_CMDWIN
     if (cmdwin_type != 0)
@@ -6993,7 +7000,7 @@ ex_exit(eap ASYNC_ARG)
 		    || curbufIsChanged())
 		&& do_write(eap ASYNC_ARG) == FAIL)
 	    || check_more(TRUE, eap->forceit) == FAIL
-	    || (only_one_window() && check_changed_any(eap->forceit)))
+	    || (only_one_window() && check_changed_any(eap->forceit ASYNC_ARG)))
     {
 	not_exiting();
     }
@@ -7056,10 +7063,11 @@ ex_goto(eap)
  * ":shell".
  */
     static void
-ex_shell(eap)
+ex_shell(eap ASYNC_ARG)
     exarg_T	*eap UNUSED;
+    DECL_ASYNC_ARG_KR
 {
-    do_shell(NULL, 0);
+    do_shell(NULL, 0 ASYNC_ARG);
 }
 
 #if (defined(FEAT_WINDOWS) && defined(HAVE_DROP_FILE)) \
@@ -7266,13 +7274,14 @@ alist_expand(fnum_list, fnum_len)
  * Takes over the allocated files[] and the allocated fnames in it.
  */
     void
-alist_set(al, count, files, use_curbuf, fnum_list, fnum_len)
+alist_set(al, count, files, use_curbuf, fnum_list, fnum_len ASYNC_ARG)
     alist_T	*al;
     int		count;
     char_u	**files;
     int		use_curbuf;
     int		*fnum_list;
     int		fnum_len;
+    DECL_ASYNC_ARG_KR
 {
     int		i;
 
@@ -7295,7 +7304,7 @@ alist_set(al, count, files, use_curbuf, fnum_list, fnum_len)
 	    if (fnum_list != NULL && i < fnum_len)
 		buf_set_name(fnum_list[i], files[i]);
 
-	    alist_add(al, files[i], use_curbuf ? 2 : 1);
+	    alist_add(al, files[i], use_curbuf ? 2 : 1 ASYNC_ARG);
 	    ui_breakcheck();
 	}
 	vim_free(files);
@@ -7313,10 +7322,11 @@ alist_set(al, count, files, use_curbuf, fnum_list, fnum_len)
  * "fname" must have been allocated and "al" must have been checked for room.
  */
     void
-alist_add(al, fname, set_fnum)
+alist_add(al, fname, set_fnum ASYNC_ARG)
     alist_T	*al;
     char_u	*fname;
     int		set_fnum;	/* 1: set buffer number; 2: re-use curbuf */
+    DECL_ASYNC_ARG_KR
 {
     if (fname == NULL)		/* don't add NULL file names */
 	return;
@@ -7739,8 +7749,9 @@ ex_resize(eap)
  * ":find [+command] <file>" command.
  */
     static void
-ex_find(eap)
+ex_find(eap ASYNC_ARG)
     exarg_T	*eap;
+    DECL_ASYNC_ARG_KR
 {
 #ifdef FEAT_SEARCHPATH
     char_u	*fname;
@@ -7765,7 +7776,7 @@ ex_find(eap)
     {
 	eap->arg = fname;
 #endif
-	do_exedit(eap, NULL);
+	do_exedit(eap, NULL ASYNC_ARG);
 #ifdef FEAT_SEARCHPATH
 	vim_free(fname);
     }
@@ -7776,8 +7787,9 @@ ex_find(eap)
  * ":open" simulation: for now just work like ":visual".
  */
     static void
-ex_open(eap)
+ex_open(eap ASYNC_ARG)
     exarg_T	*eap;
+    DECL_ASYNC_ARG_KR
 {
     regmatch_T	regmatch;
     char_u	*p;
@@ -7807,17 +7819,18 @@ ex_open(eap)
     check_cursor();
 
     eap->cmdidx = CMD_visual;
-    do_exedit(eap, NULL);
+    do_exedit(eap, NULL ASYNC_ARG);
 }
 
 /*
  * ":edit", ":badd", ":visual".
  */
     static void
-ex_edit(eap)
+ex_edit(eap ASYNC_ARG)
     exarg_T	*eap;
+    DECL_ASYNC_ARG_KR
 {
-    do_exedit(eap, NULL);
+    do_exedit(eap, NULL ASYNC_ARG);
 }
 
 /*
@@ -7827,7 +7840,7 @@ ex_edit(eap)
 do_exedit(eap, old_curwin ASYNC_ARG)
     exarg_T	*eap;
     win_T	*old_curwin;	    /* curwin before doing a split or NULL */
-    DECL_ASYNC_ARG2
+    DECL_ASYNC_ARG_KR
 {
     int		n;
 #ifdef FEAT_WINDOWS
@@ -7977,7 +7990,7 @@ do_exedit(eap, old_curwin ASYNC_ARG)
     else
     {
 	if (eap->do_ecmd_cmd != NULL)
-	    do_cmdline_cmd(eap->do_ecmd_cmd);
+	    do_cmdline_cmd(eap->do_ecmd_cmd ASYNC_ARG);
 #ifdef FEAT_TITLE
 	n = curwin->w_arg_idx_invalid;
 #endif
@@ -8036,13 +8049,14 @@ ex_popup(eap)
 #endif
 
     static void
-ex_swapname(eap)
+ex_swapname(eap ASYNC_ARG)
     exarg_T	*eap UNUSED;
+    DECL_ASYNC_ARG_KR
 {
     if (curbuf->b_ml.ml_mfp == NULL || curbuf->b_ml.ml_mfp->mf_fname == NULL)
 	MSG(_("No swap file"));
     else
-	msg(curbuf->b_ml.ml_mfp->mf_fname);
+	msg(curbuf->b_ml.ml_mfp->mf_fname ASYNC_ARG);
 }
 
 /*
@@ -8126,15 +8140,16 @@ ex_syncbind(eap)
 
 
     static void
-ex_read(eap)
+ex_read(eap ASYNC_ARG)
     exarg_T	*eap;
+    DECL_ASYNC_ARG_KR
 {
     int		i;
     int		empty = (curbuf->b_ml.ml_flags & ML_EMPTY);
     linenr_T	lnum;
 
     if (eap->usefilter)			/* :r!cmd */
-	do_bang(1, eap, FALSE, FALSE, TRUE);
+	do_bang(1, eap, FALSE, FALSE, TRUE ASYNC_ARG);
     else
     {
 	if (u_save(eap->line2, (linenr_T)(eap->line2 + 1)) == FAIL)
@@ -8168,7 +8183,7 @@ ex_read(eap)
 	else
 	{
 	    if (vim_strchr(p_cpo, CPO_ALTREAD) != NULL)
-		(void)setaltfname(eap->arg, eap->arg, (linenr_T)1);
+		(void)setaltfname(eap->arg, eap->arg, (linenr_T)1 ASYNC_ARG);
 	    i = readfile(eap->arg, NULL,
 			  eap->line2, (linenr_T)0, (linenr_T)MAXLNUM, eap, 0);
 
@@ -8254,8 +8269,9 @@ post_chdir(local)
  * ":cd", ":lcd", ":chdir" and ":lchdir".
  */
     void
-ex_cd(eap)
+ex_cd(eap ASYNC_ARG)
     exarg_T	*eap;
+    DECL_ASYNC_ARG_KR
 {
     char_u		*new_dir;
     char_u		*tofree;
@@ -8324,7 +8340,7 @@ ex_cd(eap)
 
 	    /* Echo the new current directory if the command was typed. */
 	    if (KeyTyped || p_verbose >= 5)
-		ex_pwd(eap);
+		ex_pwd(eap ASYNC_ARG);
 	}
 	vim_free(tofree);
     }
@@ -8334,15 +8350,16 @@ ex_cd(eap)
  * ":pwd".
  */
     static void
-ex_pwd(eap)
+ex_pwd(eap ASYNC_ARG)
     exarg_T	*eap UNUSED;
+    DECL_ASYNC_ARG_KR
 {
     if (mch_dirname(NameBuff, MAXPATHL) == OK)
     {
 #ifdef BACKSLASH_IN_FILENAME
 	slash_adjust(NameBuff);
 #endif
-	msg(NameBuff);
+	msg(NameBuff ASYNC_ARG);
     }
     else
 	EMSG(_("E187: Unknown"));
@@ -8360,8 +8377,9 @@ ex_equal(eap)
 }
 
     static void
-ex_sleep(eap)
+ex_sleep(eap ASYNC_ARG)
     exarg_T	*eap;
+    DECL_ASYNC_ARG_KR
 {
     int		n;
     long	len;
@@ -8380,15 +8398,16 @@ ex_sleep(eap)
 	case NUL: len *= 1000L; break;
 	default: EMSG2(_(e_invarg2), eap->arg); return;
     }
-    do_sleep(len);
+    do_sleep(len ASYNC_ARG);
 }
 
 /*
  * Sleep for "msec" milliseconds, but keep checking for a CTRL-C every second.
  */
     void
-do_sleep(msec)
+do_sleep(msec ASYNC_ARG)
     long	msec;
+    DECL_ASYNC_ARG_KR
 {
     long	done;
 
@@ -8396,7 +8415,7 @@ do_sleep(msec)
     out_flush();
     for (done = 0; !got_int && done < msec; done += 1000L)
     {
-	ui_delay(msec - done > 1000L ? 1000L : msec - done, TRUE);
+	ui_delay(msec - done > 1000L ? 1000L : msec - done, TRUE ASYNC_ARG);
 	ui_breakcheck();
 #ifdef FEAT_NETBEANS_INTG
 	/* Process the netbeans messages that may have been received in the
@@ -8492,8 +8511,9 @@ ex_wincmd(eap)
  * ":winpos".
  */
     static void
-ex_winpos(eap)
+ex_winpos(eap ASYNC_ARG)
     exarg_T	*eap;
+    DECL_ASYNC_ARG_KR
 {
     int		x, y;
     char_u	*arg = eap->arg;
@@ -8509,7 +8529,7 @@ ex_winpos(eap)
 #  endif
 	{
 	    sprintf((char *)IObuff, _("Window position: X %d, Y %d"), x, y);
-	    msg(IObuff);
+	    msg(IObuff ASYNC_ARG);
 	}
 	else
 # endif
@@ -8635,12 +8655,13 @@ ex_put(eap)
  * Handle ":copy" and ":move".
  */
     static void
-ex_copymove(eap)
+ex_copymove(eap ASYNC_ARG)
     exarg_T	*eap;
+    DECL_ASYNC_ARG_KR
 {
     long	n;
 
-    n = get_address(&eap->arg, FALSE, FALSE);
+    n = get_address(&eap->arg, FALSE, FALSE ASYNC_ARG);
     if (eap->arg == NULL)	    /* error detected */
     {
 	eap->nextcmd = NULL;
@@ -8659,7 +8680,7 @@ ex_copymove(eap)
 
     if (eap->cmdidx == CMD_move)
     {
-	if (do_move(eap->line1, eap->line2, n) == FAIL)
+	if (do_move(eap->line1, eap->line2, n ASYNC_ARG) == FAIL)
 	    return;
     }
     else
@@ -8688,13 +8709,14 @@ ex_may_print(eap)
  * ":smagic" and ":snomagic".
  */
     static void
-ex_submagic(eap)
+ex_submagic(eap ASYNC_ARG)
     exarg_T	*eap;
+    DECL_ASYNC_ARG_KR
 {
     int		magic_save = p_magic;
 
     p_magic = (eap->cmdidx == CMD_smagic);
-    do_sub(eap);
+    do_sub(eap ASYNC_ARG);
     p_magic = magic_save;
 }
 
@@ -8726,8 +8748,9 @@ ex_join(eap)
  * ":[addr]@r" or ":[addr]*r": execute register
  */
     static void
-ex_at(eap)
+ex_at(eap ASYNC_ARG)
     exarg_T	*eap;
+    DECL_ASYNC_ARG_KR
 {
     int		c;
     int		prev_len = typebuf.tb_len;
@@ -8760,7 +8783,7 @@ ex_at(eap)
 	 * have been consumed.
 	 */
 	while (!stuff_empty() || typebuf.tb_len > prev_len)
-	    (void)do_cmdline(NULL, getexline, NULL, DOCMD_NOWAIT|DOCMD_VERBOSE);
+	    (void)do_cmdline(NULL, getexline, NULL, DOCMD_NOWAIT|DOCMD_VERBOSE ASYNC_ARG);
 
 	exec_from_reg = save_efr;
     }
@@ -8770,10 +8793,11 @@ ex_at(eap)
  * ":!".
  */
     static void
-ex_bang(eap)
+ex_bang(eap ASYNC_ARG)
     exarg_T	*eap;
+    DECL_ASYNC_ARG_KR
 {
-    do_bang(eap->addr_count, eap, eap->forceit, TRUE, TRUE);
+    do_bang(eap->addr_count, eap, eap->forceit, TRUE, TRUE ASYNC_ARG);
 }
 
 /*

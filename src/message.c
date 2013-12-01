@@ -102,10 +102,11 @@ static int  verbose_did_open = FALSE;
  * return TRUE if wait_return not called
  */
     int
-msg(s)
+msg(s ASYNC_ARG)
     char_u	*s;
+    DECL_ASYNC_ARG_KR
 {
-    return msg_attr_keep(s, 0, FALSE);
+    return msg_attr_keep(s, 0, FALSE ASYNC_ARG);
 }
 
 #if defined(FEAT_EVAL) || defined(FEAT_X11) || defined(USE_XSMP) \
@@ -128,18 +129,20 @@ verb_msg(s)
 #endif
 
     int
-msg_attr(s, attr)
+msg_attr(s, attr ASYNC_ARG)
     char_u	*s;
     int		attr;
+    DECL_ASYNC_ARG_KR
 {
-    return msg_attr_keep(s, attr, FALSE);
+    return msg_attr_keep(s, attr, FALSE ASYNC_ARG);
 }
 
     int
-msg_attr_keep(s, attr, keep)
+msg_attr_keep(s, attr, keep ASYNC_ARG)
     char_u	*s;
     int		attr;
     int		keep;	    /* TRUE: set keep_msg if it doesn't scroll */
+    DECL_ASYNC_ARG_KR
 {
     static int	entered = 0;
     int		retval;
@@ -181,7 +184,7 @@ msg_attr_keep(s, attr, keep)
 
     msg_outtrans_attr(s, attr);
     msg_clr_eos();
-    retval = msg_end();
+    retval = msg_end(ASYNC_ARG1);
 
     if (keep && retval && vim_strsize(s) < (int)(Rows - cmdline_row - 1)
 							   * Columns + sc_col)
@@ -402,28 +405,29 @@ int vim_snprintf(char *str, size_t str_m, char *fmt, ...);
 #ifdef __BORLANDC__
 _RTLENTRYF
 #endif
-smsg(char_u *s, ...)
+smsg(char_u *s DECL_ASYNC_ARG , ...)
 {
     va_list arglist;
 
     va_start(arglist, s);
     vim_vsnprintf((char *)IObuff, IOSIZE, (char *)s, arglist, NULL);
     va_end(arglist);
-    return msg(IObuff);
+    return msg(IObuff ASYNC_ARG);
 }
 
     int
 #ifdef __BORLANDC__
 _RTLENTRYF
 #endif
-smsg_attr(int attr, char_u *s, ...)
+smsg_attr(int attr, char_u *s, ... ASYNC_ARG)
+    DECL_ASYNC_ARG_KR
 {
     va_list arglist;
 
     va_start(arglist, s);
     vim_vsnprintf((char *)IObuff, IOSIZE, (char *)s, arglist, NULL);
     va_end(arglist);
-    return msg_attr(IObuff, attr);
+    return msg_attr(IObuff, attr ASYNC_ARG);
 }
 
 # endif /* HAVE_STDARG_H */
@@ -880,8 +884,9 @@ msg_end_prompt()
  * if 'redraw' is -1, don't redraw at all
  */
     void
-wait_return(redraw)
+wait_return(redraw ASYNC_ARG)
     int		redraw;
+    DECL_ASYNC_ARG_KR
 {
     int		c;
     int		oldState;
@@ -945,7 +950,7 @@ wait_return(redraw)
 	 * to start an Ex command, but the file-changed dialog gets in the
 	 * way. */
 	if (need_check_timestamps)
-	    check_timestamps(FALSE);
+	    check_timestamps(FALSE ASYNC_ARG);
 
 	hit_return_msg();
 
@@ -2348,7 +2353,8 @@ clear_sb_text()
  * "g<" command.
  */
     void
-show_sb_text()
+show_sb_text(ASYNC_ARG1)
+    DECL_ASYNC_ARG_KR
 {
     msgchunk_T	*mp;
 
@@ -2360,7 +2366,7 @@ show_sb_text()
     else
     {
 	do_more_prompt('G');
-	wait_return(FALSE);
+	wait_return(FALSE ASYNC_ARG);
     }
 }
 
@@ -3076,7 +3082,8 @@ msg_clr_cmdline()
  * return TRUE if wait_return not called.
  */
     int
-msg_end()
+msg_end( ASYNC_ARG1)
+    DECL_ASYNC_ARG_KR
 {
     /*
      * If the string is larger than the window,
@@ -3086,7 +3093,7 @@ msg_end()
      */
     if (!exiting && need_wait_return && !(State & CMDLINE))
     {
-	wait_return(FALSE);
+	wait_return(FALSE ASYNC_ARG);
 	return FALSE;
     }
     out_flush();

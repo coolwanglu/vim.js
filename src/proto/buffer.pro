@@ -1,5 +1,5 @@
 /* buffer.c */
-int open_buffer __ARGS((int read_stdin, exarg_T *eap, int flags));
+int open_buffer __ARGS((int read_stdin, exarg_T *eap, int flags, async_context *_async_context));
 int buf_valid __ARGS((buf_T *buf));
 void close_buffer __ARGS((win_T *win, buf_T *buf, int action, int abort_if_last));
 void buf_clear_file __ARGS((buf_T *buf));
@@ -8,8 +8,8 @@ void goto_buffer __ARGS((exarg_T *eap, int start, int dir, int count));
 void handle_swap_exists __ARGS((buf_T *old_curbuf));
 char_u *do_bufdel __ARGS((int command, char_u *arg, int addr_count, int start_bnr, int end_bnr, int forceit));
 int do_buffer __ARGS((int action, int start, int dir, int count, int forceit));
-void set_curbuf __ARGS((buf_T *buf, int action));
-void enter_buffer __ARGS((buf_T *buf));
+void set_curbuf __ARGS((buf_T *buf, int action, async_context *_async_context));
+void enter_buffer __ARGS((buf_T *buf, async_context *_async_context));
 void do_autochdir __ARGS((void));
 buf_T *buflist_new __ARGS((char_u *ffname, char_u *sfname, linenr_T lnum, int flags, async_context *_async_context));
 void free_buf_options __ARGS((buf_T *buf, int free_p_ff));
@@ -36,7 +36,7 @@ void buflist_slash_adjust __ARGS((void));
 void buflist_altfpos __ARGS((win_T *win));
 int otherfile __ARGS((char_u *ffname));
 void buf_setino __ARGS((buf_T *buf));
-void fileinfo __ARGS((int fullname, int shorthelp, int dont_truncate));
+void fileinfo __ARGS((int fullname, int shorthelp, int dont_truncate, async_context *_async_context));
 void col_print __ARGS((char_u *buf, size_t buflen, int col, int vcol));
 void maketitle __ARGS((void));
 void resettitle __ARGS((void));

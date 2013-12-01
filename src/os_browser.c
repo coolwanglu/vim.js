@@ -248,7 +248,7 @@ mch_total_mem(special)
 mch_delay(msec, ignoreinput ASYNC_ARG)
     long	msec;
     int		ignoreinput;
-    DECL_ASYNC_ARG2
+    DECL_ASYNC_ARG_KR
 {
     int		old_tmode;
 

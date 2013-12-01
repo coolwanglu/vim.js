@@ -27,7 +27,7 @@
 #define EXTRA_MARKS 10					/* marks 0-9 */
 static xfmark_T namedfm[NMARKS + EXTRA_MARKS];		/* marks with file nr */
 
-static void fname2fnum __ARGS((xfmark_T *fm));
+static void fname2fnum __ARGS((xfmark_T *fm DECL_ASYNC_ARG));
 static void fmarks_check_one __ARGS((xfmark_T *fm, char_u *name, buf_T *buf));
 static char_u *mark_line __ARGS((pos_T *mp, int lead_len));
 static void show_one_mark __ARGS((int, char_u *, pos_T *, char_u *, int current));
@@ -316,28 +316,31 @@ movechangelist(count)
  * - -1 if mark is in other file and jumped there (only if changefile is TRUE)
  */
     pos_T *
-getmark_buf(buf, c, changefile)
+getmark_buf(buf, c, changefile ASYNC_ARG)
     buf_T	*buf;
     int		c;
     int		changefile;
+    DECL_ASYNC_ARG_KR
 {
-    return getmark_buf_fnum(buf, c, changefile, NULL);
+    return getmark_buf_fnum(buf, c, changefile, NULL ASYNC_ARG);
 }
 
     pos_T *
-getmark(c, changefile)
+getmark(c, changefile ASYNC_ARG)
     int		c;
     int		changefile;
+    DECL_ASYNC_ARG_KR
 {
-    return getmark_buf_fnum(curbuf, c, changefile, NULL);
+    return getmark_buf_fnum(curbuf, c, changefile, NULL ASYNC_ARG);
 }
 
     pos_T *
-getmark_buf_fnum(buf, c, changefile, fnum)
+getmark_buf_fnum(buf, c, changefile, fnum ASYNC_ARG)
     buf_T	*buf;
     int		c;
     int		changefile;
     int		*fnum;
+    DECL_ASYNC_ARG_KR
 {
     pos_T		*posp;
 #ifdef FEAT_VISUAL
@@ -442,7 +445,7 @@ getmark_buf_fnum(buf, c, changefile, fnum)
 	posp = &(namedfm[c].fmark.mark);
 
 	if (namedfm[c].fmark.fnum == 0)
-	    fname2fnum(&namedfm[c]);
+	    fname2fnum(&namedfm[c] ASYNC_ARG);
 
 	if (fnum != NULL)
 	    *fnum = namedfm[c].fmark.fnum;
@@ -455,7 +458,7 @@ getmark_buf_fnum(buf, c, changefile, fnum)
 				       && changefile && namedfm[c].fmark.fnum)
 	    {
 		if (buflist_getfile(namedfm[c].fmark.fnum,
-				      (linenr_T)1, GETF_SETMARK, FALSE) == OK)
+				      (linenr_T)1, GETF_SETMARK, FALSE ASYNC_ARG) == OK)
 		{
 		    /* Set the lnum now, autocommands could have changed it */
 		    curwin->w_cursor = namedfm[c].fmark.mark;
@@ -526,8 +529,9 @@ getnextmark(startpos, dir, begin_line)
  * until the mark is used to avoid a long startup delay.
  */
     static void
-fname2fnum(fm)
+fname2fnum(fm ASYNC_ARG)
     xfmark_T	*fm;
+    DECL_ASYNC_ARG_KR
 {
     char_u	*p;
 
@@ -557,7 +561,7 @@ fname2fnum(fm)
 	p = shorten_fname(NameBuff, IObuff);
 
 	/* buflist_new() will call fmarks_check_names() */
-	(void)buflist_new(NameBuff, p, (linenr_T)1, 0);
+	(void)buflist_new(NameBuff, p, (linenr_T)1, 0 ASYNC_ARG);
     }
 }
 

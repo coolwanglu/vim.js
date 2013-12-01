@@ -216,7 +216,7 @@ filemess(buf, name, s, attr)
  * return FAIL for failure, OK otherwise
  */
     int
-readfile(fname, sfname, from, lines_to_skip, lines_to_read, eap, flags)
+readfile(fname, sfname, from, lines_to_skip, lines_to_read, eap, flags ASYNC_ARG)
     char_u	*fname;
     char_u	*sfname;
     linenr_T	from;
@@ -224,6 +224,7 @@ readfile(fname, sfname, from, lines_to_skip, lines_to_read, eap, flags)
     linenr_T	lines_to_read;
     exarg_T	*eap;			/* can be NULL! */
     int		flags;
+    DECL_ASYNC_ARG_KR
 {
     int		fd = 0;
     int		newfile = (flags & READ_NEW);
@@ -422,7 +423,7 @@ readfile(fname, sfname, from, lines_to_skip, lines_to_read, eap, flags)
 	if (after_pathsep(fname, p) || STRLEN(fname) >= MAXPATHL)
 	{
 	    filemess(curbuf, fname, (char_u *)_("Illegal file name"), 0);
-	    msg_end();
+	    msg_end(ASYNC_ARG_ONLY);
 	    msg_scroll = msg_save;
 	    return FAIL;
 	}
@@ -453,7 +454,7 @@ readfile(fname, sfname, from, lines_to_skip, lines_to_read, eap, flags)
 		filemess(curbuf, fname, (char_u *)_("is a directory"), 0);
 	    else
 		filemess(curbuf, fname, (char_u *)_("is not a file"), 0);
-	    msg_end();
+	    msg_end(ASYNC_ARG_ONLY);
 	    msg_scroll = msg_save;
 	    return FAIL;
 	}
@@ -3153,7 +3154,7 @@ check_file_readonly(fname, perm)
  */
     int
 buf_write(buf, fname, sfname, start, end, eap, append, forceit,
-						      reset_changed, filtering)
+						      reset_changed, filtering ASYNC_ARG)
     buf_T	    *buf;
     char_u	    *fname;
     char_u	    *sfname;
@@ -3164,6 +3165,7 @@ buf_write(buf, fname, sfname, start, end, eap, append, forceit,
     int		    forceit;
     int		    reset_changed;
     int		    filtering;
+    DECL_ASYNC_ARG_KR
 {
     int		    fd;
     char_u	    *backup = NULL;
@@ -5336,9 +5338,10 @@ msg_add_eol()
  * using the same timestamp but can't set the size.
  */
     static int
-check_mtime(buf, st)
+check_mtime(buf, st ASYNC_ARG)
     buf_T		*buf;
     struct stat		*st;
+    DECL_ASYNC_ARG_KR
 {
     if (buf->b_mtime_read != 0
 	    && time_differs((long)st->st_mtime, buf->b_mtime_read))
@@ -5346,7 +5349,7 @@ check_mtime(buf, st)
 	msg_scroll = TRUE;	    /* don't overwrite messages here */
 	msg_silent = 0;		    /* must give this prompt */
 	/* don't use emsg() here, don't want to flush the buffers */
-	MSG_ATTR(_("WARNING: The file has been changed since reading it!!!"),
+        MSG_ATTR(_("WARNING: The file has been changed since reading it!!!"),
 						       hl_attr(HLF_E));
 	if (ask_yesno((char_u *)_("Do you really want to write to it"),
 								 TRUE) == 'n')
@@ -6730,8 +6733,9 @@ static int already_warned = FALSE;
  * cursor positioned).
  */
     int
-check_timestamps(focus)
+check_timestamps(focus ASYNC_ARG)
     int		focus;		/* called for GUI focus event */
+    DECL_ASYNC_ARG_KR
 {
     buf_T	*buf;
     int		didit = 0;
@@ -6767,7 +6771,7 @@ check_timestamps(focus)
 	    /* Only check buffers in a window. */
 	    if (buf->b_nwindows > 0)
 	    {
-		n = buf_check_timestamp(buf, focus);
+		n = buf_check_timestamp(buf, focus ASYNC_ARG);
 		if (didit < n)
 		    didit = n;
 		if (n > 0 && !buf_valid(buf))
@@ -6847,9 +6851,10 @@ move_lines(frombuf, tobuf)
  * return 0 otherwise.
  */
     int
-buf_check_timestamp(buf, focus)
+buf_check_timestamp(buf, focus ASYNC_ARG)
     buf_T	*buf;
     int		focus UNUSED;	/* called for GUI focus event */
+    DECL_ASYNC_ARG_KR
 {
     struct stat	st;
     int		stat_res;
@@ -6936,7 +6941,7 @@ buf_check_timestamp(buf, focus)
 		reason = "deleted";
 	    else if (bufIsChanged(buf))
 		reason = "conflict";
-	    else if (orig_size != buf->b_orig_size || buf_contents_changed(buf))
+	    else if (orig_size != buf->b_orig_size || buf_contents_changed(buf ASYNC_ARG))
 		reason = "changed";
 	    else if (orig_mode != buf->b_orig_mode)
 		reason = "mode";
@@ -7084,7 +7089,7 @@ buf_check_timestamp(buf, focus)
 			if (!focus)
 # endif
 			    /* give the user some time to think about it */
-			    ui_delay(1000L, TRUE);
+			    ui_delay(1000L, TRUE ASYNC_ARG);
 
 			/* don't redraw and erase the message */
 			redraw_cmdline = FALSE;
@@ -7101,7 +7106,7 @@ buf_check_timestamp(buf, focus)
     if (reload)
     {
 	/* Reload the buffer. */
-	buf_reload(buf, orig_mode);
+	buf_reload(buf, orig_mode ASYNC_ARG);
 #ifdef FEAT_PERSISTENT_UNDO
 	if (buf->b_p_udf && buf->b_ffname != NULL)
 	{
@@ -7139,9 +7144,10 @@ buf_check_timestamp(buf, focus)
  * buf->b_orig_mode may have been reset already.
  */
     void
-buf_reload(buf, orig_mode)
+buf_reload(buf, orig_mode ASYNC_ARG)
     buf_T	*buf;
     int		orig_mode;
+    DECL_ASYNC_ARG_KR
 {
     exarg_T	ea;
     pos_T	old_cursor;
@@ -7184,7 +7190,7 @@ buf_reload(buf, orig_mode)
 	else
 	{
 	    /* Allocate a buffer without putting it in the buffer list. */
-	    savebuf = buflist_new(NULL, NULL, (linenr_T)1, BLN_DUMMY);
+	    savebuf = buflist_new(NULL, NULL, (linenr_T)1, BLN_DUMMY ASYNC_ARG);
 	    if (savebuf != NULL && buf == curbuf)
 	    {
 		/* Open the memline. */

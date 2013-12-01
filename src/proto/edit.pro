@@ -1,5 +1,5 @@
 /* edit.c */
-int edit __ARGS((int cmdchar, int startln, long count));
+int edit __ARGS((int cmdchar, int startln, long count, async_context *_async_context));
 void edit_putchar __ARGS((int c, int highlight));
 void edit_unputchar __ARGS((void));
 void display_dollar __ARGS((colnr_T col));

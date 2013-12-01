@@ -17,7 +17,7 @@
 #ifdef FEAT_EX_EXTRA
 static int linelen __ARGS((int *has_tab));
 #endif
-static void do_filter __ARGS((linenr_T line1, linenr_T line2, exarg_T *eap, char_u *cmd, int do_in, int do_out));
+static void do_filter __ARGS((linenr_T line1, linenr_T line2, exarg_T *eap, char_u *cmd, int do_in, int do_out DECL_ASYNC_ARG));
 #ifdef FEAT_VIMINFO
 static char_u *viminfo_filename __ARGS((char_u	*));
 static void do_viminfo __ARGS((FILE *fp_in, FILE *fp_out, int flags));
@@ -39,8 +39,9 @@ static int
  * ":ascii" and "ga".
  */
     void
-do_ascii(eap)
+do_ascii(eap ASYNC_ARG)
     exarg_T	*eap UNUSED;
+    DECL_ASYNC_ARG_KR
 {
     int		c;
     int		cval;
@@ -131,7 +132,7 @@ do_ascii(eap)
     }
 #endif
 
-    msg(IObuff);
+    msg(IObuff ASYNC_ARG);
 }
 
 #if defined(FEAT_EX_EXTRA) || defined(PROTO)
@@ -730,10 +731,11 @@ ex_retab(eap)
  * return FAIL for failure, OK otherwise
  */
     int
-do_move(line1, line2, dest)
+do_move(line1, line2, dest ASYNC_ARG)
     linenr_T	line1;
     linenr_T	line2;
     linenr_T	dest;
+    DECL_ASYNC_ARG_KR
 {
     char_u	*str;
     linenr_T	l;
@@ -915,11 +917,12 @@ free_prev_shellcmd()
  * Remember the argument.
  */
     void
-do_bang(addr_count, eap, forceit, do_in, do_out)
+do_bang(addr_count, eap, forceit, do_in, do_out ASYNC_ARG)
     int		addr_count;
     exarg_T	*eap;
     int		forceit;
     int		do_in, do_out;
+    DECL_ASYNC_ARG_KR
 {
     char_u		*arg = eap->arg;	/* command */
     linenr_T		line1 = eap->line1;	/* start of range */
@@ -1039,13 +1042,13 @@ do_bang(addr_count, eap, forceit, do_in, do_out)
 	msg_clr_eos();
 	windgoto(msg_row, msg_col);
 
-	do_shell(newcmd, 0);
+	do_shell(newcmd, 0 ASYNC_ARG);
     }
     else				/* :range! */
     {
 	/* Careful: This may recursively call do_bang() again! (because of
 	 * autocommands) */
-	do_filter(line1, line2, eap, newcmd, do_in, do_out);
+	do_filter(line1, line2, eap, newcmd, do_in, do_out ASYNC_ARG);
 #ifdef FEAT_AUTOCMD
 	apply_autocmds(EVENT_SHELLFILTERPOST, NULL, NULL, FALSE, curbuf);
 #endif
@@ -1070,11 +1073,12 @@ do_bang(addr_count, eap, forceit, do_in, do_out)
  * We use output redirection if do_out is TRUE.
  */
     static void
-do_filter(line1, line2, eap, cmd, do_in, do_out)
+do_filter(line1, line2, eap, cmd, do_in, do_out ASYNC_ARG)
     linenr_T	line1, line2;
     exarg_T	*eap;		/* for forced 'ff' and 'fenc' */
     char_u	*cmd;
     int		do_in, do_out;
+    DECL_ASYNC_ARG_KR
 {
     char_u	*itmp = NULL;
     char_u	*otmp = NULL;
@@ -1159,7 +1163,7 @@ do_filter(line1, line2, eap, cmd, do_in, do_out)
  */
     ++no_wait_return;		/* don't call wait_return() while busy */
     if (itmp != NULL && buf_write(curbuf, itmp, NULL, line1, line2, eap,
-					   FALSE, FALSE, FALSE, TRUE) == FAIL)
+					   FALSE, FALSE, FALSE, TRUE ASYNC_ARG) == FAIL)
     {
 	msg_putchar('\n');		/* keep message from buf_write() */
 	--no_wait_return;
@@ -1218,7 +1222,7 @@ do_filter(line1, line2, eap, cmd, do_in, do_out)
     if (call_shell(cmd_buf, SHELL_FILTER | SHELL_COOKED | shell_flags))
     {
 	redraw_later_clear();
-	wait_return(FALSE);
+	wait_return(FALSE ASYNC_ARG);
     }
     vim_free(cmd_buf);
 
@@ -1236,7 +1240,7 @@ do_filter(line1, line2, eap, cmd, do_in, do_out)
 	if (otmp != NULL)
 	{
 	    if (readfile(otmp, NULL, line2, (linenr_T)0, (linenr_T)MAXLNUM,
-						    eap, READ_FILTER) == FAIL)
+						    eap, READ_FILTER ASYNC_ARG) == FAIL)
 	    {
 #if defined(FEAT_AUTOCMD) && defined(FEAT_EVAL)
 		if (!aborting())
@@ -1311,7 +1315,7 @@ do_filter(line1, line2, eap, cmd, do_in, do_out)
 	    {
 		vim_snprintf((char *)msg_buf, sizeof(msg_buf),
 				    _("%ld lines filtered"), (long)linecount);
-		if (msg(msg_buf) && !msg_scroll)
+		if (msg(msg_buf ASYNC_ARG) && !msg_scroll)
 		    /* save message to display it after redraw */
 		    set_keep_msg(msg_buf, 0);
 	    }
@@ -1325,7 +1329,7 @@ error:
 	/* put cursor back in same position for ":w !cmd" */
 	curwin->w_cursor = cursor_save;
 	--no_wait_return;
-	wait_return(FALSE);
+	wait_return(FALSE ASYNC_ARG);
     }
 
 filterend:
@@ -1350,9 +1354,10 @@ filterend:
  * When "cmd" is NULL start an interactive shell.
  */
     void
-do_shell(cmd, flags)
+do_shell(cmd, flags ASYNC_ARG)
     char_u	*cmd;
     int		flags;	/* may be SHELL_DOOUT when output is redirected */
+    DECL_ASYNC_ARG_KR
 {
     buf_T	*buf;
 #ifndef FEAT_GUI_MSWIN
@@ -1369,7 +1374,7 @@ do_shell(cmd, flags)
      */
     if (check_restricted() || check_secure())
     {
-	msg_end();
+	msg_end(ASYNC_ARG_ONLY);
 	return;
     }
 
@@ -1484,7 +1489,7 @@ do_shell(cmd, flags)
 # ifdef AMIGA
 	    wait_return(term_console ? -1 : msg_silent == 0);	/* see below */
 # else
-	    wait_return(msg_silent == 0);
+	    wait_return(msg_silent == 0 ASYNC_ARG);
 # endif
 	    no_wait_return = save_nwr;
 	}
@@ -2427,7 +2432,7 @@ print_line(lnum, use_number, list)
     int
 rename_buffer(new_fname ASYNC_ARG)
     char_u	*new_fname;
-    DECL_ASYNC_ARG2
+    DECL_ASYNC_ARG_KR
 {
     char_u	*fname, *sfname, *xfname;
     buf_T	*buf;
@@ -2484,7 +2489,7 @@ rename_buffer(new_fname ASYNC_ARG)
     void
 ex_file(eap ASYNC_ARG)
     exarg_T	*eap;
-    DECL_ASYNC_ARG2
+    DECL_ASYNC_ARG_KR
 {
     /* ":0file" removes the file name.  Check for illegal uses ":3file",
      * "0file name", etc. */
@@ -2503,7 +2508,7 @@ ex_file(eap ASYNC_ARG)
 	    return;
     }
     /* print full file name if :cd used */
-    fileinfo(FALSE, FALSE, eap->forceit);
+    fileinfo(FALSE, FALSE, eap->forceit ASYNC_ARG);
 }
 
 /*
@@ -2512,7 +2517,7 @@ ex_file(eap ASYNC_ARG)
     void
 ex_update(eap ASYNC_ARG)
     exarg_T	*eap;
-    DECL_ASYNC_ARG2
+    DECL_ASYNC_ARG_KR
 {
     if (curbufIsChanged())
 	(void)do_write(eap ASYNC_ARG);
@@ -2524,10 +2529,10 @@ ex_update(eap ASYNC_ARG)
     void
 ex_write(eap ASYNC_ARG)
     exarg_T	*eap;
-    DECL_ASYNC_ARG2
+    DECL_ASYNC_ARG_KR
 {
     if (eap->usefilter)		/* input lines to shell command */
-	do_bang(1, eap, FALSE, TRUE, FALSE);
+	do_bang(1, eap, FALSE, TRUE, FALSE ASYNC_ARG);
     else
 	(void)do_write(eap ASYNC_ARG);
 }
@@ -2543,7 +2548,7 @@ ex_write(eap ASYNC_ARG)
     int
 do_write(eap ASYNC_ARG)
     exarg_T	*eap;
-    DECL_ASYNC_ARG2
+    DECL_ASYNC_ARG_KR
 {
     int		other;
     char_u	*fname = NULL;		/* init to shut up gcc */
@@ -2722,7 +2727,7 @@ do_write(eap ASYNC_ARG)
 	}
 
 	retval = buf_write(curbuf, ffname, fname, eap->line1, eap->line2,
-				 eap, eap->append, eap->forceit, TRUE, FALSE);
+				 eap, eap->append, eap->forceit, TRUE, FALSE ASYNC_ARG);
 
 	/* After ":saveas fname" reset 'readonly'. */
 	if (eap->cmdidx == CMD_saveas)
@@ -2875,7 +2880,7 @@ check_overwrite(eap, buf, fname, ffname, other)
     void
 ex_wnext(eap ASYNC_ARG)
     exarg_T	*eap;
-    DECL_ASYNC_ARG2
+    DECL_ASYNC_ARG_KR
 {
     int		i;
 
@@ -3039,7 +3044,7 @@ getfile(fnum, ffname, sfname, setpm, lnum, forceit ASYNC_ARG)
     int		setpm;
     linenr_T	lnum;
     int		forceit;
-    DECL_ASYNC_ARG2
+    DECL_ASYNC_ARG_KR
 {
     int		other;
     int		retval;
@@ -3142,7 +3147,7 @@ do_ecmd(fnum, ffname, sfname, eap, newlnum, flags, oldwin ASYNC_ARG)
     linenr_T	newlnum;
     int		flags;
     win_T	*oldwin;
-    DECL_ASYNC_ARG2
+    DECL_ASYNC_ARG_KR
 {
     int		other_file;		/* TRUE if editing another file */
     int		oldbuf;			/* TRUE if using existing buffer */
@@ -3353,7 +3358,7 @@ do_ecmd(fnum, ffname, sfname, eap, newlnum, flags, oldwin ASYNC_ARG)
 	else					/* existing memfile */
 	{
 	    oldbuf = TRUE;
-	    (void)buf_check_timestamp(buf, FALSE);
+	    (void)buf_check_timestamp(buf, FALSE ASYNC_ARG);
 	    /* Check if autocommands made buffer invalid or changed the current
 	     * buffer. */
 	    if (!buf_valid(buf)
@@ -3725,7 +3730,7 @@ do_ecmd(fnum, ffname, sfname, eap, newlnum, flags, oldwin ASYNC_ARG)
 	    if (should_abort(open_buffer(FALSE, eap, readfile_flags)))
 		retval = FAIL;
 #else
-	    (void)open_buffer(FALSE, eap, readfile_flags);
+	    (void)open_buffer(FALSE, eap, readfile_flags ASYNC_ARG);
 #endif
 
 #if defined(HAS_SWAP_EXISTS_ACTION)
@@ -3848,7 +3853,7 @@ do_ecmd(fnum, ffname, sfname, eap, newlnum, flags, oldwin ASYNC_ARG)
 	msg_scroll = msg_scroll_save;
 	msg_scrolled_ign = TRUE;
 
-	fileinfo(FALSE, TRUE, FALSE);
+	fileinfo(FALSE, TRUE, FALSE ASYNC_ARG);
 
 	msg_scrolled_ign = FALSE;
     }
@@ -3927,7 +3932,7 @@ static int append_indent = 0;	    /* autoindent for first line */
     void
 ex_append(eap ASYNC_ARG)
     exarg_T	*eap;
-    DECL_ASYNC_ARG2
+    DECL_ASYNC_ARG_KR
 {
     char_u	*theline;
     int		did_undo = FALSE;
@@ -4065,7 +4070,7 @@ ex_append(eap ASYNC_ARG)
     void
 ex_change(eap ASYNC_ARG)
     exarg_T	*eap;
-    DECL_ASYNC_ARG2
+    DECL_ASYNC_ARG_KR
 {
     linenr_T	lnum;
 
@@ -4276,8 +4281,9 @@ static int	global_need_beginline;	/* call beginline() after ":g" */
  * The usual escapes are supported as described in the regexp docs.
  */
     void
-do_sub(eap)
+do_sub(eap ASYNC_ARG)
     exarg_T	*eap;
+    DECL_ASYNC_ARG_KR
 {
     linenr_T	lnum;
     long	i = 0;
@@ -5269,7 +5275,7 @@ outofmem:
 		else
 		    beginline(BL_WHITE | BL_FIX);
 	    }
-	    if (!do_sub_msg(do_count) && do_ask)
+	    if (!do_sub_msg(do_count ASYNC_ARG) && do_ask)
 		MSG("");
 	}
 	else
@@ -5302,8 +5308,9 @@ outofmem:
  * Return TRUE if a message was given.
  */
     int
-do_sub_msg(count_only)
+do_sub_msg(count_only ASYNC_ARG)
     int	    count_only;		/* used 'n' flag for ":s" */
+    DECL_ASYNC_ARG_KR
 {
     /*
      * Only report substitutions when:
@@ -5332,7 +5339,7 @@ do_sub_msg(count_only)
 	else
 	    vim_snprintf_add((char *)msg_buf, sizeof(msg_buf),
 		    _(" on %ld lines"), (long)sub_nlines);
-	if (msg(msg_buf))
+	if (msg(msg_buf ASYNC_ARG))
 	    /* save message to display it after redraw */
 	    set_keep_msg(msg_buf, 0);
 	return TRUE;
@@ -5364,7 +5371,7 @@ do_sub_msg(count_only)
     void
 ex_global(eap ASYNC_ARG)
     exarg_T	*eap;
-    DECL_ASYNC_ARG2
+    DECL_ASYNC_ARG_KR
 {
     linenr_T	lnum;		/* line number according to old situation */
     int		ndone = 0;
@@ -5478,7 +5485,7 @@ ex_global(eap ASYNC_ARG)
     void
 global_exe(cmd ASYNC_ARG)
     char_u	*cmd;
-    DECL_ASYNC_ARG2
+    DECL_ASYNC_ARG_KR
 {
     linenr_T old_lcount;	/* b_ml.ml_line_count before the command */
     buf_T    *old_buf = curbuf;	/* remember what buffer we started in */
@@ -5529,7 +5536,7 @@ global_exe(cmd ASYNC_ARG)
      * number of extra or deleted lines.
      * Don't report extra or deleted lines in the edge case where the buffer
      * we are in after execution is different from the buffer we started in. */
-    if (!do_sub_msg(FALSE) && curbuf == old_buf)
+    if (!do_sub_msg(FALSE ASYNC_ARG) && curbuf == old_buf)
 	msgmore(curbuf->b_ml.ml_line_count - old_lcount);
 }
 
@@ -5624,7 +5631,7 @@ prepare_tagpreview(undo_sync)
     void
 ex_help(eap ASYNC_ARG)
     exarg_T	*eap;
-    DECL_ASYNC_ARG2
+    DECL_ASYNC_ARG_KR
 {
     char_u	*arg;
     char_u	*tag;
@@ -6382,20 +6389,22 @@ fix_help_buffer()
  * ":exusage"
  */
     void
-ex_exusage(eap)
+ex_exusage(eap ASYNC_ARG)
     exarg_T	*eap UNUSED;
+    DECL_ASYNC_ARG_KR
 {
-    do_cmdline_cmd((char_u *)"help ex-cmd-index");
+    do_cmdline_cmd((char_u *)"help ex-cmd-index" ASYNC_ARG);
 }
 
 /*
  * ":viusage"
  */
     void
-ex_viusage(eap)
+ex_viusage(eap ASYNC_ARG)
     exarg_T	*eap UNUSED;
+    DECL_ASYNC_ARG_KR
 {
-    do_cmdline_cmd((char_u *)"help normal-index");
+    do_cmdline_cmd((char_u *)"help normal-index" ASYNC_ARG);
 }
 
 #if defined(FEAT_EX_EXTRA) || defined(PROTO)
@@ -7614,7 +7623,7 @@ set_context_in_sign_cmd(xp, arg)
     void
 ex_drop(eap ASYNC_ARG)
     exarg_T	*eap;
-    DECL_ASYNC_ARG2
+    DECL_ASYNC_ARG_KR
 {
     int		split = FALSE;
     win_T	*wp;

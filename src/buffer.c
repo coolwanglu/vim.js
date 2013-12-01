@@ -73,10 +73,11 @@ static char *e_auabort = N_("E855: Autocommands caused command to abort");
  * Return FAIL for failure, OK otherwise.
  */
     int
-open_buffer(read_stdin, eap, flags)
+open_buffer(read_stdin, eap, flags ASYNC_ARG)
     int		read_stdin;	    /* read file from stdin */
     exarg_T	*eap;		    /* for forced 'ff' and 'fenc' or NULL */
     int		flags;		    /* extra flags for readfile() */
+    DECL_ASYNC_ARG_KR
 {
     int		retval = OK;
 #ifdef FEAT_AUTOCMD
@@ -115,7 +116,7 @@ open_buffer(read_stdin, eap, flags)
 	    getout(2);
 	}
 	EMSG(_("E83: Cannot allocate buffer, using other one..."));
-	enter_buffer(curbuf);
+	enter_buffer(curbuf ASYNC_ARG);
 #ifdef FEAT_SYN_HL
 	if (old_tw != curbuf->b_p_tw)
 	    check_colorcolumn(curwin);
@@ -146,7 +147,7 @@ open_buffer(read_stdin, eap, flags)
 #endif
 	retval = readfile(curbuf->b_ffname, curbuf->b_fname,
 		  (linenr_T)0, (linenr_T)0, (linenr_T)MAXLNUM, eap,
-		  flags | READ_NEW);
+		  flags | READ_NEW ASYNC_ARG);
 #ifdef FEAT_NETBEANS_INTG
 	netbeansFireChanges = oldFire;
 #endif
@@ -168,14 +169,14 @@ open_buffer(read_stdin, eap, flags)
 	curbuf->b_p_bin = TRUE;
 	retval = readfile(NULL, NULL, (linenr_T)0,
 		  (linenr_T)0, (linenr_T)MAXLNUM, NULL,
-		  flags | (READ_NEW + READ_STDIN));
+		  flags | (READ_NEW + READ_STDIN) ASYNC_ARG);
 	curbuf->b_p_bin = save_bin;
 	if (retval == OK)
 	{
 	    line_count = curbuf->b_ml.ml_line_count;
 	    retval = readfile(NULL, NULL, (linenr_T)line_count,
 			    (linenr_T)0, (linenr_T)MAXLNUM, eap,
-			    flags | READ_BUFFER);
+			    flags | READ_BUFFER ASYNC_ARG);
 	    if (retval == OK)
 	    {
 		/* Delete the binary lines. */
@@ -1388,9 +1389,10 @@ do_buffer(action, start, dir, count, forceit)
  * DOBUF_WIPE	    wipe it out
  */
     void
-set_curbuf(buf, action)
+set_curbuf(buf, action ASYNC_ARG)
     buf_T	*buf;
     int		action;
+    DECL_ASYNC_ARG_KR
 {
     buf_T	*prevbuf;
     int		unload = (action == DOBUF_UNLOAD || action == DOBUF_DEL
@@ -1465,7 +1467,7 @@ set_curbuf(buf, action)
        )
 #endif
     {
-	enter_buffer(buf);
+	enter_buffer(buf ASYNC_ARG);
 #ifdef FEAT_SYN_HL
 	if (old_tw != curbuf->b_p_tw)
 	    check_colorcolumn(curwin);
@@ -1479,8 +1481,9 @@ set_curbuf(buf, action)
  * be pointing to freed memory.
  */
     void
-enter_buffer(buf)
+enter_buffer(buf ASYNC_ARG)
     buf_T	*buf;
+    DECL_ASYNC_ARG_KR
 {
     /* Copy buffer and window local option values.  Not for a help buffer. */
     buf_copy_options(buf, BCO_ENTER | BCO_NOHELP);
@@ -1532,13 +1535,13 @@ enter_buffer(buf)
 	    did_filetype = FALSE;
 #endif
 
-	open_buffer(FALSE, NULL, 0);
+	open_buffer(FALSE, NULL, 0 ASYNC_ARG);
     }
     else
     {
 	if (!msg_silent)
 	    need_fileinfo = TRUE;	/* display file info after redraw */
-	(void)buf_check_timestamp(curbuf, FALSE); /* check if file changed */
+	(void)buf_check_timestamp(curbuf, FALSE ASYNC_ARG); /* check if file changed */
 #ifdef FEAT_AUTOCMD
 	curwin->w_topline = 1;
 # ifdef FEAT_DIFF
@@ -1619,7 +1622,7 @@ buflist_new(ffname, sfname, lnum, flags ASYNC_ARG)
     char_u	*sfname;	/* short fname or NULL */
     linenr_T	lnum;		/* preferred cursor line */
     int		flags;		/* BLN_ defines */
-    DECL_ASYNC_ARG2
+    DECL_ASYNC_ARG_KR
 {
     buf_T	*buf;
 #ifdef UNIX
@@ -1969,7 +1972,7 @@ buflist_getfile(n, lnum, options, forceit ASYNC_ARG)
     linenr_T	lnum;
     int		options;
     int		forceit;
-    DECL_ASYNC_ARG2
+    DECL_ASYNC_ARG_KR
 {
     buf_T	*buf;
 #ifdef FEAT_WINDOWS
@@ -2922,7 +2925,7 @@ setaltfname(ffname, sfname, lnum ASYNC_ARG)
     char_u	*ffname;
     char_u	*sfname;
     linenr_T	lnum;
-    DECL_ASYNC_ARG2
+    DECL_ASYNC_ARG_KR
 {
     buf_T	*buf;
 
@@ -2963,7 +2966,7 @@ getaltfname(errmsg)
 buflist_add(fname, flags ASYNC_ARG)
     char_u	*fname;
     int		flags;
-    DECL_ASYNC_ARG2
+    DECL_ASYNC_ARG_KR
 {
     buf_T	*buf;
 
@@ -3105,10 +3108,11 @@ buf_same_ino(buf, stp)
  * Print info about the current buffer.
  */
     void
-fileinfo(fullname, shorthelp, dont_truncate)
+fileinfo(fullname, shorthelp, dont_truncate ASYNC_ARG)
     int fullname;	    /* when non-zero print full path */
     int shorthelp;
     int	dont_truncate;
+    DECL_ASYNC_ARG_KR
 {
     char_u	*name;
     int		n;
@@ -3205,7 +3209,7 @@ fileinfo(fullname, shorthelp, dont_truncate)
 	msg_start();
 	n = msg_scroll;
 	msg_scroll = TRUE;
-	msg(buffer);
+	msg(buffer ASYNC_ARG);
 	msg_scroll = n;
     }
     else
@@ -5766,7 +5770,7 @@ set_buflisted(on)
     int
 buf_contents_changed(buf ASYNC_ARG)
     buf_T	*buf;
-    DECL_ASYNC_ARG2
+    DECL_ASYNC_ARG_KR
 {
     buf_T	*newbuf;
     int		differ = TRUE;
@@ -5792,7 +5796,7 @@ buf_contents_changed(buf ASYNC_ARG)
     if (ml_open(curbuf) == OK
 	    && readfile(buf->b_ffname, buf->b_fname,
 				  (linenr_T)0, (linenr_T)0, (linenr_T)MAXLNUM,
-					    &ea, READ_NEW | READ_DUMMY) == OK)
+					    &ea, READ_NEW | READ_DUMMY ASYNC_ARG) == OK)
     {
 	/* compare the two files line by line */
 	if (buf->b_ml.ml_line_count == curbuf->b_ml.ml_line_count)
