@@ -7396,7 +7396,7 @@ ex_recover(eap ASYNC_ARG)
 
 	    && (*eap->arg == NUL
 			     || setfname(curbuf, eap->arg, NULL, TRUE) == OK))
-	ml_recover();
+	ml_recover( ASYNC_ARG_ONLY);
     recoverymode = FALSE;
 }
 
