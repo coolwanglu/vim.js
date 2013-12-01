@@ -2341,7 +2341,7 @@ ml_preserve(buf, message ASYNC_ARG)
 	lnum = 1;
 	while (mf_need_trans(mfp) && lnum <= buf->b_ml.ml_line_count)
 	{
-	    hp = ml_find_line(buf, lnum, ML_FIND);
+	    hp = ml_find_line(buf, lnum, ML_FIND ASYNC_ARG);
 	    if (hp == NULL)
 	    {
 		status = FAIL;
