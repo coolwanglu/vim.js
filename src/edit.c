@@ -1306,7 +1306,7 @@ doESCkey:
 		goto docomplete;
 #endif
 	    inserted_space = FALSE;
-	    if (ins_tab())
+	    if (ins_tab( ASYNC_ARG_ONLY))
 		goto normalchar;	/* insert TAB as a normal char */
 	    auto_format(FALSE, TRUE ASYNC_ARG);
 	    break;
