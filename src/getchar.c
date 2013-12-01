@@ -1220,9 +1220,10 @@ del_typebuf(len, offset)
  * If recording is on put the character in the recordbuffer.
  */
     static void
-gotchars(chars, len)
+gotchars(chars, len ASYNC_ARG)
     char_u	*chars;
     int		len;
+    DECL_ASYNC_ARG_KR
 {
     char_u	*s = chars;
     int		c;
