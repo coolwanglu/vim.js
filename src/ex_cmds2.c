@@ -1443,9 +1443,10 @@ autowrite_all( ASYNC_ARG_ONLY)
  * For flags use the CCGD_ values.
  */
     int
-check_changed(buf, flags)
+check_changed(buf, flags ASYNC_ARG)
     buf_T	*buf;
     int		flags;
+    DECL_ASYNC_ARG_KR
 {
     int forceit = (flags & CCGD_FORCEIT);
 

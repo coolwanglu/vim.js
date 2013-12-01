@@ -34,7 +34,7 @@ void prof_inchar_exit __ARGS((void));
 int prof_def_func __ARGS((void));
 int autowrite __ARGS((buf_T *buf, int forceit, async_context *_async_context));
 void autowrite_all __ARGS((async_context *_async_context));
-int check_changed __ARGS((buf_T *buf, int flags));
+int check_changed __ARGS((buf_T *buf, int flags, async_context *_async_context));
 void browse_save_fname __ARGS((buf_T *buf));
 void dialog_changed __ARGS((buf_T *buf, int checkall));
 int can_abandon __ARGS((buf_T *buf, int forceit));
