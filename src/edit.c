@@ -229,7 +229,7 @@ static void ins_insert __ARGS((int replaceState));
 static void ins_ctrl_o __ARGS((void));
 static void ins_shift __ARGS((int c, int lastc DECL_ASYNC_ARG));
 static void ins_del __ARGS((void));
-static int  ins_bs __ARGS((int c, int mode, int *inserted_space_p));
+static int  ins_bs __ARGS((int c, int mode, int *inserted_space_p DECL_ASYNC_ARG));
 #ifdef FEAT_MOUSE
 static void ins_mouse __ARGS((int c));
 static void ins_mousescroll __ARGS((int dir));
