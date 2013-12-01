@@ -5528,7 +5528,7 @@ global_exe(cmd ASYNC_ARG)
 
     global_busy = 0;
     if (global_need_beginline)
-	beginline(BL_WHITE | BL_FIX);
+	beginline(BL_WHITE | BL_FIX ASYNC_ARG);
     else
 	check_cursor();	/* cursor may be beyond the end of the line */
 
