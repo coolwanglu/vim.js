@@ -6502,7 +6502,7 @@ auto_format(trailblank, prev_line ASYNC_ARG)
 	return;
 
     pos = curwin->w_cursor;
-    old = ml_get_curline();
+    old = ml_get_curline( ASYNC_ARG_ONLY);
 
     /* may remove added space */
     check_auto_format(FALSE);
