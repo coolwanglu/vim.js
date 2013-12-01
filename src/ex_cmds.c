@@ -6149,7 +6149,8 @@ find_help_tags(arg, num_matches, matches, keep_lang)
  * highlighting is not used.
  */
     void
-fix_help_buffer()
+fix_help_buffer( ASYNC_ARG_ONLY)
+    DECL_ASYNC_ARG_KR
 {
     linenr_T	lnum;
     char_u	*line;
