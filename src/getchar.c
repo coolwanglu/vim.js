@@ -1508,7 +1508,7 @@ using_script()
     void
 before_blocking()
 {
-    updatescript(0);
+    updatescript(0 ASYNC_ARG);
 #ifdef FEAT_EVAL
     if (may_garbage_collect)
 	garbage_collect();
