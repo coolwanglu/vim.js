@@ -245,7 +245,7 @@ static void ins_right __ARGS((void));
 static void ins_s_right __ARGS((void));
 static void ins_up __ARGS((int startcol DECL_ASYNC_ARG));
 static void ins_pageup __ARGS((void));
-static void ins_down __ARGS((int startcol));
+static void ins_down __ARGS((int startcol DECL_ASYNC_ARG));
 static void ins_pagedown __ARGS((void));
 #ifdef FEAT_DND
 static void ins_drop __ARGS((void));
