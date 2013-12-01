@@ -714,10 +714,11 @@ emsg_invreg(name)
  * Returns a pointer to the printed message, if wait_return() not called.
  */
     char_u *
-msg_trunc_attr(s, force, attr)
+msg_trunc_attr(s, force, attr ASYNC_ARG)
     char_u	*s;
     int		force;
     int		attr;
+    DECL_ASYNC_ARG_KR
 {
     int		n;
 
