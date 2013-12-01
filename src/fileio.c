@@ -3695,7 +3695,7 @@ buf_write(buf, fname, sfname, start, end, eap, append, forceit,
      */
     dobackup = (p_wb || p_bk || *p_pm != NUL);
 #ifdef FEAT_WILDIGN
-    if (dobackup && *p_bsk != NUL && match_file_list(p_bsk, sfname, ffname))
+    if (dobackup && *p_bsk != NUL && match_file_list(p_bsk, sfname, ffname ASYNC_ARG))
 	dobackup = FALSE;
 #endif
 
