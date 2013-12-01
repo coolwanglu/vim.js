@@ -3072,7 +3072,7 @@ getfile(fnum, ffname, sfname, setpm, lnum, forceit ASYNC_ARG)
     if (other)
 	++no_wait_return;	    /* don't wait for autowrite message */
     if (other && !forceit && curbuf->b_nwindows == 1 && !P_HID(curbuf)
-		   && curbufIsChanged() && autowrite(curbuf, forceit) == FAIL)
+		   && curbufIsChanged() && autowrite(curbuf, forceit ASYNC_ARG) == FAIL)
     {
 #if defined(FEAT_GUI_DIALOG) || defined(FEAT_CON_DIALOG)
 	if (p_confirm && p_write)
