@@ -6701,8 +6701,9 @@ redo_literal(c)
  * For undo/redo it resembles hitting the <ESC> key.
  */
     static void
-start_arrow(end_insert_pos)
+start_arrow(end_insert_pos ASYNC_ARG)
     pos_T    *end_insert_pos;	    /* can be NULL */
+    DECL_ASYNC_ARG_KR
 {
     if (!arrow_used)	    /* something has been inserted */
     {
