@@ -589,8 +589,9 @@ ml_set_crypt_key(buf, old_key, old_cm)
  * It may rename the swap file.
  */
     void
-ml_setname(buf)
+ml_setname(buf ASYNC_ARG)
     buf_T	*buf;
+    DECL_ASYNC_ARG_KR
 {
     int		success = FALSE;
     memfile_T	*mfp;
