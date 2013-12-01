@@ -1256,7 +1256,7 @@ doESCkey:
 	    if (mod_mask & MOD_MASK_SHIFT)
 		ins_pageup();
 	    else
-		ins_up(FALSE);
+		ins_up(FALSE ASYNC_ARG);
 	    break;
 
 	case K_S_UP:	/* <S-Up> */
