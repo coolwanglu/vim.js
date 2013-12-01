@@ -121,7 +121,7 @@ static void	start_stuff __ARGS((void));
 static int	read_redo __ARGS((int, int));
 static void	copy_redo __ARGS((int));
 static void	init_typebuf __ARGS((void));
-static void	gotchars __ARGS((char_u *, int));
+static void	gotchars __ARGS((char_u *, int DECL_ASYNC_ARG));
 static void	may_sync_undo __ARGS((void));
 static void	closescript __ARGS((void));
 static int	vgetorpeek __ARGS((int));
