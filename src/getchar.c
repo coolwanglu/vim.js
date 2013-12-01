@@ -1921,8 +1921,9 @@ vungetc(c)	/* unget one character (can only be done once!) */
  * K_SPECIAL and CSI may be escaped, need to get two more bytes then.
  */
     static int
-vgetorpeek(advance)
+vgetorpeek(advance ASYNC_ARG)
     int	    advance;
+    DECL_ASYNC_ARG_KR
 {
     int		c, c1;
     int		keylen;
