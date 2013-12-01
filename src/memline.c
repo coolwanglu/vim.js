@@ -872,7 +872,7 @@ ml_close_notmod()
 ml_timestamp(buf)
     buf_T	*buf;
 {
-    ml_upd_block0(buf, UB_FNAME);
+    ml_upd_block0(buf, UB_FNAME ASYNC_ARG);
 }
 
 /*
