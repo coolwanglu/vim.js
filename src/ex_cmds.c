@@ -5059,7 +5059,7 @@ do_sub(eap ASYNC_ARG)
 		{
 		    sub_firstlnum += nmatch - 1;
 		    vim_free(sub_firstline);
-		    sub_firstline = vim_strsave(ml_get(sub_firstlnum));
+		    sub_firstline = vim_strsave(ml_get(sub_firstlnum ASYNC_ARG));
 		    /* When going beyond the last line, stop substituting. */
 		    if (sub_firstlnum <= line2)
 			do_again = TRUE;
