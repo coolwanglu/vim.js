@@ -4157,10 +4157,11 @@ do_swapexists(buf, fname)
  * Note: May trigger SwapExists autocmd, pointers may change!
  */
     static char_u *
-findswapname(buf, dirp, old_fname)
+findswapname(buf, dirp, old_fname ASYNC_ARG)
     buf_T	*buf;
     char_u	**dirp;		/* pointer to list of directories */
     char_u	*old_fname;	/* don't give warning for this file name */
+    DECL_ASYNC_ARG_KR
 {
     char_u	*fname;
     int		n;
