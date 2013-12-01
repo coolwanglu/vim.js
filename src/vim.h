@@ -1622,7 +1622,7 @@ typedef UINT32_TYPEDEF UINT32_T;
 
 #define MSG(s)			    msg((char_u *)(s) ASYNC_ARG)
 #define MSG_ATTR(s, attr)	    msg_attr(ASYNC_ARG_FIRST (char_u *)(s), (attr))
-#define EMSG(s)			    emsg((char_u *)(s))
+#define EMSG(s)			    emsg((char_u *)(s) ASYNC_ARG)
 #define EMSG2(s, p)		    emsg2((char_u *)(s), (char_u *)(p))
 #define EMSG3(s, p, q)		    emsg3((char_u *)(s), (char_u *)(p), (char_u *)(q))
 #define EMSGN(s, n)		    emsgn((char_u *)(s), (long)(n))

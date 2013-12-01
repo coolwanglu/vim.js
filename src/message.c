@@ -679,7 +679,7 @@ emsg(s ASYNC_ARG)
     /*
      * Display name and line number for the source of the error.
      */
-    msg_source(attr);
+    msg_source(attr ASYNC_ARG);
 
     /*
      * Display the error message itself.

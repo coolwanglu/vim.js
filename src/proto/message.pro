@@ -63,7 +63,7 @@ void verbose_enter_scroll __ARGS((void));
 void verbose_leave_scroll __ARGS((void));
 void verbose_stop __ARGS((void));
 int verbose_open __ARGS((void));
-void give_warning __ARGS((char_u *message, int hl));
+void give_warning __ARGS((char_u *message, int hl, async_context *_async_context));
 void msg_advance __ARGS((int col));
 int do_dialog __ARGS((int type, char_u *title, char_u *message, char_u *buttons, int dfltbutton, char_u *textfield, int ex_cmd));
 void display_confirm_msg __ARGS((void));
