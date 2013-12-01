@@ -2882,7 +2882,7 @@ ml_append_int(buf, lnum, line, len, newfile, mark ASYNC_ARG)
 	 */
 	lineadd = buf->b_ml.ml_locked_lineadd;
 	buf->b_ml.ml_locked_lineadd = 0;
-	ml_find_line(buf, (linenr_T)0, ML_FLUSH);   /* flush data block */
+	ml_find_line(buf, (linenr_T)0, ML_FLUSH ASYNC_ARG);   /* flush data block */
 
 	/*
 	 * update pointer blocks for the new data block
