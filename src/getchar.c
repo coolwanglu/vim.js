@@ -936,12 +936,13 @@ init_typebuf()
  * return FAIL for failure, OK otherwise
  */
     int
-ins_typebuf(str, noremap, offset, nottyped, silent)
+ins_typebuf(str, noremap, offset, nottyped, silent ASYNC_ARG)
     char_u	*str;
     int		noremap;
     int		offset;
     int		nottyped;
     int		silent;
+    DECL_ASYNC_ARG_KR
 {
     char_u	*s1, *s2;
     int		newlen;
