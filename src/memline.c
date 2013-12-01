@@ -2393,8 +2393,9 @@ ml_get(lnum ASYNC_ARG)
  * Return pointer to position "pos".
  */
     char_u *
-ml_get_pos(pos)
+ml_get_pos(pos ASYNC_ARG)
     pos_T	*pos;
+    DECL_ASYNC_ARG_KR
 {
     return (ml_get_buf(curbuf, pos->lnum, FALSE ASYNC_ARG) + pos->col);
 }
