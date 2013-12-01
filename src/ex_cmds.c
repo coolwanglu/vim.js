@@ -25,7 +25,7 @@ static int viminfo_encoding __ARGS((vir_T *virp));
 static int read_viminfo_up_to_marks __ARGS((vir_T *virp, int forceit, int writing));
 #endif
 
-static int check_readonly __ARGS((int *forceit, buf_T *buf));
+static int check_readonly __ARGS((int *forceit, buf_T *buf DECL_ASYNC_ARG));
 #ifdef FEAT_AUTOCMD
 static void delbuf_msg __ARGS((char_u *name));
 #endif
