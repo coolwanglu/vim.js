@@ -6097,12 +6097,13 @@ insertchar(c, flags, second_indent ASYNC_ARG)
  * will be the comment leader length sent to open_line().
  */
     static void
-internal_format(textwidth, second_indent, flags, format_only, c)
+internal_format(textwidth, second_indent, flags, format_only, c ASYNC_ARG)
     int		textwidth;
     int		second_indent;
     int		flags;
     int		format_only;
     int		c; /* character to be inserted (can be NUL) */
+    DECL_ASYNC_ARG_KR
 {
     int		cc;
     int		save_char = NUL;
