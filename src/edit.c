@@ -259,7 +259,7 @@ static int  ins_ctrl_ey __ARGS((int tc));
 #ifdef FEAT_SMARTINDENT
 static void ins_try_si __ARGS((int c));
 #endif
-static colnr_T get_nolist_virtcol __ARGS((void));
+static colnr_T get_nolist_virtcol __ARGS(( DECL_ASYNC_ARG_ONLY));
 #ifdef FEAT_AUTOCMD
 static char_u *do_insert_char_pre __ARGS((int c));
 #endif
