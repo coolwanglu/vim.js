@@ -5798,7 +5798,7 @@ buf_contents_changed(buf ASYNC_ARG)
     /* set curwin/curbuf to buf and save a few things */
     aucmd_prepbuf(&aco, newbuf);
 
-    if (ml_open(curbuf) == OK
+    if (ml_open(curbuf ASYNC_ARG) == OK
 	    && readfile(buf->b_ffname, buf->b_fname,
 				  (linenr_T)0, (linenr_T)0, (linenr_T)MAXLNUM,
 					    &ea, READ_NEW | READ_DUMMY ASYNC_ARG) == OK)
