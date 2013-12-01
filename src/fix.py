@@ -204,7 +204,7 @@ def process(line):
         global proto_refreshed
         if not fn in proto_refreshed:
             proto_refreshed[fn] = 1
-            os.system('make {0}.pro'.format(fn[:-2]))
+            os.system('make {0}.pro 2>/dev/null'.format(fn[:-2]))
 
     if ok:
         modified_files[fn] = 1

@@ -24,7 +24,7 @@ int ml_append_buf __ARGS((buf_T *buf, linenr_T lnum, char_u *line, colnr_T len, 
 int ml_replace __ARGS((linenr_T lnum, char_u *line, int copy, async_context *_async_context));
 int ml_delete __ARGS((linenr_T lnum, int message, async_context *_async_context));
 void ml_setmarked __ARGS((linenr_T lnum, async_context *_async_context));
-linenr_T ml_firstmarked __ARGS((void));
+linenr_T ml_firstmarked __ARGS((async_context *_async_context));
 void ml_clearmarked __ARGS((void));
 int resolve_symlink __ARGS((char_u *fname, char_u *buf));
 char_u *makeswapname __ARGS((char_u *fname, char_u *ffname, buf_T *buf, char_u *dir_name));

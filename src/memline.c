@@ -3384,7 +3384,7 @@ ml_clearmarked()
 	 * This also fills the stack with the blocks from the root to the data
 	 * block and releases any locked block.
 	 */
-	if ((hp = ml_find_line(curbuf, lnum, ML_FIND)) == NULL)
+	if ((hp = ml_find_line(curbuf, lnum, ML_FIND ASYNC_ARG)) == NULL)
 	    return;		/* give error message? */
 
 	dp = (DATA_BL *)(hp->bh_data);
