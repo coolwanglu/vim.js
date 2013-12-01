@@ -2113,7 +2113,7 @@ do_one_cmd(cmdlinep, sourcing,
 	    if ((errormsg = invalid_range(&ea)) == NULL)
 	    {
 		correct_range(&ea);
-		ex_print(&ea);
+		ex_print(&ea ASYNC_ARG);
 	    }
 	}
 	else if (ea.addr_count != 0)
