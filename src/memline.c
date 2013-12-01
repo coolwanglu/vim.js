@@ -3114,7 +3114,7 @@ ml_delete(lnum, message)
     int		message;
 {
     ml_flush_line(curbuf);
-    return ml_delete_int(curbuf, lnum, message);
+    return ml_delete_int(curbuf, lnum, message ASYNC_ARG);
 }
 
     static int
