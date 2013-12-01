@@ -6797,10 +6797,11 @@ stop_arrow( ASYNC_ARG_ONLY)
  * to another window/buffer.
  */
     static void
-stop_insert(end_insert_pos, esc, nomove)
+stop_insert(end_insert_pos, esc, nomove ASYNC_ARG)
     pos_T	*end_insert_pos;
     int		esc;			/* called by ins_esc() */
     int		nomove;			/* <c-\><c-o>, don't move cursor */
+    DECL_ASYNC_ARG_KR
 {
     int		cc;
     char_u	*ptr;
