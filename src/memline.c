@@ -3241,7 +3241,7 @@ ml_delete_int(buf, lnum, message ASYNC_ARG)
 		/* fix line count for rest of blocks in the stack */
 		if (buf->b_ml.ml_locked_lineadd != 0)
 		{
-		    ml_lineadd(buf, buf->b_ml.ml_locked_lineadd);
+		    ml_lineadd(buf, buf->b_ml.ml_locked_lineadd ASYNC_ARG);
 		    buf->b_ml.ml_stack[buf->b_ml.ml_stack_top].ip_high +=
 						  buf->b_ml.ml_locked_lineadd;
 		}
