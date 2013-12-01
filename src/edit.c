@@ -1945,7 +1945,7 @@ change_indent(type, amount, round, replaced, call_changed_bytes ASYNC_ARG)
 	 */
 	vcol = last_vcol = 0;
 	new_cursor_col = -1;
-	ptr = ml_get_curline();
+	ptr = ml_get_curline( ASYNC_ARG_ONLY);
 	while (vcol <= (int)curwin->w_virtcol)
 	{
 	    last_vcol = vcol;
