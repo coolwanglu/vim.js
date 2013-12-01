@@ -2636,7 +2636,7 @@ ml_append_int(buf, lnum, line, len, newfile, mark ASYNC_ARG)
 	 */
 	--(buf->b_ml.ml_locked_lineadd);
 	--(buf->b_ml.ml_locked_high);
-	if ((hp = ml_find_line(buf, lnum + 1, ML_INSERT)) == NULL)
+	if ((hp = ml_find_line(buf, lnum + 1, ML_INSERT ASYNC_ARG)) == NULL)
 	    return FAIL;
 
 	db_idx = -1;		    /* careful, it is negative! */
