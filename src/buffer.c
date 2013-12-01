@@ -3216,7 +3216,7 @@ fileinfo(fullname, shorthelp, dont_truncate ASYNC_ARG)
     }
     else
     {
-	p = msg_trunc_attr(buffer, FALSE, 0);
+	p = msg_trunc_attr(buffer, FALSE, 0 ASYNC_ARG);
 	if (restart_edit != 0 || (msg_scrolled && !need_wait_return))
 	    /* Need to repeat the message after redrawing when:
 	     * - When restart_edit is set (otherwise there will be a delay
