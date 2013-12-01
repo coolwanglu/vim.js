@@ -1452,7 +1452,7 @@ check_changed(buf, flags)
     if (       !forceit
 	    && bufIsChanged(buf)
 	    && ((flags & CCGD_MULTWIN) || buf->b_nwindows <= 1)
-	    && (!(flags & CCGD_AW) || autowrite(buf, forceit) == FAIL))
+	    && (!(flags & CCGD_AW) || autowrite(buf, forceit ASYNC_ARG) == FAIL))
     {
 #if defined(FEAT_GUI_DIALOG) || defined(FEAT_CON_DIALOG)
 	if ((p_confirm || cmdmod.confirm) && p_write)
@@ -2802,7 +2802,7 @@ do_in_runtimepath(name, all, callback, cookie)
 	if (p_verbose > 1 && name != NULL)
 	{
 	    verbose_enter();
-	    smsg((char_u *)_("Searching for \"%s\" in \"%s\""),
+	    smsg(ASYNC_ARG_FIRST (char_u *)_("Searching for \"%s\" in \"%s\""),
 						 (char *)name, (char *)p_rtp);
 	    verbose_leave();
 	}
