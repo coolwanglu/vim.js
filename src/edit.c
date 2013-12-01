@@ -8249,7 +8249,7 @@ ins_ctrl_g()
 	/* CTRL-G k and CTRL-G <Up>: cursor up to Insstart.col */
 	case K_UP:
 	case Ctrl_K:
-	case 'k': ins_up(TRUE);
+	case 'k': ins_up(TRUE ASYNC_ARG);
 		  break;
 
 	/* CTRL-G j and CTRL-G <Down>: cursor down to Insstart.col */
