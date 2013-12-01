@@ -3466,7 +3466,7 @@ nextwild(xp, type, options, escape ASYNC_ARG)
 	beep_flush();
     else if (xp->xp_numfiles == 1)
 	/* free expanded pattern */
-	(void)ExpandOne(xp, NULL, NULL, 0, WILD_FREE);
+	(void)ExpandOne(xp, NULL, NULL, 0, WILD_FREE ASYNC_ARG);
 
     return OK;
 }
