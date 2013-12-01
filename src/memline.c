@@ -1208,7 +1208,7 @@ ml_recover()
 	msg_outtrans_attr(mfp->mf_fname, attr | MSG_HIST);
 	MSG_PUTS_ATTR(_("\nMaybe no changes were made or Vim did not update the swap file."),
 		attr | MSG_HIST);
-	msg_end();
+	msg_end( ASYNC_ARG_ONLY);
 	goto theend;
     }
     b0p = (ZERO_BL *)(hp->bh_data);
