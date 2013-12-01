@@ -3407,8 +3407,9 @@ ml_clearmarked( ASYNC_ARG_ONLY)
  * flush ml_line if necessary
  */
     static void
-ml_flush_line(buf)
+ml_flush_line(buf ASYNC_ARG)
     buf_T	*buf;
+    DECL_ASYNC_ARG_KR
 {
     bhdr_T	*hp;
     DATA_BL	*dp;
