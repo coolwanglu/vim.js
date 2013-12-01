@@ -1307,7 +1307,7 @@ do_filter(line1, line2, eap, cmd, do_in, do_out ASYNC_ARG)
 	    curwin->w_cursor.lnum = curbuf->b_op_end.lnum;
 	}
 
-	beginline(BL_WHITE | BL_FIX);	    /* cursor on first non-blank */
+	beginline(BL_WHITE | BL_FIX ASYNC_ARG);	    /* cursor on first non-blank */
 	--no_wait_return;
 
 	if (linecount > p_report)
