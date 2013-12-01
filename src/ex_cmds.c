@@ -3271,7 +3271,7 @@ do_ecmd(fnum, ffname, sfname, eap, newlnum, flags, oldwin ASYNC_ARG)
 	&& check_changed(curbuf, (p_awa ? CCGD_AW : 0)
 			       | (other_file ? 0 : CCGD_MULTWIN)
 			       | ((flags & ECMD_FORCEIT) ? CCGD_FORCEIT : 0)
-			       | (eap == NULL ? 0 : CCGD_EXCMD)))
+			       | (eap == NULL ? 0 : CCGD_EXCMD) ASYNC_ARG))
     {
 	if (fnum == 0 && other_file && ffname != NULL)
 	    (void)setaltfname(ffname, sfname, newlnum < 0 ? 0 : newlnum ASYNC_ARG);
