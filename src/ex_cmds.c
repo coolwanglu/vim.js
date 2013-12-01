@@ -5793,7 +5793,7 @@ ex_help(eap ASYNC_ARG)
 		goto erret;
 #else
 	    /* use current window */
-	    if (!can_abandon(curbuf, FALSE))
+	    if (!can_abandon(curbuf, FALSE ASYNC_ARG))
 		goto erret;
 #endif
 
