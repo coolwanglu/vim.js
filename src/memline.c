@@ -1575,7 +1575,7 @@ ml_recover( ASYNC_ARG_ONLY)
 			}
 			else
 			    p = (char_u *)dp + txt_start;
-			ml_append(lnum++, p, (colnr_T)0, TRUE);
+			ml_append(lnum++, p, (colnr_T)0, TRUE ASYNC_ARG);
 		    }
 		    if (has_error)
 			ml_append(lnum++, (char_u *)_("???END"),
