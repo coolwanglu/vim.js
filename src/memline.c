@@ -869,8 +869,9 @@ ml_close_notmod()
  * Used when the file has been written.
  */
     void
-ml_timestamp(buf)
+ml_timestamp(buf ASYNC_ARG)
     buf_T	*buf;
+    DECL_ASYNC_ARG_KR
 {
     ml_upd_block0(buf, UB_FNAME ASYNC_ARG);
 }
