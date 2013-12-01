@@ -7392,8 +7392,9 @@ get_last_insert_save()
  * the replacement string is inserted in typebuf.tb_buf[], followed by "c".
  */
     static int
-echeck_abbr(c)
+echeck_abbr(c ASYNC_ARG)
     int c;
+    DECL_ASYNC_ARG_KR
 {
     /* Don't check for abbreviation in paste mode, when disabled and just
      * after moving around with cursor keys. */
