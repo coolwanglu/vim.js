@@ -9101,8 +9101,9 @@ static int mksession_nl = FALSE;    /* use NL only in put_eol() */
  * ":mkexrc", ":mkvimrc", ":mkview" and ":mksession".
  */
     static void
-ex_mkrc(eap)
+ex_mkrc(eap ASYNC_ARG)
     exarg_T	*eap;
+    DECL_ASYNC_ARG_KR
 {
     FILE	*fd;
     int		failed = FALSE;
