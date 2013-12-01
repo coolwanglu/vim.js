@@ -124,7 +124,7 @@ static void	init_typebuf __ARGS((void));
 static void	gotchars __ARGS((char_u *, int DECL_ASYNC_ARG));
 static void	may_sync_undo __ARGS((void));
 static void	closescript __ARGS((void));
-static int	vgetorpeek __ARGS((int));
+static int	vgetorpeek __ARGS((int DECL_ASYNC_ARG));
 static void	map_free __ARGS((mapblock_T **));
 static void	validate_maphash __ARGS((void));
 static void	showmap __ARGS((mapblock_T *mp, int local));
