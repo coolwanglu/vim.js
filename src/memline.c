@@ -2467,7 +2467,7 @@ errorret:
      */
     if (buf->b_ml.ml_line_lnum != lnum || mf_dont_release)
     {
-	ml_flush_line(buf);
+	ml_flush_line(buf ASYNC_ARG);
 
 	/*
 	 * Find the data block containing the line.
