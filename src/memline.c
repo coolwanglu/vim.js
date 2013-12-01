@@ -1527,7 +1527,7 @@ ml_recover( ASYNC_ARG_ONLY)
 		    }
 		    ++error;
 		    ml_append(lnum++, (char_u *)_("???BLOCK MISSING"),
-							    (colnr_T)0, TRUE);
+							    (colnr_T)0, TRUE ASYNC_ARG);
 		}
 		else
 		{
