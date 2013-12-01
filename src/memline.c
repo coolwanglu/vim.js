@@ -1220,7 +1220,7 @@ ml_recover( ASYNC_ARG_ONLY)
 	MSG_PUTS_ATTR(_(" cannot be used with this version of Vim.\n"),
 								    MSG_HIST);
 	MSG_PUTS_ATTR(_("Use Vim version 3.0.\n"), MSG_HIST);
-	msg_end();
+	msg_end( ASYNC_ARG_ONLY);
 	goto theend;
     }
     if (ml_check_b0_id(b0p) == FAIL)
