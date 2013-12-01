@@ -3287,7 +3287,7 @@ buf_write(buf, fname, sfname, start, end, eap, append, forceit,
 	    && (!append || vim_strchr(p_cpo, CPO_FNAMEAPP) != NULL)
 	    && vim_strchr(p_cpo, CPO_FNAMEW) != NULL)
     {
-	if (set_rw_fname(fname, sfname) == FAIL)
+	if (set_rw_fname(fname, sfname ASYNC_ARG) == FAIL)
 	    return FAIL;
 	buf = curbuf;	    /* just in case autocmds made "buf" invalid */
     }
