@@ -5170,7 +5170,7 @@ skip:
 
 			if (u_savesub(lnum) != OK)
 			    break;
-			ml_replace(lnum, new_start, TRUE);
+			ml_replace(lnum, new_start, TRUE ASYNC_ARG);
 
 			if (nmatch_tl > 0)
 			{
