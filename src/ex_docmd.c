@@ -7391,7 +7391,7 @@ ex_recover(eap)
     if (!check_changed(curbuf, (p_awa ? CCGD_AW : 0)
 			     | CCGD_MULTWIN
 			     | (eap->forceit ? CCGD_FORCEIT : 0)
-			     | CCGD_EXCMD)
+			     | CCGD_EXCMD ASYNC_ARG)
 
 	    && (*eap->arg == NUL
 			     || setfname(curbuf, eap->arg, NULL, TRUE) == OK))
