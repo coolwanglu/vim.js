@@ -1238,7 +1238,7 @@ gotchars(chars, len)
     {
 	/* Handle one byte at a time; no translation to be done. */
 	c = *s++;
-	updatescript(c);
+	updatescript(c ASYNC_ARG);
 
 	if (Recording)
 	{
