@@ -5282,7 +5282,7 @@ outofmem:
 		if (endcolumn)
 		    coladvance((colnr_T)MAXCOL);
 		else
-		    beginline(BL_WHITE | BL_FIX);
+		    beginline(BL_WHITE | BL_FIX ASYNC_ARG);
 	    }
 	    if (!do_sub_msg(do_count ASYNC_ARG) && do_ask)
 		MSG("");
