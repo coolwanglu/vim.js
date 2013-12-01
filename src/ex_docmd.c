@@ -430,7 +430,7 @@ static void	ex_setfiletype  __ARGS((exarg_T *eap));
 # define ex_diffthis		ex_ni
 # define ex_diffupdate		ex_ni
 #endif
-static void	ex_digraphs __ARGS((exarg_T *eap));
+static void	ex_digraphs __ARGS((exarg_T *eap DECL_ASYNC_ARG));
 static void	ex_set __ARGS((exarg_T *eap));
 #if !defined(FEAT_EVAL) || !defined(FEAT_AUTOCMD)
 # define ex_options		ex_ni
