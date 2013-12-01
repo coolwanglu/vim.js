@@ -9656,7 +9656,7 @@ ins_tab( ASYNC_ARG_ONLY)
     int		temp;
 
     if (Insstart_blank_vcol == MAXCOL && curwin->w_cursor.lnum == Insstart.lnum)
-	Insstart_blank_vcol = get_nolist_virtcol();
+	Insstart_blank_vcol = get_nolist_virtcol( ASYNC_ARG_ONLY);
     if (echeck_abbr(TAB + ABBR_OFF))
 	return FALSE;
 
