@@ -15,7 +15,7 @@ void ml_sync_all __ARGS((int check_file, int check_char, async_context *_async_c
 void ml_preserve __ARGS((buf_T *buf, int message, async_context *_async_context));
 char_u *ml_get __ARGS((linenr_T lnum, async_context *_async_context));
 char_u *ml_get_pos __ARGS((pos_T *pos, async_context *_async_context));
-char_u *ml_get_curline __ARGS((void));
+char_u *ml_get_curline __ARGS((async_context *_async_context));
 char_u *ml_get_cursor __ARGS((void));
 char_u *ml_get_buf __ARGS((buf_T *buf, linenr_T lnum, int will_change, async_context *_async_context));
 int ml_line_alloced __ARGS((void));

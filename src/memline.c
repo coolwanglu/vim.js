@@ -2416,7 +2416,7 @@ ml_get_curline( ASYNC_ARG_ONLY)
     char_u *
 ml_get_cursor()
 {
-    return (ml_get_buf(curbuf, curwin->w_cursor.lnum, FALSE) +
+    return (ml_get_buf(curbuf, curwin->w_cursor.lnum, FALSE ASYNC_ARG) +
 							curwin->w_cursor.col);
 }
 
