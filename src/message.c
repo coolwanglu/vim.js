@@ -3293,9 +3293,10 @@ verbose_open()
  * Use 'w' highlighting and may repeat the message after redrawing
  */
     void
-give_warning(message, hl)
+give_warning(message, hl ASYNC_ARG)
     char_u  *message;
     int	    hl;
+    DECL_ASYNC_ARG_KR
 {
     /* Don't do this for ":silent". */
     if (msg_silent != 0)

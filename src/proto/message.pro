@@ -14,7 +14,7 @@ void emsg_invreg __ARGS((int name));
 char_u *msg_trunc_attr __ARGS((char_u *s, int force, int attr, async_context *_async_context));
 char_u *msg_may_trunc __ARGS((int force, char_u *s));
 int delete_first_msg __ARGS((void));
-void ex_messages __ARGS((exarg_T *eap));
+void ex_messages __ARGS((exarg_T *eap, async_context *_async_context));
 void msg_end_prompt __ARGS((void));
 void wait_return __ARGS((int redraw, async_context *_async_context));
 void set_keep_msg __ARGS((char_u *s, int attr));
