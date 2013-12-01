@@ -2461,7 +2461,7 @@ rename_buffer(new_fname ASYNC_ARG)
     xfname = curbuf->b_fname;
     curbuf->b_ffname = NULL;
     curbuf->b_sfname = NULL;
-    if (setfname(curbuf, new_fname, NULL, TRUE) == FAIL)
+    if (setfname(curbuf, new_fname, NULL, TRUE ASYNC_ARG) == FAIL)
     {
 	curbuf->b_ffname = fname;
 	curbuf->b_sfname = sfname;
