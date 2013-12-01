@@ -1277,7 +1277,7 @@ doESCkey:
 	    if (mod_mask & MOD_MASK_SHIFT)
 		ins_pagedown();
 	    else
-		ins_down(FALSE);
+		ins_down(FALSE ASYNC_ARG);
 	    break;
 
 	case K_S_DOWN:	/* <S-Down> */
