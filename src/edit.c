@@ -6899,7 +6899,7 @@ stop_insert(end_insert_pos, esc, nomove)
 	     * deleted characters. */
 	    if (VIsual_active && VIsual.lnum == curwin->w_cursor.lnum)
 	    {
-		int len = (int)STRLEN(ml_get_curline());
+		int len = (int)STRLEN(ml_get_curline( ASYNC_ARG_ONLY));
 
 		if (VIsual.col > len)
 		{
