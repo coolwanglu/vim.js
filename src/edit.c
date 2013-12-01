@@ -8986,7 +8986,7 @@ ins_bs(c, mode, inserted_space_p ASYNC_ARG)
 	    getvcol(curwin, &curwin->w_cursor, &vcol, NULL, NULL ASYNC_ARG);
 	    start_vcol = vcol;
 	    dec_cursor();
-	    getvcol(curwin, &curwin->w_cursor, NULL, NULL, &want_vcol);
+	    getvcol(curwin, &curwin->w_cursor, NULL, NULL, &want_vcol ASYNC_ARG);
 	    inc_cursor();
 	    want_vcol = (want_vcol / ts) * ts;
 
