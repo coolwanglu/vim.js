@@ -1060,7 +1060,7 @@ doESCkey:
 	case Ctrl_A:
 	    /* For ^@ the trailing ESC will end the insert, unless there is an
 	     * error.  */
-	    if (stuff_inserted(NUL, 1L, (c == Ctrl_A)) == FAIL
+	    if (stuff_inserted(NUL, 1L, (c == Ctrl_A) ASYNC_ARG) == FAIL
 						   && c != Ctrl_A && !p_im)
 		goto doESCkey;		/* quit insert mode */
 	    inserted_space = FALSE;

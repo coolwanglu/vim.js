@@ -28,7 +28,7 @@ int oneright __ARGS((void));
 int oneleft __ARGS((void));
 int cursor_up __ARGS((long n, int upd_topline));
 int cursor_down __ARGS((long n, int upd_topline));
-int stuff_inserted __ARGS((int c, long count, int no_esc));
+int stuff_inserted __ARGS((int c, long count, int no_esc, async_context *_async_context));
 char_u *get_last_insert __ARGS((void));
 char_u *get_last_insert_save __ARGS((void));
 void replace_push __ARGS((int c));
