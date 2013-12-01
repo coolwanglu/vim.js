@@ -113,7 +113,7 @@ static char_u	noremapbuf_init[TYPELEN_INIT];	/* initial typebuf.tb_noremap */
 static int	last_recorded_len = 0;	/* number of last recorded chars */
 
 static char_u	*get_buffcont __ARGS((struct buffheader *, int));
-static void	add_buff __ARGS((struct buffheader *, char_u *, long n));
+static void	add_buff __ARGS((struct buffheader *, char_u *, long n DECL_ASYNC_ARG));
 static void	add_num_buff __ARGS((struct buffheader *, long));
 static void	add_char_buff __ARGS((struct buffheader *, int));
 static int	read_stuff __ARGS((int advance));
