@@ -2513,10 +2513,11 @@ ml_line_alloced()
  */
     int
 ml_append(lnum, line, len, newfile)
-    linenr_T	lnum;		/* append after this line (can be 0) */
+    linenr_T	lnum;		/* append after this line (can be 0 ASYNC_ARG) */
     char_u	*line;		/* text of the new line */
     colnr_T	len;		/* length of new line, including NUL, or 0 */
     int		newfile;	/* flag, see above */
+    DECL_ASYNC_ARG_KR
 {
     /* When starting up, we might still need to create the memfile */
     if (curbuf->b_ml.ml_mfp == NULL && open_buffer(FALSE, NULL, 0 ASYNC_ARG) == FAIL)
