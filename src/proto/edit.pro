@@ -23,7 +23,7 @@ int stop_arrow __ARGS((async_context *_async_context));
 void set_last_insert __ARGS((int c));
 void free_last_insert __ARGS((void));
 char_u *add_char2buf __ARGS((int c, char_u *s));
-void beginline __ARGS((int flags));
+void beginline __ARGS((int flags, async_context *_async_context));
 int oneright __ARGS((void));
 int oneleft __ARGS((void));
 int cursor_up __ARGS((long n, int upd_topline));

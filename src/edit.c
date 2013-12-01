@@ -7080,7 +7080,7 @@ oneright()
     }
 #endif
 
-    ptr = ml_get_cursor();
+    ptr = ml_get_cursor( ASYNC_ARG_ONLY);
     if (*ptr == NUL)
 	return FAIL;	    /* already at the very end */
 
