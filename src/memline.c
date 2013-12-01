@@ -2601,7 +2601,7 @@ ml_append_int(buf, lnum, line, len, newfile, mark ASYNC_ARG)
  * This also releases any locked block.
  */
     if ((hp = ml_find_line(buf, lnum == 0 ? (linenr_T)1 : lnum,
-							  ML_INSERT)) == NULL)
+							  ML_INSERT ASYNC_ARG)) == NULL)
 	return FAIL;
 
     buf->b_ml.ml_flags &= ~ML_EMPTY;
