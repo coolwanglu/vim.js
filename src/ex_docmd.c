@@ -8460,8 +8460,9 @@ do_exmap(eap, isabbrev ASYNC_ARG)
  * ":winsize" command (obsolete).
  */
     static void
-ex_winsize(eap)
+ex_winsize(eap ASYNC_ARG)
     exarg_T	*eap;
+    DECL_ASYNC_ARG_KR
 {
     int		w, h;
     char_u	*arg = eap->arg;
