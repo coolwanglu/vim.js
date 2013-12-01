@@ -405,7 +405,7 @@ int vim_snprintf(char *str, size_t str_m, char *fmt, ...);
 #ifdef __BORLANDC__
 _RTLENTRYF
 #endif
-// Lu Wang, for variable parameters, we have to declare ASYNC_ARG in the beginning
+// Lu Wang: for variable parameters, we have to declare ASYNC_ARG in the beginning
 smsg(DECL_ASYNC_ARG_FIRST char_u *s, ...)
 {
     va_list arglist;

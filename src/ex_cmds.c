@@ -818,7 +818,7 @@ do_move(line1, line2, dest ASYNC_ARG)
 	if (num_lines == 1)
 	    MSG(_("1 line moved"));
 	else
-	    smsg((char_u *)_("%ld lines moved"), num_lines);
+	    smsg(ASYNC_ARG_FIRST (char_u *)_("%ld lines moved"), num_lines);
     }
 
     /*
@@ -2767,7 +2767,6 @@ check_overwrite(eap, buf, fname, ffname, other)
 			       buf->ffname ASYNC_ARG) */
     char_u	*ffname;    /* full path version of fname */
     int		other;	    /* writing under other name */
-    DECL_ASYNC_ARG_KR
 {
     /*
      * write to other file or b_flags set or not writing the whole file:
@@ -4861,7 +4860,7 @@ do_sub(eap ASYNC_ARG)
 			    msg_no_more = TRUE;
 			    /* write message same highlighting as for
 			     * wait_return */
-			    smsg_attr(hl_attr(HLF_R),
+			    smsg_attr(ASYNC_ARG_FIRST hl_attr(HLF_R),
 				    (char_u *)_("replace with %s (y/n/a/q/l/^E/^Y)?"), sub);
 			    msg_no_more = FALSE;
 			    msg_scroll = i;
