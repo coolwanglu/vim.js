@@ -4236,7 +4236,8 @@ ex_z(eap ASYNC_ARG)
  * Otherwise, return FALSE.
  */
     int
-check_restricted()
+check_restricted( ASYNC_ARG_ONLY)
+    DECL_ASYNC_ARG_KR
 {
     if (restricted)
     {
