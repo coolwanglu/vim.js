@@ -4064,7 +4064,7 @@ ex_append(eap ASYNC_ARG)
     curbuf->b_op_start.col = curbuf->b_op_end.col = 0;
     curwin->w_cursor.lnum = lnum;
     check_cursor_lnum();
-    beginline(BL_SOL | BL_FIX);
+    beginline(BL_SOL | BL_FIX ASYNC_ARG);
 
     need_wait_return = FALSE;	/* don't use wait_return() now */
     ex_no_reprint = TRUE;
