@@ -759,7 +759,7 @@ do_move(line1, line2, dest ASYNC_ARG)
 	return FAIL;
     for (extra = 0, l = line1; l <= line2; l++)
     {
-	str = vim_strsave(ml_get(l + extra));
+	str = vim_strsave(ml_get(l + extra ASYNC_ARG));
 	if (str != NULL)
 	{
 	    ml_append(dest + l - line1, str, (colnr_T)0, FALSE ASYNC_ARG);
