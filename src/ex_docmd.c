@@ -6941,7 +6941,7 @@ ex_stop(eap)
 					)
     {
 	if (!eap->forceit)
-	    autowrite_all();
+	    autowrite_all( ASYNC_ARG_ONLY);
 	windgoto((int)Rows - 1, 0);
 	out_char('\n');
 	out_flush();
