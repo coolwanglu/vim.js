@@ -201,7 +201,7 @@ static void check_spell_redraw __ARGS((void));
 static void spell_back_to_badword __ARGS((void));
 static int  spell_bad_len = 0;	/* length of located bad word */
 #endif
-static void stop_insert __ARGS((pos_T *end_insert_pos, int esc, int nomove));
+static void stop_insert __ARGS((pos_T *end_insert_pos, int esc, int nomove DECL_ASYNC_ARG));
 static int  echeck_abbr __ARGS((int));
 static int  replace_pop __ARGS((void));
 static void replace_join __ARGS((int off));
