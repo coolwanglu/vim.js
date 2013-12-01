@@ -189,7 +189,7 @@ static unsigned  quote_meta __ARGS((char_u *dest, char_u *str, int len));
 #define BACKSPACE_LINE		    4
 
 static void ins_redraw __ARGS((int ready));
-static void ins_ctrl_v __ARGS((void));
+static void ins_ctrl_v __ARGS(( DECL_ASYNC_ARG_ONLY));
 static void undisplay_dollar __ARGS((void));
 static void insert_special __ARGS((int, int, int DECL_ASYNC_ARG));
 static void internal_format __ARGS((int textwidth, int second_indent, int flags, int format_only, int c));
