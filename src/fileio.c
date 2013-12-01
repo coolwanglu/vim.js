@@ -10170,7 +10170,7 @@ match_file_list(list, sfname, ffname)
     while (*p)
     {
 	copy_option_part(&p, buf, 100, ",");
-	regpat = file_pat_to_reg_pat(buf, NULL, &allow_dirs, FALSE);
+	regpat = file_pat_to_reg_pat(buf, NULL, &allow_dirs, FALSE ASYNC_ARG);
 	if (regpat == NULL)
 	    break;
 	match = match_file_pat(regpat, NULL, ffname, sfname,
