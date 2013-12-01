@@ -5994,7 +5994,7 @@ insertchar(c, flags, second_indent ASYNC_ARG)
 #ifdef FEAT_MBYTE
 	    && (!has_mbyte || (*mb_char2len)(c) == 1)
 #endif
-	    && vpeekc() != NUL
+	    && vpeekc( ASYNC_ARG_ONLY) != NUL
 	    && !(State & REPLACE_FLAG)
 #ifdef FEAT_CINDENT
 	    && !cindent_on()
