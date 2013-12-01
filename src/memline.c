@@ -4056,9 +4056,10 @@ static void attention_message __ARGS((buf_T *buf, char_u *fname));
  * Print the ATTENTION message: info about an existing swap file.
  */
     static void
-attention_message(buf, fname)
+attention_message(buf, fname ASYNC_ARG)
     buf_T   *buf;	/* buffer being edited */
     char_u  *fname;	/* swap file name */
+    DECL_ASYNC_ARG_KR
 {
     struct stat st;
     time_t	x, sx;
