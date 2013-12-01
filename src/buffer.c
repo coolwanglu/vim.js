@@ -5057,8 +5057,9 @@ static int  chk_modeline __ARGS((linenr_T, int DECL_ASYNC_ARG));
  * Returns immediately if the "ml" option isn't set.
  */
     void
-do_modelines(flags)
+do_modelines(flags ASYNC_ARG)
     int		flags;
+    DECL_ASYNC_ARG_KR
 {
     linenr_T	lnum;
     int		nmlines;
