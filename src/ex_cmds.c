@@ -7692,7 +7692,7 @@ ex_drop(eap ASYNC_ARG)
 # ifdef FEAT_WINDOWS
 	    ++emsg_off;
 # endif
-	    split = check_changed(curbuf, CCGD_AW | CCGD_EXCMD);
+	    split = check_changed(curbuf, CCGD_AW | CCGD_EXCMD ASYNC_ARG);
 # ifdef FEAT_WINDOWS
 	    --emsg_off;
 # else
