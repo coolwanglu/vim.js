@@ -893,9 +893,10 @@ ml_check_b0_id(b0p)
  * Update the timestamp or the B0_SAME_DIR flag of the .swp file.
  */
     static void
-ml_upd_block0(buf, what)
+ml_upd_block0(buf, what ASYNC_ARG)
     buf_T	*buf;
     upd_block0_T what;
+    DECL_ASYNC_ARG_KR
 {
     memfile_T	*mfp;
     bhdr_T	*hp;
