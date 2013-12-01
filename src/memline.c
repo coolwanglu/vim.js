@@ -3288,8 +3288,9 @@ ml_delete_int(buf, lnum, message ASYNC_ARG)
  * set the B_MARKED flag for line 'lnum'
  */
     void
-ml_setmarked(lnum)
+ml_setmarked(lnum ASYNC_ARG)
     linenr_T lnum;
+    DECL_ASYNC_ARG_KR
 {
     bhdr_T    *hp;
     DATA_BL *dp;
