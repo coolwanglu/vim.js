@@ -8727,7 +8727,7 @@ ins_bs_one(vcolp)
     colnr_T	*vcolp;
 {
     dec_cursor();
-    getvcol(curwin, &curwin->w_cursor, vcolp, NULL, NULL);
+    getvcol(curwin, &curwin->w_cursor, vcolp, NULL, NULL ASYNC_ARG);
     if (State & REPLACE_FLAG)
     {
 	/* Don't delete characters before the insert point when in
