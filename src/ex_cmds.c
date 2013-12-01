@@ -1373,7 +1373,7 @@ do_shell(cmd, flags ASYNC_ARG)
      * Disallow shell commands from .exrc and .vimrc in current directory for
      * security reasons.
      */
-    if (check_restricted() || check_secure())
+    if (check_restricted( ASYNC_ARG_ONLY) || check_secure())
     {
 	msg_end(ASYNC_ARG_ONLY);
 	return;
@@ -5475,9 +5475,9 @@ ex_global(eap ASYNC_ARG)
     else if (ndone == 0)
     {
 	if (type == 'v')
-	    smsg((char_u *)_("Pattern found in every line: %s"), pat);
+	    smsg(ASYNC_ARG_FIRST (char_u *)_("Pattern found in every line: %s"), pat);
 	else
-	    smsg((char_u *)_("Pattern not found: %s"), pat);
+	    smsg(ASYNC_ARG_FIRST (char_u *)_("Pattern not found: %s"), pat);
     }
     else
 	global_exe(cmd ASYNC_ARG);
