@@ -1715,11 +1715,12 @@ theend:
  * - find the name of the n'th swap file when recovering
  */
     int
-recover_names(fname, list, nr, fname_out)
+recover_names(fname, list, nr, fname_out ASYNC_ARG)
     char_u	*fname;		/* base for swap file name */
     int		list;		/* when TRUE, list the swap file names */
     int		nr;		/* when non-zero, return nr'th swap file name */
     char_u	**fname_out;	/* result when "nr" > 0 */
+    DECL_ASYNC_ARG_KR
 {
     int		num_names;
     char_u	*(names[6]);
