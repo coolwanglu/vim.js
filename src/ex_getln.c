@@ -816,7 +816,7 @@ getcmdline(firstc, count, indent ASYNC_ARG)
 		}
 		if (wim_flags[wim_index] & WIM_LONGEST)
 		    res = nextwild(&xpc, WILD_LONGEST, WILD_NO_BEEP,
-							       firstc != '@');
+							       firstc != '@' ASYNC_ARG);
 		else if (wim_flags[wim_index] & WIM_FULL)
 		    res = nextwild(&xpc, WILD_NEXT, WILD_NO_BEEP,
 							       firstc != '@');
