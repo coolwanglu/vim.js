@@ -2756,7 +2756,7 @@ source_runtime(name, all)
     char_u	*name;
     int		all;
 {
-    return do_in_runtimepath(name, all, source_callback, NULL);
+    return do_in_runtimepath(name, all, source_callback, NULL ASYNC_ARG);
 }
 
 /*
