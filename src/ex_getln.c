@@ -913,7 +913,7 @@ getcmdline(firstc, count, indent ASYNC_ARG)
 	{
 	    if (nextwild(&xpc, WILD_EXPAND_KEEP, 0, firstc != '@' ASYNC_ARG) == OK
 		    && nextwild(&xpc, WILD_PREV, 0, firstc != '@' ASYNC_ARG) == OK
-		    && nextwild(&xpc, WILD_PREV, 0, firstc != '@') == OK)
+		    && nextwild(&xpc, WILD_PREV, 0, firstc != '@' ASYNC_ARG) == OK)
 		goto cmdline_changed;
 	}
 
