@@ -1392,9 +1392,10 @@ prof_def_func()
  * return FAIL for failure, OK otherwise
  */
     int
-autowrite(buf, forceit)
+autowrite(buf, forceit ASYNC_ARG)
     buf_T	*buf;
     int		forceit;
+    DECL_ASYNC_ARG_KR
 {
     int		r;
 
