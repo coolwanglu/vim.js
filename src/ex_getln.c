@@ -1430,7 +1430,7 @@ getcmdline(firstc, count, indent ASYNC_ARG)
 		goto cmdline_not_changed;
 
 	case Ctrl_A:	    /* all matches */
-		if (nextwild(&xpc, WILD_ALL, 0, firstc != '@') == FAIL)
+		if (nextwild(&xpc, WILD_ALL, 0, firstc != '@' ASYNC_ARG) == FAIL)
 		    break;
 		goto cmdline_changed;
 
