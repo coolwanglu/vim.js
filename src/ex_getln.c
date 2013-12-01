@@ -1475,7 +1475,7 @@ getcmdline(firstc, count, indent ASYNC_ARG)
 		if (xpc.xp_numfiles > 0)
 		{
 		    if (nextwild(&xpc, (c == Ctrl_P) ? WILD_PREV : WILD_NEXT,
-						    0, firstc != '@') == FAIL)
+						    0, firstc != '@' ASYNC_ARG) == FAIL)
 			break;
 		    goto cmdline_changed;
 		}
