@@ -10151,10 +10151,11 @@ match_file_pat(pattern, prog, fname, sfname, tail, allow_dirs)
  * "sfname" is the short file name or NULL, "ffname" the long file name.
  */
     int
-match_file_list(list, sfname, ffname)
+match_file_list(list, sfname, ffname ASYNC_ARG)
     char_u	*list;
     char_u	*sfname;
     char_u	*ffname;
+    DECL_ASYNC_ARG_KR
 {
     char_u	buf[100];
     char_u	*tail;
