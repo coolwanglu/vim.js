@@ -2414,7 +2414,8 @@ ml_get_curline( ASYNC_ARG_ONLY)
  * Return pointer to cursor position.
  */
     char_u *
-ml_get_cursor()
+ml_get_cursor( ASYNC_ARG_ONLY)
+    DECL_ASYNC_ARG_KR
 {
     return (ml_get_buf(curbuf, curwin->w_cursor.lnum, FALSE ASYNC_ARG) +
 							curwin->w_cursor.col);
