@@ -912,7 +912,7 @@ getcmdline(firstc, count, indent ASYNC_ARG)
 	if (c == K_S_TAB && KeyTyped)
 	{
 	    if (nextwild(&xpc, WILD_EXPAND_KEEP, 0, firstc != '@' ASYNC_ARG) == OK
-		    && nextwild(&xpc, WILD_PREV, 0, firstc != '@') == OK
+		    && nextwild(&xpc, WILD_PREV, 0, firstc != '@' ASYNC_ARG) == OK
 		    && nextwild(&xpc, WILD_PREV, 0, firstc != '@') == OK)
 		goto cmdline_changed;
 	}
