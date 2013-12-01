@@ -237,7 +237,7 @@ static void add_b0_fenc __ARGS((ZERO_BL *b0p, buf_T *buf));
 #endif
 static time_t swapfile_info __ARGS((char_u *));
 static int recov_file_names __ARGS((char_u **, char_u *, int prepend_dot));
-static int ml_append_int __ARGS((buf_T *, linenr_T, char_u *, colnr_T, int, int));
+static int ml_append_int __ARGS((buf_T *, linenr_T, char_u *, colnr_T, int, int DECL_ASYNC_ARG));
 static int ml_delete_int __ARGS((buf_T *, linenr_T, int));
 static char_u *findswapname __ARGS((buf_T *, char_u **, char_u *));
 static void ml_flush_line __ARGS((buf_T *));
