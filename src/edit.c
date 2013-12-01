@@ -1073,7 +1073,7 @@ doESCkey:
 	    break;
 
 	case Ctrl_G:	/* commands starting with CTRL-G */
-	    ins_ctrl_g();
+	    ins_ctrl_g( ASYNC_ARG_ONLY);
 	    break;
 
 	case Ctrl_HAT:	/* switch input mode and/or langmap */
