@@ -8965,7 +8965,7 @@ ins_bs(c, mode, inserted_space_p ASYNC_ARG)
 		&& ((p_sta && in_indent)
 		    || (get_sts_value() != 0
 			&& curwin->w_cursor.col > 0
-			&& (*(ml_get_cursor() - 1) == TAB
+			&& (*(ml_get_cursor( ASYNC_ARG_ONLY) - 1) == TAB
 			    || (*(ml_get_cursor() - 1) == ' '
 				&& (!*inserted_space_p
 				    || arrow_used))))))
