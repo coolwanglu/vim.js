@@ -3095,7 +3095,7 @@ ml_replace(lnum, line, copy ASYNC_ARG)
     }
 #endif
     if (curbuf->b_ml.ml_line_lnum != lnum)	    /* other line buffered */
-	ml_flush_line(curbuf);			    /* flush it */
+	ml_flush_line(curbuf ASYNC_ARG);			    /* flush it */
     else if (curbuf->b_ml.ml_flags & ML_LINE_DIRTY) /* same line allocated */
 	vim_free(curbuf->b_ml.ml_line_ptr);	    /* free it */
     curbuf->b_ml.ml_line_ptr = line;
