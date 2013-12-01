@@ -9521,7 +9521,7 @@ ins_up(startcol)
     if (cursor_up(1L, TRUE) == OK)
     {
 	if (startcol)
-	    coladvance(getvcol_nolist(&Insstart));
+	    coladvance(getvcol_nolist(&Insstart ASYNC_ARG));
 	if (old_topline != curwin->w_topline
 #ifdef FEAT_DIFF
 		|| old_topfill != curwin->w_topfill
