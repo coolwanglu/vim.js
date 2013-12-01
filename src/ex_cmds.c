@@ -4771,7 +4771,7 @@ do_sub(eap ASYNC_ARG)
 
 			    getvcol(curwin, &curwin->w_cursor, &sc, NULL, NULL ASYNC_ARG);
 			    curwin->w_cursor.col = regmatch.endpos[0].col - 1;
-			    getvcol(curwin, &curwin->w_cursor, NULL, NULL, &ec);
+			    getvcol(curwin, &curwin->w_cursor, NULL, NULL, &ec ASYNC_ARG);
 			    if (do_number || curwin->w_p_nu)
 			    {
 				int numw = number_width(curwin) + 1;
