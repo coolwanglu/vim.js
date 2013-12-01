@@ -5029,7 +5029,7 @@ ex_map(eap ASYNC_ARG)
 ex_unmap(eap)
     exarg_T	*eap;
 {
-    do_exmap(eap, FALSE);
+    do_exmap(eap, FALSE ASYNC_ARG);
 }
 
 /*
