@@ -11,7 +11,7 @@ int emsg_not_now __ARGS((void));
 int emsg __ARGS((char_u *s, async_context *_async_context));
 int emsg2 __ARGS((char_u *s, char_u *a1));
 void emsg_invreg __ARGS((int name));
-char_u *msg_trunc_attr __ARGS((char_u *s, int force, int attr));
+char_u *msg_trunc_attr __ARGS((char_u *s, int force, int attr, async_context *_async_context));
 char_u *msg_may_trunc __ARGS((int force, char_u *s));
 int delete_first_msg __ARGS((void));
 void ex_messages __ARGS((exarg_T *eap));

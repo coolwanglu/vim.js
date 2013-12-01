@@ -842,8 +842,9 @@ delete_first_msg()
  * ":messages" command.
  */
     void
-ex_messages(eap)
+ex_messages(eap ASYNC_ARG)
     exarg_T	*eap UNUSED;
+    DECL_ASYNC_ARG_KR
 {
     struct msg_hist *p;
     char_u	    *s;
