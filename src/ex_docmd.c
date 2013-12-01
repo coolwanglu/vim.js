@@ -304,7 +304,7 @@ static void	ex_pwd __ARGS((exarg_T *eap DECL_ASYNC_ARG));
 static void	ex_equal __ARGS((exarg_T *eap));
 static void	ex_sleep __ARGS((exarg_T *eap DECL_ASYNC_ARG));
 static void	do_exmap __ARGS((exarg_T *eap, int isabbrev DECL_ASYNC_ARG));
-static void	ex_winsize __ARGS((exarg_T *eap));
+static void	ex_winsize __ARGS((exarg_T *eap DECL_ASYNC_ARG));
 #ifdef FEAT_WINDOWS
 static void	ex_wincmd __ARGS((exarg_T *eap));
 #else
