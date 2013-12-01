@@ -5484,7 +5484,7 @@ ex_global(eap ASYNC_ARG)
     else
 	global_exe(cmd ASYNC_ARG);
 
-    ml_clearmarked();	   /* clear rest of the marks */
+    ml_clearmarked( ASYNC_ARG_ONLY);	   /* clear rest of the marks */
     vim_regfree(regmatch.regprog);
 }
 
