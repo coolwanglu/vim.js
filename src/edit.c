@@ -1390,7 +1390,7 @@ doESCkey:
 		/* CTRL-L with 'insertmode' set: Leave Insert mode */
 		if (p_im)
 		{
-		    if (echeck_abbr(Ctrl_L + ABBR_OFF))
+		    if (echeck_abbr(Ctrl_L + ABBR_OFF ASYNC_ARG))
 			break;
 		    goto doESCkey;
 		}
