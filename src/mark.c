@@ -764,7 +764,7 @@ do_marks(eap ASYNC_ARG)
     show_one_mark('.', arg, &curbuf->b_last_change, NULL, TRUE ASYNC_ARG);
 #ifdef FEAT_VISUAL
     show_one_mark('<', arg, &curbuf->b_visual.vi_start, NULL, TRUE ASYNC_ARG);
-    show_one_mark('>', arg, &curbuf->b_visual.vi_end, NULL, TRUE);
+    show_one_mark('>', arg, &curbuf->b_visual.vi_end, NULL, TRUE ASYNC_ARG);
 #endif
     show_one_mark(-1, arg, NULL, NULL, FALSE);
 }
