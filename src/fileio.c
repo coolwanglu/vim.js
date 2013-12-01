@@ -5206,7 +5206,7 @@ set_rw_fname(fname, sfname)
     }
 #endif
 
-    if (setfname(curbuf, fname, sfname, FALSE) == OK)
+    if (setfname(curbuf, fname, sfname, FALSE ASYNC_ARG) == OK)
 	curbuf->b_flags |= BF_NOTEDITED;
 
 #ifdef FEAT_AUTOCMD
