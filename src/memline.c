@@ -2512,8 +2512,8 @@ ml_line_alloced()
  * return FAIL for failure, OK otherwise
  */
     int
-ml_append(lnum, line, len, newfile)
-    linenr_T	lnum;		/* append after this line (can be 0 ASYNC_ARG) */
+ml_append(lnum, line, len, newfile ASYNC_ARG)
+    linenr_T	lnum;		/* append after this line (can be 0) */
     char_u	*line;		/* text of the new line */
     colnr_T	len;		/* length of new line, including NUL, or 0 */
     int		newfile;	/* flag, see above */
