@@ -5515,7 +5515,7 @@ global_exe(cmd ASYNC_ARG)
     global_need_beginline = FALSE;
     global_busy = 1;
     old_lcount = curbuf->b_ml.ml_line_count;
-    while (!got_int && (lnum = ml_firstmarked()) != 0 && global_busy == 1)
+    while (!got_int && (lnum = ml_firstmarked( ASYNC_ARG_ONLY)) != 0 && global_busy == 1)
     {
 	curwin->w_cursor.lnum = lnum;
 	curwin->w_cursor.col = 0;
