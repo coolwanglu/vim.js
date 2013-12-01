@@ -3817,9 +3817,10 @@ ml_add_stack(buf)
  * Count is the number of lines added, negative if lines have been deleted.
  */
     static void
-ml_lineadd(buf, count)
+ml_lineadd(buf, count ASYNC_ARG)
     buf_T	*buf;
     int		count;
+    DECL_ASYNC_ARG_KR
 {
     int		idx;
     infoptr_T	*ip;
