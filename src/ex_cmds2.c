@@ -1770,7 +1770,8 @@ theend:
  * give error message for FAIL
  */
     int
-check_fname()
+check_fname( ASYNC_ARG_ONLY)
+    DECL_ASYNC_ARG_KR
 {
     if (curbuf->b_ffname == NULL)
     {
