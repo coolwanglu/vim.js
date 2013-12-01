@@ -48,7 +48,7 @@ void vungetc __ARGS((int c));
 int inchar __ARGS((char_u *buf, int maxlen, long wait_time, int tb_change_cnt));
 int fix_input_buffer __ARGS((char_u *buf, int len, int script));
 int input_available __ARGS((void));
-int do_map __ARGS((int maptype, char_u *arg, int mode, int abbrev));
+int do_map __ARGS((int maptype, char_u *arg, int mode, int abbrev, async_context *_async_context));
 int get_map_mode __ARGS((char_u **cmdp, int forceit));
 void map_clear __ARGS((char_u *cmdp, char_u *arg, int forceit, int abbr));
 void map_clear_int __ARGS((buf_T *buf, int mode, int local, int abbr));

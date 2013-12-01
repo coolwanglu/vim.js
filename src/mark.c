@@ -769,12 +769,13 @@ do_marks(eap)
 }
 
     static void
-show_one_mark(c, arg, p, name, current)
+show_one_mark(c, arg, p, name, current ASYNC_ARG)
     int		c;
     char_u	*arg;
     pos_T	*p;
     char_u	*name;
     int		current;	/* in current file */
+    DECL_ASYNC_ARG_KR
 {
     static int	did_title = FALSE;
     int		mustfree = FALSE;
