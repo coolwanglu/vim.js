@@ -5018,7 +5018,7 @@ ex_map(eap)
 	msg_outtrans(eap->cmd);
 	msg_putchar('\n');
     }
-    do_exmap(eap, FALSE);
+    do_exmap(eap, FALSE ASYNC_ARG);
 }
 
 /*
