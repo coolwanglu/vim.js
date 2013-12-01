@@ -30,7 +30,7 @@ static xfmark_T namedfm[NMARKS + EXTRA_MARKS];		/* marks with file nr */
 static void fname2fnum __ARGS((xfmark_T *fm DECL_ASYNC_ARG));
 static void fmarks_check_one __ARGS((xfmark_T *fm, char_u *name, buf_T *buf));
 static char_u *mark_line __ARGS((pos_T *mp, int lead_len));
-static void show_one_mark __ARGS((int, char_u *, pos_T *, char_u *, int current));
+static void show_one_mark __ARGS((int, char_u *, pos_T *, char_u *, int current DECL_ASYNC_ARG));
 #ifdef FEAT_JUMPLIST
 static void cleanup_jumplist __ARGS((void));
 #endif
