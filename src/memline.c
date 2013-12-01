@@ -1245,7 +1245,7 @@ ml_recover( ASYNC_ARG_ONLY)
 	b0p->b0_fname[0] = NUL;
 	MSG_PUTS_ATTR(b0p->b0_hname, attr | MSG_HIST);
 	MSG_PUTS_ATTR(_(",\nor the file has been damaged."), attr | MSG_HIST);
-	msg_end();
+	msg_end( ASYNC_ARG_ONLY);
 	goto theend;
     }
 
