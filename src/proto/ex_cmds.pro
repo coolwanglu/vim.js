@@ -18,7 +18,7 @@ void ex_file __ARGS((exarg_T *eap, async_context *_async_context));
 void ex_update __ARGS((exarg_T *eap, async_context *_async_context));
 void ex_write __ARGS((exarg_T *eap, async_context *_async_context));
 int do_write __ARGS((exarg_T *eap, async_context *_async_context));
-int check_overwrite __ARGS((exarg_T *eap, buf_T *buf, char_u *fname, char_u *ffname, int other));
+int check_overwrite __ARGS((exarg_T *eap, buf_T *buf, char_u *fname, char_u *ffname, int other, async_context *_async_context));
 void ex_wnext __ARGS((exarg_T *eap, async_context *_async_context));
 void do_wqall __ARGS((exarg_T *eap, async_context *_async_context));
 int not_writing __ARGS((async_context *_async_context));

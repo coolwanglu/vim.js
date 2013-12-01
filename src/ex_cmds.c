@@ -942,7 +942,7 @@ do_bang(addr_count, eap, forceit, do_in, do_out ASYNC_ARG)
      * Disallow shell commands from .exrc and .vimrc in current directory for
      * security reasons.
      */
-    if (check_restricted( ASYNC_ARG_ONLY) || check_secure())
+    if (check_restricted( ASYNC_ARG_ONLY) || check_secure(ASYNC_ARG_ONLY))
 	return;
 
     if (addr_count == 0)		/* :! */
@@ -1373,7 +1373,7 @@ do_shell(cmd, flags ASYNC_ARG)
      * Disallow shell commands from .exrc and .vimrc in current directory for
      * security reasons.
      */
-    if (check_restricted( ASYNC_ARG_ONLY) || check_secure())
+    if (check_restricted( ASYNC_ARG_ONLY) || check_secure(ASYNC_ARG_ONLY))
     {
 	msg_end(ASYNC_ARG_ONLY);
 	return;
@@ -2760,13 +2760,14 @@ theend:
  * Return OK if it's OK, FAIL if it is not.
  */
     int
-check_overwrite(eap, buf, fname, ffname, other)
+check_overwrite(eap, buf, fname, ffname, other ASYNC_ARG)
     exarg_T	*eap;
     buf_T	*buf;
     char_u	*fname;	    /* file name to be used (can differ from
-			       buf->ffname ASYNC_ARG) */
+			       buf->ffname) */
     char_u	*ffname;    /* full path version of fname */
     int		other;	    /* writing under other name */
+    DECL_ASYNC_ARG_KR
 {
     /*
      * write to other file or b_flags set or not writing the whole file:
