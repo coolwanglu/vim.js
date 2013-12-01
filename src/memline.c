@@ -761,7 +761,7 @@ ml_open_file(buf)
 	     */
 	    mf_fullname(mfp);
 #endif
-	    ml_upd_block0(buf, UB_SAME_DIR);
+	    ml_upd_block0(buf, UB_SAME_DIR ASYNC_ARG);
 
 	    /* Flush block zero, so others can read it */
 	    if (mf_sync(mfp, MFS_ZERO) == OK)
