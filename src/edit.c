@@ -10223,7 +10223,8 @@ ins_try_si(c)
  * Unless 'cpo' contains the 'L' flag.
  */
     static colnr_T
-get_nolist_virtcol()
+get_nolist_virtcol( ASYNC_ARG_ONLY)
+    DECL_ASYNC_ARG_KR
 {
     if (curwin->w_p_list && vim_strchr(p_cpo, CPO_LISTWM) == NULL)
 	return getvcol_nolist(&curwin->w_cursor ASYNC_ARG);
