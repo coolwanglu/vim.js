@@ -3118,10 +3118,11 @@ ml_delete(lnum, message)
 }
 
     static int
-ml_delete_int(buf, lnum, message)
+ml_delete_int(buf, lnum, message ASYNC_ARG)
     buf_T	*buf;
     linenr_T	lnum;
     int		message;
+    DECL_ASYNC_ARG_KR
 {
     bhdr_T	*hp;
     memfile_T	*mfp;
