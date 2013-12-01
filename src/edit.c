@@ -8723,8 +8723,9 @@ static void ins_bs_one __ARGS((colnr_T *vcolp));
  * Delete one character for ins_bs().
  */
     static void
-ins_bs_one(vcolp)
+ins_bs_one(vcolp ASYNC_ARG)
     colnr_T	*vcolp;
+    DECL_ASYNC_ARG_KR
 {
     dec_cursor();
     getvcol(curwin, &curwin->w_cursor, vcolp, NULL, NULL ASYNC_ARG);
