@@ -6156,7 +6156,7 @@ internal_format(textwidth, second_indent, flags, format_only, c ASYNC_ARG)
 	colnr_T	col;
 	colnr_T	end_col;
 
-	virtcol = get_nolist_virtcol()
+	virtcol = get_nolist_virtcol( ASYNC_ARG_ONLY)
 		+ char2cells(c != NUL ? c : gchar_cursor());
 	if (virtcol <= (colnr_T)textwidth)
 	    break;
