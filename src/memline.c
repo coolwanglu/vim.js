@@ -2424,10 +2424,11 @@ ml_get_cursor()
  * changed)
  */
     char_u  *
-ml_get_buf(buf, lnum, will_change)
+ml_get_buf(buf, lnum, will_change ASYNC_ARG)
     buf_T	*buf;
     linenr_T	lnum;
     int		will_change;		/* line will be changed */
+    DECL_ASYNC_ARG_KR
 {
     bhdr_T	*hp;
     DATA_BL	*dp;
