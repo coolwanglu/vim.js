@@ -5110,7 +5110,7 @@ chk_modeline(lnum, flags)
 #endif
 
     prev = -1;
-    for (s = ml_get(lnum); *s != NUL; ++s)
+    for (s = ml_get(lnum ASYNC_ARG); *s != NUL; ++s)
     {
 	if (prev == -1 || vim_isspace(prev))
 	{
