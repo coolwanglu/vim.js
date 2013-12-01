@@ -9648,7 +9648,8 @@ ins_drop()
  * Return TRUE when the TAB needs to be inserted like a normal character.
  */
     static int
-ins_tab()
+ins_tab( ASYNC_ARG_ONLY)
+    DECL_ASYNC_ARG_KR
 {
     int		ind;
     int		i;
