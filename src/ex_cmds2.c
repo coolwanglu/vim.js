@@ -1616,7 +1616,7 @@ can_abandon(buf, forceit)
     return (	   P_HID(buf)
 		|| !bufIsChanged(buf)
 		|| buf->b_nwindows > 1
-		|| autowrite(buf, forceit) == OK
+		|| autowrite(buf, forceit ASYNC_ARG) == OK
 		|| forceit);
 }
 
@@ -1700,7 +1700,7 @@ check_changed_any(hidden ASYNC_ARG)
 	    * longer exists it's not changed, that's OK. */
 	    if (check_changed(buf, (p_awa ? CCGD_AW : 0)
 				 | CCGD_MULTWIN
-				 | CCGD_ALLBUF) && buf_valid(buf))
+				 | CCGD_ALLBUF ASYNC_ARG) && buf_valid(buf))
 		break;	    /* didn't save - still changes */
 	}
     }
@@ -2297,7 +2297,7 @@ do_argfile(eap, argn ASYNC_ARG)
 		  && check_changed(curbuf, CCGD_AW
 					 | (other ? 0 : CCGD_MULTWIN)
 					 | (eap->forceit ? CCGD_FORCEIT : 0)
-					 | CCGD_EXCMD))
+					 | CCGD_EXCMD ASYNC_ARG))
 		return;
 	}
 
@@ -2341,7 +2341,7 @@ ex_next(eap ASYNC_ARG)
 	    || eap->cmdidx == CMD_snext
 	    || !check_changed(curbuf, CCGD_AW
 				    | (eap->forceit ? CCGD_FORCEIT : 0)
-				    | CCGD_EXCMD))
+				    | CCGD_EXCMD ASYNC_ARG))
     {
 	if (*eap->arg != NUL)		    /* redefine file list */
 	{
@@ -2840,7 +2840,7 @@ do_in_runtimepath(name, all, callback, cookie ASYNC_ARG)
 		    if (p_verbose > 2)
 		    {
 			verbose_enter();
-			smsg((char_u *)_("Searching for \"%s\""), buf);
+			smsg(ASYNC_ARG_FIRST (char_u *)_("Searching for \"%s\""), buf);
 			verbose_leave();
 		    }
 

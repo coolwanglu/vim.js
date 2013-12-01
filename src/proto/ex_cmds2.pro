@@ -39,7 +39,7 @@ void browse_save_fname __ARGS((buf_T *buf));
 void dialog_changed __ARGS((buf_T *buf, int checkall));
 int can_abandon __ARGS((buf_T *buf, int forceit));
 int check_changed_any __ARGS((int hidden, async_context *_async_context));
-int check_fname __ARGS((void));
+int check_fname __ARGS((async_context *_async_context));
 int buf_write_all __ARGS((buf_T *buf, int forceit, async_context *_async_context));
 int get_arglist __ARGS((garray_T *gap, char_u *str));
 int get_arglist_exp __ARGS((char_u *str, int *fcountp, char_u ***fnamesp, int wig));
