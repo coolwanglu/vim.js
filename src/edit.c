@@ -7053,7 +7053,8 @@ beginline(flags ASYNC_ARG)
  */
 
     int
-oneright()
+oneright( ASYNC_ARG_ONLY)
+    DECL_ASYNC_ARG_KR
 {
     char_u	*ptr;
     int		l;
