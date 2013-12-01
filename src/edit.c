@@ -195,7 +195,7 @@ static void insert_special __ARGS((int, int, int DECL_ASYNC_ARG));
 static void internal_format __ARGS((int textwidth, int second_indent, int flags, int format_only, int c DECL_ASYNC_ARG));
 static void check_auto_format __ARGS((int));
 static void redo_literal __ARGS((int c));
-static void start_arrow __ARGS((pos_T *end_insert_pos));
+static void start_arrow __ARGS((pos_T *end_insert_pos DECL_ASYNC_ARG));
 #ifdef FEAT_SPELL
 static void check_spell_redraw __ARGS((void));
 static void spell_back_to_badword __ARGS((void));
