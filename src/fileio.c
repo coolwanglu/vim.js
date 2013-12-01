@@ -2197,7 +2197,7 @@ rewind_retry:
 				ff_error = EOL_DOS;
 			    }
 			}
-			if (ml_append(lnum, line_start, len, newfile) == FAIL)
+			if (ml_append(lnum, line_start, len, newfile ASYNC_ARG) == FAIL)
 			{
 			    error = TRUE;
 			    break;
