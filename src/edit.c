@@ -1862,7 +1862,7 @@ change_indent(type, amount, round, replaced, call_changed_bytes)
     /* for the following tricks we don't want list mode */
     save_p_list = curwin->w_p_list;
     curwin->w_p_list = FALSE;
-    vc = getvcol_nolist(&curwin->w_cursor);
+    vc = getvcol_nolist(&curwin->w_cursor ASYNC_ARG);
     vcol = vc;
 
     /*
