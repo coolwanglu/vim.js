@@ -5026,8 +5026,9 @@ ex_map(eap ASYNC_ARG)
  * ":unmap" and friends.
  */
     static void
-ex_unmap(eap)
+ex_unmap(eap ASYNC_ARG)
     exarg_T	*eap;
+    DECL_ASYNC_ARG_KR
 {
     do_exmap(eap, FALSE ASYNC_ARG);
 }
