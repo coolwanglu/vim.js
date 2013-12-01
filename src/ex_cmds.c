@@ -5090,7 +5090,7 @@ do_sub(eap ASYNC_ARG)
 			{
 			    *p1 = NUL;		    /* truncate up to the CR */
 			    ml_append(lnum - 1, new_start,
-					(colnr_T)(p1 - new_start + 1), FALSE);
+					(colnr_T)(p1 - new_start + 1), FALSE ASYNC_ARG);
 			    mark_adjust(lnum + 1, (linenr_T)MAXLNUM, 1L, 0L);
 			    if (do_ask)
 				appended_lines(lnum - 1, 1L);
