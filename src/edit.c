@@ -8992,7 +8992,7 @@ ins_bs(c, mode, inserted_space_p ASYNC_ARG)
 
 	    /* delete characters until we are at or before want_vcol */
 	    while (vcol > want_vcol
-		    && (cc = *(ml_get_cursor() - 1), vim_iswhite(cc)))
+		    && (cc = *(ml_get_cursor( ASYNC_ARG_ONLY) - 1), vim_iswhite(cc)))
 		ins_bs_one(&vcol);
 
 	    /* insert extra spaces until we are at want_vcol */
