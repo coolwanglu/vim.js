@@ -268,8 +268,9 @@ static void ml_updatechunk __ARGS((buf_T *buf, long line, long len, int updtype)
  * Return FAIL for failure, OK otherwise.
  */
     int
-ml_open(buf)
+ml_open(buf ASYNC_ARG)
     buf_T	*buf;
+    DECL_ASYNC_ARG_KR
 {
     memfile_T	*mfp;
     bhdr_T	*hp = NULL;

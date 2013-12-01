@@ -1,5 +1,5 @@
 /* memline.c */
-int ml_open __ARGS((buf_T *buf));
+int ml_open __ARGS((buf_T *buf, async_context *_async_context));
 void ml_set_crypt_key __ARGS((buf_T *buf, char_u *old_key, int old_cm));
 void ml_setname __ARGS((buf_T *buf));
 void ml_open_files __ARGS((void));
