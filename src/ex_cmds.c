@@ -762,7 +762,7 @@ do_move(line1, line2, dest ASYNC_ARG)
 	str = vim_strsave(ml_get(l + extra));
 	if (str != NULL)
 	{
-	    ml_append(dest + l - line1, str, (colnr_T)0, FALSE);
+	    ml_append(dest + l - line1, str, (colnr_T)0, FALSE ASYNC_ARG);
 	    vim_free(str);
 	    if (dest < line1)
 		extra++;
