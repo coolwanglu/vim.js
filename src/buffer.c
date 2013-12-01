@@ -2901,7 +2901,7 @@ buf_name_changed(buf)
      * If the file name changed, also change the name of the swapfile
      */
     if (buf->b_ml.ml_mfp != NULL)
-	ml_setname(buf);
+	ml_setname(buf ASYNC_ARG);
 
     if (curwin->w_buffer == buf)
 	check_arg_idx(curwin);	/* check file name for arg list */
