@@ -2899,8 +2899,9 @@ ex_wnext(eap ASYNC_ARG)
  * ":wall", ":wqall" and ":xall": Write all changed files (and exit).
  */
     void
-do_wqall(eap)
+do_wqall(eap ASYNC_ARG)
     exarg_T	*eap;
+    DECL_ASYNC_ARG_KR
 {
     buf_T	*buf;
     int		error = 0;

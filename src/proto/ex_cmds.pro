@@ -20,7 +20,7 @@ void ex_write __ARGS((exarg_T *eap, async_context *_async_context));
 int do_write __ARGS((exarg_T *eap, async_context *_async_context));
 int check_overwrite __ARGS((exarg_T *eap, buf_T *buf, char_u *fname, char_u *ffname, int other));
 void ex_wnext __ARGS((exarg_T *eap, async_context *_async_context));
-void do_wqall __ARGS((exarg_T *eap));
+void do_wqall __ARGS((exarg_T *eap, async_context *_async_context));
 int not_writing __ARGS((void));
 int getfile __ARGS((int fnum, char_u *ffname, char_u *sfname, int setpm, linenr_T lnum, int forceit, async_context *_async_context));
 int do_ecmd __ARGS((int fnum, char_u *ffname, char_u *sfname, exarg_T *eap, linenr_T newlnum, int flags, win_T *oldwin, async_context *_async_context));
