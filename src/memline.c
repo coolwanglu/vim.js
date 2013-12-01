@@ -2469,7 +2469,7 @@ errorret:
 	 * This also fills the stack with the blocks from the root to the data
 	 * block and releases any locked block.
 	 */
-	if ((hp = ml_find_line(buf, lnum, ML_FIND)) == NULL)
+	if ((hp = ml_find_line(buf, lnum, ML_FIND ASYNC_ARG)) == NULL)
 	{
 	    if (recursive == 0)
 	    {
