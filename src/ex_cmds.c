@@ -4104,8 +4104,9 @@ ex_change(eap ASYNC_ARG)
 }
 
     void
-ex_z(eap)
+ex_z(eap ASYNC_ARG)
     exarg_T	*eap;
+    DECL_ASYNC_ARG_KR
 {
     char_u	*x;
     int		bigness = 1; // supress warning
