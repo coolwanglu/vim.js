@@ -3244,7 +3244,7 @@ buf_write(buf, fname, sfname, start, end, eap, append, forceit,
      * Disallow writing from .exrc and .vimrc in current directory for
      * security reasons.
      */
-    if (check_secure())
+    if (check_secure( ASYNC_ARG_ONLY))
 	return FAIL;
 
     /* Avoid a crash for a long name. */
