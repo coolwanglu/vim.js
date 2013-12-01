@@ -1612,7 +1612,7 @@ vgetc( ASYNC_ARG_ONLY)
 
 	    ++no_mapping;
 	    allow_keys = 0;		/* make sure BS is not found */
-	    c2 = vgetorpeek(TRUE);	/* no mapping for these chars */
+	    c2 = vgetorpeek(TRUE ASYNC_ARG);	/* no mapping for these chars */
 	    c = vgetorpeek(TRUE);
 	    --no_mapping;
 	    allow_keys = save_allow_keys;
