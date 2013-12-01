@@ -2922,7 +2922,7 @@ do_wqall(eap ASYNC_ARG)
 	     * 3. if the 'readonly' is set (even after a dialog)
 	     * 4. if overwriting is allowed (even after a dialog)
 	     */
-	    if (not_writing())
+	    if (not_writing( ASYNC_ARG_ONLY))
 	    {
 		++error;
 		break;
