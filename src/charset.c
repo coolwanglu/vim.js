@@ -1396,14 +1396,15 @@ getvcol(wp, pos, start, cursor, end ASYNC_ARG)
  * Get virtual cursor column in the current window, pretending 'list' is off.
  */
     colnr_T
-getvcol_nolist(posp)
+getvcol_nolist(posp ASYNC_ARG)
     pos_T	*posp;
+    DECL_ASYNC_ARG_KR
 {
     int		list_save = curwin->w_p_list;
     colnr_T	vcol;
 
     curwin->w_p_list = FALSE;
-    getvcol(curwin, posp, NULL, &vcol, NULL);
+    getvcol(curwin, posp, NULL, &vcol, NULL ASYNC_ARG);
     curwin->w_p_list = list_save;
     return vcol;
 }
@@ -1413,12 +1414,13 @@ getvcol_nolist(posp)
  * Get virtual column in virtual mode.
  */
     void
-getvvcol(wp, pos, start, cursor, end)
+getvvcol(wp, pos, start, cursor, end ASYNC_ARG)
     win_T	*wp;
     pos_T	*pos;
     colnr_T	*start;
     colnr_T	*cursor;
     colnr_T	*end;
+    DECL_ASYNC_ARG_KR
 {
     colnr_T	col;
     colnr_T	coladd;
