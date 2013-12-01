@@ -2932,7 +2932,7 @@ ml_append_int(buf, lnum, line, len, newfile, mark ASYNC_ARG)
 		{
 		    --(buf->b_ml.ml_stack_top);
 		    /* fix line count for rest of blocks in the stack */
-		    ml_lineadd(buf, lineadd);
+		    ml_lineadd(buf, lineadd ASYNC_ARG);
 							/* fix stack itself */
 		    buf->b_ml.ml_stack[buf->b_ml.ml_stack_top].ip_high +=
 								      lineadd;
