@@ -2937,7 +2937,7 @@ do_wqall(eap ASYNC_ARG)
 		EMSGN(_("E141: No file name for buffer %ld"), (long)buf->b_fnum);
 		++error;
 	    }
-	    else if (check_readonly(&eap->forceit, buf)
+	    else if (check_readonly(&eap->forceit, buf ASYNC_ARG)
 		    || check_overwrite(eap, buf, buf->b_fname, buf->b_ffname,
 							       FALSE) == FAIL)
 	    {
