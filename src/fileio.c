@@ -7081,7 +7081,7 @@ buf_check_timestamp(buf, focus ASYNC_ARG)
 			msg_puts_attr((char_u *)mesg2,
 						   hl_attr(HLF_W) + MSG_HIST);
 		    msg_clr_eos();
-		    (void)msg_end();
+		    (void)msg_end( ASYNC_ARG_ONLY);
 		    if (emsg_silent == 0)
 		    {
 			out_flush();
