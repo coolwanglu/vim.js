@@ -1593,7 +1593,7 @@ vgetc()
 	    ++no_mapping;
 	    ++allow_keys;
 	}
-	c = vgetorpeek(TRUE);
+	c = vgetorpeek(TRUE ASYNC_ARG);
 	if (mod_mask)
 	{
 	    --no_mapping;
