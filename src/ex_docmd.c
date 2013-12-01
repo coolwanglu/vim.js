@@ -8183,7 +8183,7 @@ ex_read(eap ASYNC_ARG)
 #endif
 	     if (*eap->arg == NUL)
 	{
-	    if (check_fname() == FAIL)	/* check for no file name */
+	    if (check_fname( ASYNC_ARG_ONLY) == FAIL)	/* check for no file name */
 		return;
 	    i = readfile(curbuf->b_ffname, curbuf->b_fname,
 			  eap->line2, (linenr_T)0, (linenr_T)MAXLNUM, eap, 0 ASYNC_ARG);
