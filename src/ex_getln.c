@@ -460,7 +460,7 @@ getcmdline(firstc, count, indent ASYNC_ARG)
 		&& c != Ctrl_N && c != Ctrl_P && c != Ctrl_A
 		&& c != Ctrl_L)
 	{
-	    (void)ExpandOne(&xpc, NULL, NULL, 0, WILD_FREE);
+	    (void)ExpandOne(&xpc, NULL, NULL, 0, WILD_FREE ASYNC_ARG);
 	    did_wild_list = FALSE;
 #ifdef FEAT_WILDMENU
 	    if (!p_wmnu || (c != K_UP && c != K_DOWN))
