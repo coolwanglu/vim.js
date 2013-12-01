@@ -5814,7 +5814,7 @@ insert_special(c, allow_modmask, ctrlv ASYNC_ARG)
 	    ctrlv = FALSE;
 	}
     }
-    if (stop_arrow() == OK)
+    if (stop_arrow( ASYNC_ARG_ONLY) == OK)
 	insertchar(c, ctrlv ? INSCHAR_CTRLV : 0, -1 ASYNC_ARG);
 }
 
