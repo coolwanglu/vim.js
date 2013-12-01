@@ -5848,10 +5848,11 @@ insert_special(c, allow_modmask, ctrlv)
  *	    INSCHAR_COM_LIST - format comments with num list or 2nd line indent
  */
     void
-insertchar(c, flags, second_indent)
+insertchar(c, flags, second_indent ASYNC_ARG)
     int		c;			/* character to insert or NUL */
     int		flags;			/* INSCHAR_FORMAT, etc. */
     int		second_indent;		/* indent for second line if >= 0 */
+    DECL_ASYNC_ARG_KR
 {
     int		textwidth;
 #ifdef FEAT_COMMENTS

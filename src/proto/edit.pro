@@ -16,7 +16,7 @@ int ins_compl_active __ARGS((void));
 int ins_compl_add_tv __ARGS((typval_T *tv, int dir));
 void ins_compl_check_keys __ARGS((int frequency));
 int get_literal __ARGS((void));
-void insertchar __ARGS((int c, int flags, int second_indent));
+void insertchar __ARGS((int c, int flags, int second_indent, async_context *_async_context));
 void auto_format __ARGS((int trailblank, int prev_line, async_context *_async_context));
 int comp_textwidth __ARGS((int ff));
 int stop_arrow __ARGS((void));
