@@ -5183,9 +5183,10 @@ nofail:
  * name and a ":r" or ":w" command with a file name is used.
  */
     static int
-set_rw_fname(fname, sfname)
+set_rw_fname(fname, sfname ASYNC_ARG)
     char_u	*fname;
     char_u	*sfname;
+    DECL_ASYNC_ARG_KR
 {
 #ifdef FEAT_AUTOCMD
     buf_T	*buf = curbuf;
