@@ -3168,11 +3168,12 @@ input_available()
  *	  5 for entry not unique
  */
     int
-do_map(maptype, arg, mode, abbrev)
+do_map(maptype, arg, mode, abbrev ASYNC_ARG)
     int		maptype;
     char_u	*arg;
     int		mode;
     int		abbrev;		/* not a mapping but an abbreviation */
+    DECL_ASYNC_ARG_KR
 {
     char_u	*keys;
     mapblock_T	*mp, **mpp;
