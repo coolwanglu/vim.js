@@ -1498,7 +1498,7 @@ normalchar:
 #endif
 	    }
 
-	    auto_format(FALSE, TRUE);
+	    auto_format(FALSE, TRUE ASYNC_ARG);
 
 #ifdef FEAT_FOLDING
 	    /* When inserting a character the cursor line must never be in a
