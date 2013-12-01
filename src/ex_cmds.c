@@ -811,7 +811,7 @@ do_move(line1, line2, dest ASYNC_ARG)
 	return FAIL;
 
     for (l = line1; l <= line2; l++)
-	ml_delete(line1 + extra, TRUE);
+	ml_delete(line1 + extra, TRUE ASYNC_ARG);
 
     if (!global_busy && num_lines > p_report)
     {
