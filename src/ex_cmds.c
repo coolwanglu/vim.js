@@ -4092,7 +4092,7 @@ ex_change(eap ASYNC_ARG)
     {
 	if (curbuf->b_ml.ml_flags & ML_EMPTY)	    /* nothing to delete */
 	    break;
-	ml_delete(eap->line1, FALSE);
+	ml_delete(eap->line1, FALSE ASYNC_ARG);
     }
 
     /* make sure the cursor is not beyond the end of the file now */
