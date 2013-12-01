@@ -621,7 +621,7 @@ ml_setname(buf ASYNC_ARG)
     {
 	if (*dirp == NUL)	    /* tried all directories, fail */
 	    break;
-	fname = findswapname(buf, &dirp, mfp->mf_fname);
+	fname = findswapname(buf, &dirp, mfp->mf_fname ASYNC_ARG);
 						    /* alloc's fname */
 	if (dirp == NULL)	    /* out of memory */
 	    break;
