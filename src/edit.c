@@ -7285,10 +7285,11 @@ cursor_down(n, upd_topline)
  * first have to remove the command.
  */
     int
-stuff_inserted(c, count, no_esc)
+stuff_inserted(c, count, no_esc ASYNC_ARG)
     int	    c;		/* Command character to be inserted */
     long    count;	/* Repeat this many times */
     int	    no_esc;	/* Don't add an ESC at the end */
+    DECL_ASYNC_ARG_KR
 {
     char_u	*esc_ptr;
     char_u	*ptr;
