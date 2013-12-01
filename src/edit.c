@@ -6574,7 +6574,7 @@ auto_format(trailblank, prev_line)
 	    pnew = vim_strnsave(new, len + 2);
 	    pnew[len] = ' ';
 	    pnew[len + 1] = NUL;
-	    ml_replace(curwin->w_cursor.lnum, pnew, FALSE);
+	    ml_replace(curwin->w_cursor.lnum, pnew, FALSE ASYNC_ARG);
 	    /* remove the space later */
 	    did_add_space = TRUE;
 	}
