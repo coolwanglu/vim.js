@@ -153,7 +153,7 @@ open_buffer(read_stdin, eap, flags ASYNC_ARG)
 #endif
 	/* Help buffer is filtered. */
 	if (curbuf->b_help)
-	    fix_help_buffer();
+	    fix_help_buffer( ASYNC_ARG_ONLY);
     }
     else if (read_stdin)
     {
