@@ -713,8 +713,9 @@ ml_open_files()
  * and the memfile will be in memory only (no recovery possible).
  */
     void
-ml_open_file(buf)
+ml_open_file(buf ASYNC_ARG)
     buf_T	*buf;
+    DECL_ASYNC_ARG_KR
 {
     memfile_T	*mfp;
     char_u	*fname;
