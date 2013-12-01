@@ -2535,7 +2535,7 @@ ml_append(lnum, line, len, newfile ASYNC_ARG)
 	return FAIL;
 
     if (curbuf->b_ml.ml_line_lnum != 0)
-	ml_flush_line(curbuf);
+	ml_flush_line(curbuf ASYNC_ARG);
     return ml_append_int(curbuf, lnum, line, len, newfile, FALSE ASYNC_ARG);
 }
 
