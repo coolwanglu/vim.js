@@ -2396,7 +2396,7 @@ ml_get(lnum ASYNC_ARG)
 ml_get_pos(pos)
     pos_T	*pos;
 {
-    return (ml_get_buf(curbuf, pos->lnum, FALSE) + pos->col);
+    return (ml_get_buf(curbuf, pos->lnum, FALSE ASYNC_ARG) + pos->col);
 }
 
 /*
