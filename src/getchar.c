@@ -1552,7 +1552,8 @@ updatescript(c ASYNC_ARG)
  * Returns the modifiers in the global "mod_mask".
  */
     int
-vgetc()
+vgetc( ASYNC_ARG_ONLY)
+    DECL_ASYNC_ARG_KR
 {
     int		c, c2;
 #ifdef FEAT_MBYTE
