@@ -4,7 +4,7 @@ void ex_align __ARGS((exarg_T *eap));
 void ex_sort __ARGS((exarg_T *eap));
 void ex_retab __ARGS((exarg_T *eap));
 int do_move __ARGS((linenr_T line1, linenr_T line2, linenr_T dest, async_context *_async_context));
-void ex_copy __ARGS((linenr_T line1, linenr_T line2, linenr_T n));
+void ex_copy __ARGS((linenr_T line1, linenr_T line2, linenr_T n, async_context *_async_context));
 void free_prev_shellcmd __ARGS((void));
 void do_bang __ARGS((int addr_count, exarg_T *eap, int forceit, int do_in, int do_out, async_context *_async_context));
 void do_shell __ARGS((char_u *cmd, int flags, async_context *_async_context));

@@ -847,10 +847,11 @@ do_move(line1, line2, dest ASYNC_ARG)
  * ":copy"
  */
     void
-ex_copy(line1, line2, n)
+ex_copy(line1, line2, n ASYNC_ARG)
     linenr_T	line1;
     linenr_T	line2;
     linenr_T	n;
+    DECL_ASYNC_ARG_KR
 {
     linenr_T	count;
     char_u	*p;
