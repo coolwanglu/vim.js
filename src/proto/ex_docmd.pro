@@ -10,7 +10,7 @@ int cmd_exists __ARGS((char_u *name));
 char_u *set_one_cmd_context __ARGS((expand_T *xp, char_u *buff));
 char_u *skip_range __ARGS((char_u *cmd, int *ctx));
 void ex_ni __ARGS((exarg_T *eap));
-int expand_filename __ARGS((exarg_T *eap, char_u **cmdlinep, char_u **errormsgp));
+int expand_filename __ARGS((exarg_T *eap, char_u **cmdlinep, char_u **errormsgp, async_context *_async_context));
 void separate_nextcmd __ARGS((exarg_T *eap));
 int ends_excmd __ARGS((int c));
 char_u *find_nextcmd __ARGS((char_u *p));

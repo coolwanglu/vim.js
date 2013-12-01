@@ -6567,7 +6567,7 @@ ex_quit(eap ASYNC_ARG)
     /* Don't quit while editing the command line. */
     if (text_locked())
     {
-	text_locked_msg();
+	text_locked_msg( ASYNC_ARG_ONLY);
 	return;
     }
 #ifdef FEAT_AUTOCMD
