@@ -9572,8 +9572,9 @@ ins_pageup()
 }
 
     static void
-ins_down(startcol)
+ins_down(startcol ASYNC_ARG)
     int		startcol;	/* when TRUE move to Insstart.col */
+    DECL_ASYNC_ARG_KR
 {
     pos_T	tpos;
     linenr_T	old_topline = curwin->w_topline;
