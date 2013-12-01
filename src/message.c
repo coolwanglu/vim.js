@@ -184,7 +184,7 @@ msg_attr_keep(s, attr, keep ASYNC_ARG)
 
     msg_outtrans_attr(s, attr);
     msg_clr_eos();
-    retval = msg_end(ASYNC_ARG1);
+    retval = msg_end(ASYNC_ARG_ONLY);
 
     if (keep && retval && vim_strsize(s) < (int)(Rows - cmdline_row - 1)
 							   * Columns + sc_col)
@@ -405,7 +405,8 @@ int vim_snprintf(char *str, size_t str_m, char *fmt, ...);
 #ifdef __BORLANDC__
 _RTLENTRYF
 #endif
-smsg(char_u *s DECL_ASYNC_ARG , ...)
+// Lu Wang, for variable parameters, we have to declare ASYNC_ARG in the beginning
+smsg(DECL_ASYNC_ARG_FIRST char_u *s, ...)
 {
     va_list arglist;
 

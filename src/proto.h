@@ -111,7 +111,7 @@ int
 #  ifdef __BORLANDC__
 _RTLENTRYF
 #  endif
-smsg __ARGS((char_u *, ...));
+smsg __ARGS((DECL_ASYNC_ARG_FIRST char_u *, ...));
 
 int
 #  ifdef __BORLANDC__
