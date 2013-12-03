@@ -2867,7 +2867,7 @@ do_in_runtimepath(name, all, callback, cookie ASYNC_ARG)
     if (p_verbose > 0 && !did_one && name != NULL)
     {
 	verbose_enter();
-	smsg((char_u *)_("not found in 'runtimepath': \"%s\""), name);
+	smsg(ASYNC_ARG_FIRST (char_u *)_("not found in 'runtimepath': \"%s\""), name);
 	verbose_leave();
     }
 
@@ -3091,7 +3091,7 @@ do_source(fname, check_other, is_vimrc ASYNC_ARG)
 	return retval;
     if (mch_isdir(fname_exp))
     {
-	smsg((char_u *)_("Cannot source a directory: \"%s\""), fname);
+	smsg(ASYNC_ARG_FIRST (char_u *)_("Cannot source a directory: \"%s\""), fname);
 	goto theend;
     }
 
