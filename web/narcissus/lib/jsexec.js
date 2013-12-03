@@ -57,6 +57,13 @@
 
 
   var asyncFunctions = { };
+  function asyncCall(func, obj, args, callback) {
+    var new_args = [];
+    new_args.push(callback);
+    for (var i = 0, l = args.length; (i < l); ++i) { new_args.push(args[i]);; };
+
+    func.apply(obj, args); };
+
 
   var parser = Narcissus.parser;
   var definitions = Narcissus.definitions;
@@ -261,7 +268,7 @@
     ecma3OnlyMode: false,
 
 
-    execute: function execute__1(n, _) { var prev, __this = this; var __frame = { name: "execute__1", line: 264 }; return __func(_, this, arguments, execute__1, 1, __frame, function __$execute__1() {
+    execute: function execute__1(n, _) { var prev, __this = this; var __frame = { name: "execute__1", line: 271 }; return __func(_, this, arguments, execute__1, 1, __frame, function __$execute__1() {
         prev = ExecutionContext.current;
         ExecutionContext.current = __this; return (function ___(__then) { (function ___(_) { __tryCatch(_, function __$execute__1() { return (function ___(__then) { (function ___(_) { __tryCatch(_, function __$execute__1() {
 
@@ -341,7 +348,7 @@
 
 
 
-  function execute(n, x, _) { var a, c, f, i, j, r, s, t, u, v, matchDefault, break_loop, c2; var __frame = { name: "execute", line: 344 }; return __func(_, this, arguments, execute, 2, __frame, function __$execute() { return (function __$execute(__break) {
+  function execute(n, x, _) { var a, c, f, i, j, r, s, t, u, v, matchDefault, break_loop, c2; var __frame = { name: "execute", line: 351 }; return __func(_, this, arguments, execute, 2, __frame, function __$execute() { return (function __$execute(__break) {
 
 
         switch (n.type) {
@@ -452,8 +459,8 @@
 
 
         case FOR: return (function __$execute(_) { var __1 = n.setup;
-            if (!__1) { return _(null, __1); } ; return execute(n.setup, x, __cb(_, __frame, 111, 32, function ___(__0, __3) { var __2 = getValue(__3); return _(null, __2); }, true)); })(__cb(_, __frame, -343, 21, function __$execute() { return (function ___(__break) { var __more; var __loop = __cb(_, __frame, 0, 0, function __$execute() { __more = false; return (function __$execute(_) { return (function __$execute(_) { var __2 = !n.condition;
-                    if (__2) { return _(null, __2); } ; return execute(n.condition, x, __cb(_, __frame, 112, 44, function ___(__0, __4) { var __3 = getValue(__4); return _(null, __3); }, true)); })(__cb(_, __frame, -343, 21, _, true)); })(__cb(_, __frame, -343, 21, function ___(__0, __106) { if (__106) { return (function ___(__then) { (function ___(_) { __tryCatch(_, function __$execute() { return execute(n.body, x, __cb(_, __frame, 114, 20, __then, true));
+            if (!__1) { return _(null, __1); } ; return execute(n.setup, x, __cb(_, __frame, 111, 32, function ___(__0, __3) { var __2 = getValue(__3); return _(null, __2); }, true)); })(__cb(_, __frame, -350, 21, function __$execute() { return (function ___(__break) { var __more; var __loop = __cb(_, __frame, 0, 0, function __$execute() { __more = false; return (function __$execute(_) { return (function __$execute(_) { var __2 = !n.condition;
+                    if (__2) { return _(null, __2); } ; return execute(n.condition, x, __cb(_, __frame, 112, 44, function ___(__0, __4) { var __3 = getValue(__4); return _(null, __3); }, true)); })(__cb(_, __frame, -350, 21, _, true)); })(__cb(_, __frame, -350, 21, function ___(__0, __106) { if (__106) { return (function ___(__then) { (function ___(_) { __tryCatch(_, function __$execute() { return execute(n.body, x, __cb(_, __frame, 114, 20, __then, true));
 
                         }); })(function ___(e, __result) { __catch(function __$execute() { if (e) { if (((e === BREAK) && (x.target === n))) {
 
@@ -465,11 +472,11 @@
                               } ; } ; __then(); } else { _(null, __result); } ; }); }); })(function ___() { __tryCatch(_, function __$execute() { return (function __$execute(_) { var __2 = n.update;
 
 
-                          if (!__2) { return _(null, __2); } ; return execute(n.update, x, __cb(_, __frame, 124, 37, function ___(__0, __4) { var __3 = getValue(__4); return _(null, __3); }, true)); })(__cb(_, __frame, -343, 21, function __$execute() { while (__more) { __loop(); }; __more = true; }, true)); }); }); } else { __break(); } ; }, true)); }); do { __loop(); } while (__more); __more = true; })(__break); }, true));
+                          if (!__2) { return _(null, __2); } ; return execute(n.update, x, __cb(_, __frame, 124, 37, function ___(__0, __4) { var __3 = getValue(__4); return _(null, __3); }, true)); })(__cb(_, __frame, -350, 21, function __$execute() { while (__more) { __loop(); }; __more = true; }, true)); }); }); } else { __break(); } ; }, true)); }); do { __loop(); } while (__more); __more = true; })(__break); }, true));
 
 
         case WHILE: return (function ___(__break) { var __more; var __loop = __cb(_, __frame, 0, 0, function __$execute() { __more = false; return (function __$execute(_) { return (function __$execute(_) { var __3 = !n.condition;
-                  if (__3) { return _(null, __3); } ; return execute(n.condition, x, __cb(_, __frame, 128, 44, function ___(__0, __5) { var __4 = getValue(__5); return _(null, __4); }, true)); })(__cb(_, __frame, -343, 21, _, true)); })(__cb(_, __frame, -343, 21, function ___(__0, __110) { if (__110) { return (function ___(__then) { (function ___(_) { __tryCatch(_, function __$execute() { return execute(n.body, x, __cb(_, __frame, 130, 20, __then, true));
+                  if (__3) { return _(null, __3); } ; return execute(n.condition, x, __cb(_, __frame, 128, 44, function ___(__0, __5) { var __4 = getValue(__5); return _(null, __4); }, true)); })(__cb(_, __frame, -350, 21, _, true)); })(__cb(_, __frame, -350, 21, function ___(__0, __110) { if (__110) { return (function ___(__then) { (function ___(_) { __tryCatch(_, function __$execute() { return execute(n.body, x, __cb(_, __frame, 130, 20, __then, true));
 
                       }); })(function ___(e, __result) { __catch(function __$execute() { if (e) { if (((e === BREAK) && (x.target === n))) {
 
@@ -481,7 +488,7 @@
                             } ; } ; __then(); } else { _(null, __result); } ; }); }); })(function ___() { __tryCatch(_, function __$execute() { return (function __$execute(_) { var __3 = n.update;
 
 
-                        if (!__3) { return _(null, __3); } ; return execute(n.update, x, __cb(_, __frame, 140, 37, function ___(__0, __5) { var __4 = getValue(__5); return _(null, __4); }, true)); })(__cb(_, __frame, -343, 21, function __$execute() { while (__more) { __loop(); }; __more = true; }, true)); }); }); } else { __break(); } ; }, true)); }); do { __loop(); } while (__more); __more = true; })(__break);
+                        if (!__3) { return _(null, __3); } ; return execute(n.update, x, __cb(_, __frame, 140, 37, function ___(__0, __5) { var __4 = getValue(__5); return _(null, __4); }, true)); })(__cb(_, __frame, -350, 21, function __$execute() { while (__more) { __loop(); }; __more = true; }, true)); }); }); } else { __break(); } ; }, true)); }); do { __loop(); } while (__more); __more = true; })(__break);
 
 
 
@@ -529,7 +536,7 @@
 
 
 
-                  var __5 = (__4 || getValue(__6)); return _(null, __5); }, true)); })(__cb(_, __frame, -343, 21, function ___(__0, __120) { if (__120) { __4 = false; return (function ___(__then) { (function ___(_) { __tryCatch(_, function __$execute() { return execute(n.body, x, __cb(_, __frame, 178, 20, __then, true)); }); })(function ___(e, __result) { __catch(function __$execute() { if (e) { if (((e === BREAK) && (x.target === n))) { return __break(); } else { if (((e === CONTINUE) && (x.target === n))) { while (__more) { __loop(); }; __more = true; return; } else { return _(e); } ; } ; __then(); } else { _(null, __result); } ; }); }); })(function ___() { __tryCatch(_, function __$execute() { while (__more) { __loop(); }; __more = true; }); }); } else { __break(); } ; }, true)); }); do { __loop(); } while (__more); __more = true; })(__break);
+                  var __5 = (__4 || getValue(__6)); return _(null, __5); }, true)); })(__cb(_, __frame, -350, 21, function ___(__0, __120) { if (__120) { __4 = false; return (function ___(__then) { (function ___(_) { __tryCatch(_, function __$execute() { return execute(n.body, x, __cb(_, __frame, 178, 20, __then, true)); }); })(function ___(e, __result) { __catch(function __$execute() { if (e) { if (((e === BREAK) && (x.target === n))) { return __break(); } else { if (((e === CONTINUE) && (x.target === n))) { while (__more) { __loop(); }; __more = true; return; } else { return _(e); } ; } ; __then(); } else { _(null, __result); } ; }); }); })(function ___() { __tryCatch(_, function __$execute() { while (__more) { __loop(); }; __more = true; }); }); } else { __break(); } ; }, true)); }); do { __loop(); } while (__more); __more = true; })(__break);
 
 
         case BREAK: 
@@ -553,7 +560,7 @@
                                     object: { }, parent: x.scope }; definitions.defineProperty(x.scope.object, t.varName, e, true);
                                   return (function ___(__then) { (function ___(_) { __tryCatch(_, function __$execute() { return (function __$execute(_) { var __5 = t.guard;
 
-                                          if (!__5) { return _(null, __5); } ; return execute(t.guard, x, __cb(_, __frame, 212, 53, function ___(__0, __7) { var __6 = !getValue(__7); return _(null, __6); }, true)); })(__cb(_, __frame, -343, 21, function ___(__0, __16) { return (function __$execute(__then) { if (__16) { while (__more) { __loop(); }; __more = true; return; } else { __then(); } ; })(function __$execute() { return execute(t.block, x, __cb(_, __frame, 214, 28, __break, true));
+                                          if (!__5) { return _(null, __5); } ; return execute(t.guard, x, __cb(_, __frame, 212, 53, function ___(__0, __7) { var __6 = !getValue(__7); return _(null, __6); }, true)); })(__cb(_, __frame, -350, 21, function ___(__0, __16) { return (function __$execute(__then) { if (__16) { while (__more) { __loop(); }; __more = true; return; } else { __then(); } ; })(function __$execute() { return execute(t.block, x, __cb(_, __frame, 214, 28, __break, true));
 
                                           }); }, true)); }); })(function ___(__e, __r, __cont) { (function ___(__then) { __tryCatch(_, function __$execute() { x.scope = x.scope.parent;
 
@@ -576,7 +583,7 @@
 
         case RETURN: return (function __$execute(_) { var __6 = n.value;
 
-            return (function __$execute(__then) { if (__6) { return execute(n.value, x, __cb(_, __frame, 235, 42, function ___(__0, __8) { var __7 = getValue(__8); return _(null, __7); }, true)); } else { __then(); } ; })(function __$execute() { return _(null, undefined); }); })(__cb(_, __frame, -343, 21, function ___(__0, __18) { x.result = __18; return _(RETURN);
+            return (function __$execute(__then) { if (__6) { return execute(n.value, x, __cb(_, __frame, 235, 42, function ___(__0, __8) { var __7 = getValue(__8); return _(null, __7); }, true)); } else { __then(); } ; })(function __$execute() { return _(null, undefined); }); })(__cb(_, __frame, -350, 21, function ___(__0, __18) { x.result = __18; return _(RETURN);
           }, true));
 
         case WITH: return execute(n.object, x, __cb(_, __frame, 239, 16, function ___(__0, __19) {
@@ -663,17 +670,17 @@
         case HOOK: c = n.children;
           return (function __$execute(_) { return execute(c[0], x, __cb(_, __frame, 321, 25, function ___(__0, __8) {
               var __7 = getValue(__8); var __9 = __7; return (function __$execute(__then) { if (__9) { return execute(c[1], x, __cb(_, __frame, 321, 57, function ___(__0, __11) { var __10 = getValue(__11); return _(null, __10); }, true)); } else { __then(); } ; })(function __$execute() { return execute(c[2], x, __cb(_, __frame, 322, 54, function ___(__0, __13) {
-                  var __12 = getValue(__13); return _(null, __12); }, true)); }); }, true)); })(__cb(_, __frame, -343, 21, function ___(__0, __25) { v = __25; return __break(); }, true));
+                  var __12 = getValue(__13); return _(null, __12); }, true)); }); }, true)); })(__cb(_, __frame, -350, 21, function ___(__0, __25) { v = __25; return __break(); }, true));
 
 
         case OR: c = n.children;
           return (function __$execute(_) { return execute(c[0], x, __cb(_, __frame, 327, 25, function ___(__0, __9) {
-              var __8 = getValue(__9); var __10 = __8; return (function __$execute(__then) { if (__10) { var __11 = __8; return _(null, __11); } else { __then(); } ; })(function __$execute() { return execute(c[1], x, __cb(_, __frame, 327, 58, function ___(__0, __13) { var __12 = getValue(__13); return _(null, __12); }, true)); }); }, true)); })(__cb(_, __frame, -343, 21, function ___(__0, __26) { v = __26; return __break(); }, true));
+              var __8 = getValue(__9); var __10 = __8; return (function __$execute(__then) { if (__10) { var __11 = __8; return _(null, __11); } else { __then(); } ; })(function __$execute() { return execute(c[1], x, __cb(_, __frame, 327, 58, function ___(__0, __13) { var __12 = getValue(__13); return _(null, __12); }, true)); }); }, true)); })(__cb(_, __frame, -350, 21, function ___(__0, __26) { v = __26; return __break(); }, true));
 
 
         case AND: c = n.children;
           return (function __$execute(_) { return execute(c[0], x, __cb(_, __frame, 332, 25, function ___(__0, __10) {
-              var __9 = getValue(__10); var __11 = !__9; return (function __$execute(__then) { if (__11) { var __12 = __9; return _(null, __12); } else { __then(); } ; })(function __$execute() { return execute(c[1], x, __cb(_, __frame, 332, 58, function ___(__0, __14) { var __13 = getValue(__14); return _(null, __13); }, true)); }); }, true)); })(__cb(_, __frame, -343, 21, function ___(__0, __27) { v = __27; return __break(); }, true));
+              var __9 = getValue(__10); var __11 = !__9; return (function __$execute(__then) { if (__11) { var __12 = __9; return _(null, __12); } else { __then(); } ; })(function __$execute() { return execute(c[1], x, __cb(_, __frame, 332, 58, function ___(__0, __14) { var __13 = getValue(__14); return _(null, __13); }, true)); }); }, true)); })(__cb(_, __frame, -350, 21, function ___(__0, __27) { v = __27; return __break(); }, true));
 
 
         case BITWISE_OR: c = n.children;
@@ -867,19 +874,17 @@
               if ((t instanceof Activation)) {
                 t = null;
               } ; return f.__call__(t, a, x, __cb(_, __frame, 526, 16, function ___(__0, __84) {
-                v = __84; console.log("CALL returned");
-                console.log(v);
-                return __break(); }, true)); }, true)); }, true));
+                v = __84; return __break(); }, true)); }, true)); }, true));
 
 
         case NEW: 
         case NEW_WITH_ARGS: c = n.children;
-          return execute(c[0], x, __cb(_, __frame, 534, 16, function ___(__0, __85) {
+          return execute(c[0], x, __cb(_, __frame, 532, 16, function ___(__0, __85) {
             r = __85; f = getValue(r);
             return (function __$execute(__then) { if ((n.type === NEW)) {
                 a = {
                 }; definitions.defineProperty(a, "length", 0, false, false, true);
-                __then(); } else { return execute(c[1], x, __cb(_, __frame, 540, 20, function ___(__0, __86) {
+                __then(); } else { return execute(c[1], x, __cb(_, __frame, 538, 20, function ___(__0, __86) {
 
                   a = __86; __then(); }, true)); } ; })(function __$execute() { if ((isPrimitive(f) || (typeof f.__construct__ !== "function"))) {
 
@@ -893,7 +898,7 @@
           c = n.children;
           i = 0;
           j = c.length; var __208 = false; return (function ___(__break) { var __more; var __loop = __cb(_, __frame, 0, 0, function __$execute() { __more = false; if (__208) { i++; } else { __208 = true; } ; var __207 = (i < j); if (__207) { return (function __$execute(__then) { if (c[i]) {
-                    return execute(c[i], x, __cb(_, __frame, 553, 36, function ___(__0, __87) {
+                    return execute(c[i], x, __cb(_, __frame, 551, 36, function ___(__0, __87) {
                       v[i] = getValue(__87); __then(); }, true)); } else { __then(); } ; })(function __$execute() { while (__more) { __loop(); }; __more = true; }); } else { __break(); } ; }); do { __loop(); } while (__more); __more = true; })(function __$execute() { v.length = j;
 
             return __break(); });
@@ -905,7 +910,7 @@
           j = c.length; var __211 = false; return (function ___(__break) { var __more; var __loop = __cb(_, __frame, 0, 0, function __$execute() { __more = false; if (__211) { i++; } else { __211 = true; } ; var __210 = (i < j); if (__210) { t = c[i];
                 return (function __$execute(__then) { if ((t.type === PROPERTY_INIT)) {
                     c2 = t.children;
-                    return execute(c2[1], x, __cb(_, __frame, 565, 46, function ___(__0, __88) {
+                    return execute(c2[1], x, __cb(_, __frame, 563, 46, function ___(__0, __88) {
                       v[c2[0].value] = getValue(__88); __then(); }, true)); } else { f = newFunction(t, x);
 
                     u = (((t.type === GETTER)) ? "__defineGetter__" : "__defineSetter__");
@@ -946,7 +951,7 @@
           return __break();
 
 
-        case GROUP: return execute(n.children[0], x, __cb(_, __frame, 606, 16, function ___(__0, __89) {
+        case GROUP: return execute(n.children[0], x, __cb(_, __frame, 604, 16, function ___(__0, __89) {
             v = __89; return __break(); }, true)); default:
 
 
@@ -1007,7 +1012,7 @@
   var FOp = FunctionObject.prototype = {
 
 
-    __call__: function __call____2(t, a, x, _) { var x2, f, __this = this; var __frame = { name: "__call____2", line: 1010 }; return __func(_, this, arguments, __call____2, 3, __frame, function __$__call____2() {
+    __call__: function __call____2(t, a, x, _) { var x2, f, __this = this; var __frame = { name: "__call____2", line: 1015 }; return __func(_, this, arguments, __call____2, 3, __frame, function __$__call____2() {
         x2 = new ExecutionContext(FUNCTION_CODE);
         x2.thisObject = (t || global);
         x2.caller = x;
@@ -1109,19 +1114,16 @@
   var REp = RegExp.prototype;
 
   if (!(("__call__" in Fp))) {
-    definitions.defineProperty(Fp, "__call__", function(t, a, x, cb) {
+    definitions.defineProperty(Fp, "__call__", function __3(t, a, x, _) { var __this = this; var __frame = { name: "__3", line: 1118 }; return __func(_, this, arguments, __3, 3, __frame, function __$__3() {
 
 
-      a = Array.prototype.splice.call(a, 0, a.length);
+        a = Array.prototype.splice.call(a, 0, a.length); return (function __$__3(__then) {
 
 
 
-      if ((this in asyncFunctions)) {
-        a.splice(0, 0, cb); };
-      var rr = this.apply(t, a);
-      console.log("INNER returned");
-      console.log(rr);
-      return rr;
+          if ((__this in asyncFunctions)) {
+            return asyncCall(__this, t, a, __cb(_, __frame, 7, 50, _, true)); } else { __then(); } ; })(function __$__3() {
+          return _(null, __this.apply(t, a)); }); });
     }, true, true, true);
     definitions.defineProperty(REp, "__call__", function(t, a, x) {
 
@@ -1159,10 +1161,11 @@
 
 
   function thunk(f, x) {
+    console.log("TODO: thunk!!!");
     return function() { return f.__call__(this, arguments, x); }; };
 
 
-  function evaluate(s, f, l, _) { var x; var __frame = { name: "evaluate", line: 1165 }; return __func(_, this, arguments, evaluate, 3, __frame, function __$evaluate() {
+  function evaluate(s, f, l, _) { var x; var __frame = { name: "evaluate", line: 1168 }; return __func(_, this, arguments, evaluate, 3, __frame, function __$evaluate() {
       if ((typeof s !== "string")) {
         return _(null, s); } ;
 

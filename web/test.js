@@ -22,7 +22,7 @@ function run_script(script, cb) {
 }
 
 function work(script){
-    run_script(script, function() { console.log('it worked!'); });
+    run_script(script, function() { console.log('script ended.'); });
 }
 
 async_load('input.js', function(res){

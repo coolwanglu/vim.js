@@ -57,6 +57,13 @@
 Narcissus.interpreter = (function() {
 
     var asyncFunctions = {};
+    function asyncCall(func, obj, args, callback) {
+        var new_args = [];
+        new_args.push(callback);
+        for(var i = 0, l = args.length; i < l; ++i)
+            new_args.push(args[i]);
+        func.apply(obj, args);
+    }
 
     var parser = Narcissus.parser;
     var definitions = Narcissus.definitions;
@@ -1108,14 +1115,14 @@ Narcissus.interpreter = (function() {
 
     if (!('__call__' in Fp)) {
         definitions.defineProperty(Fp, "__call__",
-                                   function (t, a, x, cb) {
+                                   function (t, a, x, _) {
                                        // Curse ECMA yet again!
                                        a = Array.prototype.splice.call(a, 0, a.length);
                                        // handle async functions
                                        // put the hidden callback into the
                                        // first arg
                                        if (this in asyncFunctions)
-                                           a.splice(0, 0, cb);
+                                           return asyncCall(this, t, a, _);
                                        return this.apply(t, a);
                                    }, true, true, true);
         definitions.defineProperty(REp, "__call__",
@@ -1154,6 +1161,7 @@ Narcissus.interpreter = (function() {
     }
 
     function thunk(f, x) {
+        console.log('TODO: thunk!!!');
         return function () { return f.__call__(this, arguments, x); };
     }
 
