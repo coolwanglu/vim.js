@@ -56,6 +56,8 @@
 
 Narcissus.interpreter = (function() {
 
+    var asyncFunctions = {};
+
     var parser = Narcissus.parser;
     var definitions = Narcissus.definitions;
     var hostGlobal = Narcissus.hostGlobal;
@@ -255,11 +257,11 @@ Narcissus.interpreter = (function() {
         ecma3OnlyMode: false,
 
         // Execute a node in this execution context.
-        execute: function(n) {
+        execute: function(n, _) {
             var prev = ExecutionContext.current;
             ExecutionContext.current = this;
             try {
-                execute(n, this);
+                execute(n, this, _);
             } catch (e if e === THROW) {
                 // Propagate the throw to the previous context if it exists.
                 if (prev) {
@@ -331,7 +333,7 @@ Narcissus.interpreter = (function() {
                  : new TypeError(message);
     }
 
-    function execute(n, x) {
+    function execute(n, x, _) {
         var a, c, f, i, j, r, s, t, u, v;
 
         switch (n.type) {
@@ -380,18 +382,18 @@ Narcissus.interpreter = (function() {
           case BLOCK:
             c = n.children;
             for (i = 0, j = c.length; i < j; i++)
-                execute(c[i], x);
+                execute(c[i], x, _);
             break;
 
           case IF:
-            if (getValue(execute(n.condition, x)))
-                execute(n.thenPart, x);
+            if (getValue(execute(n.condition, x, _)))
+                execute(n.thenPart, x, _);
             else if (n.elsePart)
-                execute(n.elsePart, x);
+                execute(n.elsePart, x, _);
             break;
 
           case SWITCH:
-            s = getValue(execute(n.discriminant, x));
+            s = getValue(execute(n.discriminant, x, _));
             a = n.cases;
             var matchDefault = false;
           switch_loop:
@@ -406,7 +408,7 @@ Narcissus.interpreter = (function() {
                 }
                 t = a[i];                       // next case (might be default!)
                 if (t.type === CASE) {
-                    u = getValue(execute(t.caseLabel, x));
+                    u = getValue(execute(t.caseLabel, x, _));
                 } else {
                     if (!matchDefault)          // not defaulting, skip for now
                         continue;
@@ -416,7 +418,7 @@ Narcissus.interpreter = (function() {
                     for (;;) {                  // this loop exits switch_loop
                         if (t.statements.children.length) {
                             try {
-                                execute(t.statements, x);
+                                execute(t.statements, x, _);
                             } catch (e if e === BREAK && x.target === n) {
                                 break switch_loop;
                             }
@@ -431,27 +433,27 @@ Narcissus.interpreter = (function() {
             break;
 
           case FOR:
-            n.setup && getValue(execute(n.setup, x));
+            n.setup && getValue(execute(n.setup, x, _));
             // FALL THROUGH
           case WHILE:
-            while (!n.condition || getValue(execute(n.condition, x))) {
+            while (!n.condition || getValue(execute(n.condition, x, _))) {
                 try {
-                    execute(n.body, x);
+                    execute(n.body, x, _);
                 } catch (e if e === BREAK && x.target === n) {
                     break;
                 } catch (e if e === CONTINUE && x.target === n) {
                     // Must run the update expression.
                 }
-                n.update && getValue(execute(n.update, x));
+                n.update && getValue(execute(n.update, x, _));
             }
             break;
 
           case FOR_IN:
             u = n.varDecl;
             if (u)
-                execute(u, x);
+                execute(u, x, _);
             r = n.iterator;
-            s = execute(n.object, x);
+            s = execute(n.object, x, _);
             v = getValue(s);
 
             // ECMA deviation to track extant browser JS implementation behavior.
@@ -462,9 +464,9 @@ Narcissus.interpreter = (function() {
             for (i in t)
                 a.push(i);
             for (i = 0, j = a.length; i < j; i++) {
-                putValue(execute(r, x), a[i], r);
+                putValue(execute(r, x, _), a[i], r);
                 try {
-                    execute(n.body, x);
+                    execute(n.body, x, _);
                 } catch (e if e === BREAK && x.target === n) {
                     break;
                 } catch (e if e === CONTINUE && x.target === n) {
@@ -476,13 +478,13 @@ Narcissus.interpreter = (function() {
           case DO:
             do {
                 try {
-                    execute(n.body, x);
+                    execute(n.body, x, _);
                 } catch (e if e === BREAK && x.target === n) {
                     break;
                 } catch (e if e === CONTINUE && x.target === n) {
                     continue;
                 }
-            } while (getValue(execute(n.condition, x)));
+            } while (getValue(execute(n.condition, x, _)));
             break;
 
           case BREAK:
@@ -492,7 +494,7 @@ Narcissus.interpreter = (function() {
 
           case TRY:
             try {
-                execute(n.tryBlock, x);
+                execute(n.tryBlock, x, _);
             } catch (e if e === THROW && (j = n.catchClauses.length)) {
                 e = x.result;
                 x.result = undefined;
@@ -505,9 +507,9 @@ Narcissus.interpreter = (function() {
                     x.scope = {object: {}, parent: x.scope};
                     definitions.defineProperty(x.scope.object, t.varName, e, true);
                     try {
-                        if (t.guard && !getValue(execute(t.guard, x)))
+                        if (t.guard && !getValue(execute(t.guard, x, _)))
                             continue;
-                        execute(t.block, x);
+                        execute(t.block, x, _);
                         break;
                     } finally {
                         x.scope = x.scope.parent;
@@ -515,25 +517,25 @@ Narcissus.interpreter = (function() {
                 }
             } finally {
                 if (n.finallyBlock)
-                    execute(n.finallyBlock, x);
+                    execute(n.finallyBlock, x, _);
             }
             break;
 
           case THROW:
-            x.result = getValue(execute(n.exception, x));
+            x.result = getValue(execute(n.exception, x, _));
             throw THROW;
 
           case RETURN:
             // Check for returns with no return value
-            x.result = n.value ? getValue(execute(n.value, x)) : undefined;
+            x.result = n.value ? getValue(execute(n.value, x, _)) : undefined;
             throw RETURN;
 
           case WITH:
-            r = execute(n.object, x);
+            r = execute(n.object, x, _);
             t = toObject(getValue(r), r, n.object);
             x.scope = {object: t, parent: x.scope};
             try {
-                execute(n.body, x);
+                execute(n.body, x, _);
             } finally {
                 x.scope = x.scope.parent;
             }
@@ -551,7 +553,7 @@ Narcissus.interpreter = (function() {
                     if (hasDirectProperty(s.object, t))
                         break;
                 }
-                u = getValue(execute(u, x));
+                u = getValue(execute(u, x), _);
                 if (n.type === CONST)
                     definitions.defineProperty(s.object, t, u, x.type !== EVAL_CODE, true);
                 else
@@ -564,12 +566,12 @@ Narcissus.interpreter = (function() {
 
           case SEMICOLON:
             if (n.expression)
-                x.result = getValue(execute(n.expression, x));
+                x.result = getValue(execute(n.expression, x, _));
             break;
 
           case LABEL:
             try {
-                execute(n.statement, x);
+                execute(n.statement, x, _);
             } catch (e if e === BREAK && x.target === n.target) {
             }
             break;
@@ -577,16 +579,16 @@ Narcissus.interpreter = (function() {
           case COMMA:
             c = n.children;
             for (i = 0, j = c.length; i < j; i++)
-                v = getValue(execute(c[i], x));
+                v = getValue(execute(c[i], x, _));
             break;
 
           case ASSIGN:
             c = n.children;
-            r = execute(c[0], x);
+            r = execute(c[0], x, _);
             t = n.assignOp;
             if (t)
                 u = getValue(r);
-            v = getValue(execute(c[1], x));
+            v = getValue(execute(c[1], x, _));
             if (t) {
                 switch (t) {
                   case BITWISE_OR:  v = u | v; break;
@@ -607,84 +609,84 @@ Narcissus.interpreter = (function() {
 
           case HOOK:
             c = n.children;
-            v = getValue(execute(c[0], x)) ? getValue(execute(c[1], x))
-                                           : getValue(execute(c[2], x));
+            v = getValue(execute(c[0], x, _)) ? getValue(execute(c[1], x, _))
+                                           : getValue(execute(c[2], x, _));
             break;
 
           case OR:
             c = n.children;
-            v = getValue(execute(c[0], x)) || getValue(execute(c[1], x));
+            v = getValue(execute(c[0], x, _)) || getValue(execute(c[1], x, _));
             break;
 
           case AND:
             c = n.children;
-            v = getValue(execute(c[0], x)) && getValue(execute(c[1], x));
+            v = getValue(execute(c[0], x, _)) && getValue(execute(c[1], x, _));
             break;
 
           case BITWISE_OR:
             c = n.children;
-            v = getValue(execute(c[0], x)) | getValue(execute(c[1], x));
+            v = getValue(execute(c[0], x, _)) | getValue(execute(c[1], x, _));
             break;
 
           case BITWISE_XOR:
             c = n.children;
-            v = getValue(execute(c[0], x)) ^ getValue(execute(c[1], x));
+            v = getValue(execute(c[0], x, _)) ^ getValue(execute(c[1], x, _));
             break;
 
           case BITWISE_AND:
             c = n.children;
-            v = getValue(execute(c[0], x)) & getValue(execute(c[1], x));
+            v = getValue(execute(c[0], x, _)) & getValue(execute(c[1], x, _));
             break;
 
           case EQ:
             c = n.children;
-            v = getValue(execute(c[0], x)) == getValue(execute(c[1], x));
+            v = getValue(execute(c[0], x, _)) == getValue(execute(c[1], x, _));
             break;
 
           case NE:
             c = n.children;
-            v = getValue(execute(c[0], x)) != getValue(execute(c[1], x));
+            v = getValue(execute(c[0], x, _)) != getValue(execute(c[1], x, _));
             break;
 
           case STRICT_EQ:
             c = n.children;
-            v = getValue(execute(c[0], x)) === getValue(execute(c[1], x));
+            v = getValue(execute(c[0], x, _)) === getValue(execute(c[1], x, _));
             break;
 
           case STRICT_NE:
             c = n.children;
-            v = getValue(execute(c[0], x)) !== getValue(execute(c[1], x));
+            v = getValue(execute(c[0], x, _)) !== getValue(execute(c[1], x, _));
             break;
 
           case LT:
             c = n.children;
-            v = getValue(execute(c[0], x)) < getValue(execute(c[1], x));
+            v = getValue(execute(c[0], x, _)) < getValue(execute(c[1], x, _));
             break;
 
           case LE:
             c = n.children;
-            v = getValue(execute(c[0], x)) <= getValue(execute(c[1], x));
+            v = getValue(execute(c[0], x, _)) <= getValue(execute(c[1], x, _));
             break;
 
           case GE:
             c = n.children;
-            v = getValue(execute(c[0], x)) >= getValue(execute(c[1], x));
+            v = getValue(execute(c[0], x, _)) >= getValue(execute(c[1], x, _));
             break;
 
           case GT:
             c = n.children;
-            v = getValue(execute(c[0], x)) > getValue(execute(c[1], x));
+            v = getValue(execute(c[0], x, _)) > getValue(execute(c[1], x, _));
             break;
 
           case IN:
             c = n.children;
-            v = getValue(execute(c[0], x)) in getValue(execute(c[1], x));
+            v = getValue(execute(c[0], x, _)) in getValue(execute(c[1], x, _));
             break;
 
           case INSTANCEOF:
             c = n.children;
-            t = getValue(execute(c[0], x));
-            u = getValue(execute(c[1], x));
+            t = getValue(execute(c[0], x, _));
+            u = getValue(execute(c[1], x, _));
             if (isObject(u) && typeof u.__hasInstance__ === "function")
                 v = u.__hasInstance__(t);
             else
@@ -693,79 +695,79 @@ Narcissus.interpreter = (function() {
 
           case LSH:
             c = n.children;
-            v = getValue(execute(c[0], x)) << getValue(execute(c[1], x));
+            v = getValue(execute(c[0], x, _)) << getValue(execute(c[1], x, _));
             break;
 
           case RSH:
             c = n.children;
-            v = getValue(execute(c[0], x)) >> getValue(execute(c[1], x));
+            v = getValue(execute(c[0], x, _)) >> getValue(execute(c[1], x, _));
             break;
 
           case URSH:
             c = n.children;
-            v = getValue(execute(c[0], x)) >>> getValue(execute(c[1], x));
+            v = getValue(execute(c[0], x, _)) >>> getValue(execute(c[1], x, _));
             break;
 
           case PLUS:
             c = n.children;
-            v = getValue(execute(c[0], x)) + getValue(execute(c[1], x));
+            v = getValue(execute(c[0], x, _)) + getValue(execute(c[1], x, _));
             break;
 
           case MINUS:
             c = n.children;
-            v = getValue(execute(c[0], x)) - getValue(execute(c[1], x));
+            v = getValue(execute(c[0], x, _)) - getValue(execute(c[1], x, _));
             break;
 
           case MUL:
             c = n.children;
-            v = getValue(execute(c[0], x)) * getValue(execute(c[1], x));
+            v = getValue(execute(c[0], x, _)) * getValue(execute(c[1], x, _));
             break;
 
           case DIV:
             c = n.children;
-            v = getValue(execute(c[0], x)) / getValue(execute(c[1], x));
+            v = getValue(execute(c[0], x, _)) / getValue(execute(c[1], x, _));
             break;
 
           case MOD:
             c = n.children;
-            v = getValue(execute(c[0], x)) % getValue(execute(c[1], x));
+            v = getValue(execute(c[0], x, _)) % getValue(execute(c[1], x, _));
             break;
 
           case DELETE:
-            t = execute(n.children[0], x);
+            t = execute(n.children[0], x, _);
             v = !(t instanceof Reference) || delete t.base[t.propertyName];
             break;
 
           case VOID:
-            getValue(execute(n.children[0], x));
+            getValue(execute(n.children[0], x, _));
             break;
 
           case TYPEOF:
-            t = execute(n.children[0], x);
+            t = execute(n.children[0], x, _);
             if (t instanceof Reference)
                 t = t.base ? t.base[t.propertyName] : undefined;
             v = typeof t;
             break;
 
           case NOT:
-            v = !getValue(execute(n.children[0], x));
+            v = !getValue(execute(n.children[0], x, _));
             break;
 
           case BITWISE_NOT:
-            v = ~getValue(execute(n.children[0], x));
+            v = ~getValue(execute(n.children[0], x, _));
             break;
 
           case UNARY_PLUS:
-            v = +getValue(execute(n.children[0], x));
+            v = +getValue(execute(n.children[0], x, _));
             break;
 
           case UNARY_MINUS:
-            v = -getValue(execute(n.children[0], x));
+            v = -getValue(execute(n.children[0], x, _));
             break;
 
           case INCREMENT:
           case DECREMENT:
-            t = execute(n.children[0], x);
+            t = execute(n.children[0], x, _);
             u = Number(getValue(t));
             if (n.postfix)
                 v = u;
@@ -776,7 +778,7 @@ Narcissus.interpreter = (function() {
 
           case DOT:
             c = n.children;
-            r = execute(c[0], x);
+            r = execute(c[0], x, _);
             t = getValue(r);
             u = c[1].value;
             v = new Reference(toObject(t, r, c[0]), u, n);
@@ -784,9 +786,9 @@ Narcissus.interpreter = (function() {
 
           case INDEX:
             c = n.children;
-            r = execute(c[0], x);
+            r = execute(c[0], x, _);
             t = getValue(r);
-            u = getValue(execute(c[1], x));
+            u = getValue(execute(c[1], x, _));
             v = new Reference(toObject(t, r, c[0]), String(u), n);
             break;
 
@@ -795,7 +797,7 @@ Narcissus.interpreter = (function() {
             v = {};
             c = n.children;
             for (i = 0, j = c.length; i < j; i++) {
-                u = getValue(execute(c[i], x));
+                u = getValue(execute(c[i], x, _));
                 definitions.defineProperty(v, i, u, false, false, true);
             }
             definitions.defineProperty(v, "length", i, false, false, true);
@@ -803,8 +805,8 @@ Narcissus.interpreter = (function() {
 
           case CALL:
             c = n.children;
-            r = execute(c[0], x);
-            a = execute(c[1], x);
+            r = execute(c[0], x, _);
+            a = execute(c[1], x, _);
             f = getValue(r);
             if (isPrimitive(f) || typeof f.__call__ !== "function") {
                 throw new TypeError(r + " is not callable", c[0].filename, c[0].lineno);
@@ -812,19 +814,19 @@ Narcissus.interpreter = (function() {
             t = (r instanceof Reference) ? r.base : null;
             if (t instanceof Activation)
                 t = null;
-            v = f.__call__(t, a, x);
+            v = f.__call__(t, a, x, _);
             break;
 
           case NEW:
           case NEW_WITH_ARGS:
             c = n.children;
-            r = execute(c[0], x);
+            r = execute(c[0], x, _);
             f = getValue(r);
             if (n.type === NEW) {
                 a = {};
                 definitions.defineProperty(a, "length", 0, false, false, true);
             } else {
-                a = execute(c[1], x);
+                a = execute(c[1], x, _);
             }
             if (isPrimitive(f) || typeof f.__construct__ !== "function") {
                 throw new TypeError(r + " is not a constructor", c[0].filename, c[0].lineno);
@@ -837,7 +839,7 @@ Narcissus.interpreter = (function() {
             c = n.children;
             for (i = 0, j = c.length; i < j; i++) {
                 if (c[i])
-                    v[i] = getValue(execute(c[i], x));
+                    v[i] = getValue(execute(c[i], x, _));
             }
             v.length = j;
             break;
@@ -849,7 +851,7 @@ Narcissus.interpreter = (function() {
                 t = c[i];
                 if (t.type === PROPERTY_INIT) {
                     var c2 = t.children;
-                    v[c2[0].value] = getValue(execute(c2[1], x));
+                    v[c2[0].value] = getValue(execute(c2[1], x, _));
                 } else {
                     f = newFunction(t, x);
                     u = (t.type === GETTER) ? '__defineGetter__'
@@ -890,7 +892,7 @@ Narcissus.interpreter = (function() {
             break;
 
           case GROUP:
-            v = execute(n.children[0], x);
+            v = execute(n.children[0], x, _);
             break;
 
           default:
@@ -950,7 +952,7 @@ Narcissus.interpreter = (function() {
     var FOp = FunctionObject.prototype = {
 
         // Internal methods.
-        __call__: function (t, a, x) {
+        __call__: function (t, a, x, _) {
             var x2 = new ExecutionContext(FUNCTION_CODE);
             x2.thisObject = t || global;
             x2.caller = x;
@@ -960,7 +962,7 @@ Narcissus.interpreter = (function() {
             x2.scope = {object: new Activation(f, a), parent: this.scope};
 
             try {
-                x2.execute(f.body);
+                x2.execute(f.body, _);
             } catch (e if e === RETURN) {
                 return x2.result;
             }
@@ -1049,9 +1051,14 @@ Narcissus.interpreter = (function() {
 
     if (!('__call__' in Fp)) {
         definitions.defineProperty(Fp, "__call__",
-                                   function (t, a, x) {
+                                   function (t, a, x, cb) {
                                        // Curse ECMA yet again!
                                        a = Array.prototype.splice.call(a, 0, a.length);
+                                       // handle async functions
+                                       // put the hidden callback into the
+                                       // first arg
+                                       if (this in asyncFunctions)
+                                           a.push(cb);
                                        return this.apply(t, a);
                                    }, true, true, true);
         definitions.defineProperty(REp, "__call__",
@@ -1093,12 +1100,12 @@ Narcissus.interpreter = (function() {
         return function () { return f.__call__(this, arguments, x); };
     }
 
-    function evaluate(s, f, l) {
+    function evaluate(s, f, l, _) {
         if (typeof s !== "string")
             return s;
 
         var x = new ExecutionContext(GLOBAL_CODE);
-        x.execute(parser.parse(s, f, l));
+        x.execute(parser.parse(s, f, l), _);
         return x.result;
     }
 
@@ -1210,6 +1217,7 @@ Narcissus.interpreter = (function() {
         resetEnvironment: resetEnvironment,
         evaluate: evaluate,
         repl: repl,
+        asyncFunctions : asyncFunctions,
         test: test
     };
 
