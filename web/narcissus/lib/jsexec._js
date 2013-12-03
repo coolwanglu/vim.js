@@ -1,5 +1,5 @@
 /* -*- Mode: JS; tab-width: 4; indent-tabs-mode: nil; -*-
- * vim: set sw=4 ts=4 et tw=78:
+ * vim: set sw=4 ts=4 et tw=78 ft=javascript :
 /* ***** BEGIN LICENSE BLOCK *****
  *
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
@@ -56,14 +56,19 @@
 
 Narcissus.interpreter = (function() {
 
+    // Lu Wang:
+    // all the async functions in the global scope
+    // we may need to pause the interpreting calling these fucntion
+    // do not support return values yet
     var asyncFunctions = {};
     function asyncCall(func, obj, args, callback) {
         var new_args = [];
         new_args.push(callback);
         for(var i = 0, l = args.length; i < l; ++i)
             new_args.push(args[i]);
-        func.apply(obj, args);
+        func.apply(obj, new_args);
     }
+    function asyncCallbackDummy () {}
 
     var parser = Narcissus.parser;
     var definitions = Narcissus.definitions;
@@ -100,6 +105,7 @@ Narcissus.interpreter = (function() {
             x2.callee = x.callee;
             x2.scope = x.scope;
             try {
+                console.log('TODO:eval()!!!');
                 x2.execute(parser.parse(s));
                 return x2.result;
             } catch (e) {
@@ -874,7 +880,14 @@ Narcissus.interpreter = (function() {
             t = (r instanceof Reference) ? r.base : null;
             if (t instanceof Activation)
                 t = null;
-            v = f.__call__(t, a, x, _);
+            // handle async functions
+            // forward the hidden callback into the
+            if (f in asyncFunctions) {
+                asyncCall(f, t, a, _);
+                v = undefined;
+            }
+            else
+                v = f.__call__(t, a, x, _);
             break;
 
           case NEW:
@@ -1004,7 +1017,7 @@ Narcissus.interpreter = (function() {
         var fobj = new FunctionObject(n, x.scope);
         var handler = definitions.makePassthruHandler(fobj);
         var p = Proxy.createFunction(handler,
-                                     function() { return fobj.__call__(this, arguments, x); },
+                                     function() { return fobj.__call__(this, arguments, x, asyncCallbackDummy); },
                                      function() { return fobj.__construct__(arguments, x); });
         return p;
     }
@@ -1118,11 +1131,6 @@ Narcissus.interpreter = (function() {
                                    function (t, a, x, _) {
                                        // Curse ECMA yet again!
                                        a = Array.prototype.splice.call(a, 0, a.length);
-                                       // handle async functions
-                                       // put the hidden callback into the
-                                       // first arg
-                                       if (this in asyncFunctions)
-                                           return asyncCall(this, t, a, _);
                                        return this.apply(t, a);
                                    }, true, true, true);
         definitions.defineProperty(REp, "__call__",
@@ -1161,7 +1169,7 @@ Narcissus.interpreter = (function() {
     }
 
     function thunk(f, x) {
-        console.log('TODO: thunk!!!');
+        console.log('TODO:thunk!!!');
         return function () { return f.__call__(this, arguments, x); };
     }
 
@@ -1242,6 +1250,7 @@ Narcissus.interpreter = (function() {
             ++ln.value;
 
             try {
+                console.log('TODO:repl()!!!');
                 execute(parser.parseStdin(src, ln), x);
                 display(x.result);
             } catch (e) {

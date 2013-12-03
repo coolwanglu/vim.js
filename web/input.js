@@ -9,9 +9,23 @@ function a() {
     sleep(1000);
     console.log('input.js:end');
 }
+var events = [];
+document.addEventListener('mousemove', function(e){
+    events.push(e);
+}, false);
 
-console.log('test1');
+
+console.log('step 1');
 sleep(1000);
-console.log('test2');
-a();
-console.log('test3');
+console.log('step 2');
+sleep(1000);
+console.log('step 3');
+
+//while(true) {
+    if(events.length > 0) {
+        console.log('got events:', events.length);
+        events.length = 0;
+    }
+    sleep(100);
+//}
+

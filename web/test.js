@@ -18,7 +18,7 @@ function sleep(cb, ms) {
 Narcissus.interpreter.asyncFunctions[sleep] = true;
 
 function run_script(script, cb) {
-    Narcissus.interpreter.evaluate(script, '', 0, cb);
+    Narcissus.interpreter.evaluate(script, '__buffer__', 0, cb);
 }
 
 function work(script){
