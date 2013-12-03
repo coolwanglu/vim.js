@@ -12,7 +12,7 @@ function async_load(url, onload, onerror) {
   xhr.send(null);
 }
 
-function sleep(ms, cb) {
+function sleep(cb, ms) {
     setTimeout(cb, ms);
 }
 Narcissus.interpreter.asyncFunctions[sleep] = true;
