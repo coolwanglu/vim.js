@@ -1997,7 +1997,8 @@ else
   fi
 fi
 
-test "x$with_x" = xno -a "x$MACOSX" != "xyes" -a "x$QNX" != "xyes" && enable_gui=no
+# Lu Wang: don't disable enable_gui since we have gui_browser
+#test "x$with_x" = xno -a "x$MACOSX" != "xyes" -a "x$QNX" != "xyes" && enable_gui=no
 
 AC_MSG_CHECKING(--enable-gui argument)
 AC_ARG_ENABLE(gui,
@@ -2066,7 +2067,7 @@ else
 		SKIP_ATHENA=;;
     nextaw)	AC_MSG_RESULT(neXtaw GUI support)
 		SKIP_NEXTAW=;;
-    browser)	AC_MSG_RESULT(Browser GUI support)
+    browser) AC_MSG_RESULT(Browser GUI support)
 		SKIP_BROWSER=;;
     *)		AC_MSG_RESULT([Sorry, $enable_gui GUI is not supported]) ;;
   esac

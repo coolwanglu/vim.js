@@ -22,7 +22,7 @@ cp src/vim vim.bc
 $EM_DIR/emcc vim.bc -o vim.js
 }
 
-#do_config
+do_config
 do_make
 do_link
 

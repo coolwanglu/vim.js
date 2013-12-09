@@ -8158,7 +8158,8 @@ $as_echo "$ac_cv_small_wchar_t" >&6; }
   fi
 fi
 
-test "x$with_x" = xno -a "x$MACOSX" != "xyes" -a "x$QNX" != "xyes" && enable_gui=no
+# Lu Wang:
+#test "x$with_x" = xno -a "x$MACOSX" != "xyes" -a "x$QNX" != "xyes" && enable_gui=no
 
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking --enable-gui argument" >&5
 $as_echo_n "checking --enable-gui argument... " >&6; }
@@ -8247,7 +8248,7 @@ $as_echo "Athena GUI support" >&6; }
     nextaw)	{ $as_echo "$as_me:${as_lineno-$LINENO}: result: neXtaw GUI support" >&5
 $as_echo "neXtaw GUI support" >&6; }
 		SKIP_NEXTAW=;;
-    browser)	{ $as_echo "$as_me:${as_lineno-$LINENO}: result: Browser GUI support" >&5
+    browser) { $as_echo "$as_me:${as_lineno-$LINENO}: result: Browser GUI support" >&5
 $as_echo "Browser GUI support" >&6; }
 		SKIP_BROWSER=;;
     *)		{ $as_echo "$as_me:${as_lineno-$LINENO}: result: Sorry, $enable_gui GUI is not supported" >&5
