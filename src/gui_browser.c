@@ -8,6 +8,7 @@
  * See README.txt for an overview of the Vim source code.
  */
 
+#ifdef FEAT_GUI_BROWSER
 #include "vim.h"
 
      void
@@ -680,3 +681,4 @@ gui_mch_set_curtab(nr)
 }
 
 #endif // FEAT_GUI_TABLINE
+#endif //FEAT_GUI_BROWSER

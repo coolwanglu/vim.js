@@ -18,6 +18,8 @@
  * changed beyond recognition.
  */
 
+// Lu Wang: disable os_unix.c for the browser GUI
+#ifndef FEAT_GUI_BROWSER
 /*
  * Some systems have a prototype for select() that has (int *) instead of
  * (fd_set *), which is wrong. This define removes that prototype. We define
@@ -7373,3 +7375,4 @@ char CtrlCharTable[]=
 
 
 #endif
+#endif //FEAT_GUI_BROWSER
