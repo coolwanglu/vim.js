@@ -18,11 +18,13 @@ $EM_DIR/emmake make
 }
 
 do_link() {
-cp src/vim vim.bc
-$EM_DIR/emcc vim.bc -o vim.js
+pushd web
+cp ../src/vim vim.bc
+$EM_DIR/emcc vim.bc -o vim.js --js-library vimjs.js
+popd
 }
 
-do_config
+#do_config
 do_make
 do_link
 

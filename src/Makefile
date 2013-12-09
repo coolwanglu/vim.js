@@ -1291,7 +1291,7 @@ CARBONGUI_TESTARG = VIMPROG=../$(APPDIR)/Contents/MacOS/$(VIMTARGET)
 
 # BROWSER GUI
 BROWSER_SRC	= gui.c gui_browser.c os_browser.c
-BROWSER_OBJ	= objects/gui.o objects/gui_browser.o 
+BROWSER_OBJ	= objects/gui.o objects/gui_browser.o objects/os_browser.o
 BROWSER_DEFS	= -DFEAT_GUI_BROWSER 
 BROWSER_IPATH	= -I. -Iproto
 BROWSER_LIBS_DIR =
@@ -2697,6 +2697,9 @@ objects/os_macosx.o: os_macosx.m
 
 objects/os_mac_conv.o: os_mac_conv.c
 	$(CCC) -o $@ os_mac_conv.c
+
+objects/os_browser.o: os_browser.c
+	$(CCC) -o $@ os_browser.c
 
 objects/os_unix.o: os_unix.c
 	$(CCC) -o $@ os_unix.c

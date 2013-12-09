@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>Vim.js</title>
+    <style>
+    </style>
+  </head>
+  <body>
+    <div id="container">
+    </div>
+    <script>
+      // connect to canvas
+      var Module = {
+        preRun: [],
+        postRun: [],
+        print: function() { console.log.apply(console, arguments); },
+        printErr: function() { console.log.apply(console, arguments); },
+      };
+    </script>
+    <script src="streamlinejs/lib/callbacks/require-stub.js"></script>
+    <script src="streamlinejs/lib/version.js"></script>
+    <script src="streamlinejs/lib/callbacks/runtime.js"></script>
+    <script src="streamlinejs/lib/callbacks/builtins.js"></script>
+    <script src="vimjs.js"></script>
+    <script src="vim.js"></script>
+  </body>
+</html>

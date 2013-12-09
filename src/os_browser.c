@@ -1,12 +1,8 @@
-/* vi:set ts=8 sts=4 sw=4:
+/*
+ * os_browser.c : provide OS interface with emscripten API
+ * Copyright (c) 2013 Lu Wang <coolwanglu@gmail.com>
  *
- * VIM - Vi IMproved	by Bram Moolenaar
- *	      OS/2 port by Paul Slootman
- *	      VMS merge by Zoltan Arpadffy
- *
- * Do ":help uganda"  in Vim to read copying and usage conditions.
- * Do ":help credits" in Vim to see a list of people who contributed.
- * See README.txt for an overview of the Vim source code.
+ * Mostly modified from os_unix.c
  */
 
 /*
@@ -18,8 +14,6 @@
  * changed beyond recognition.
  */
 
-// Lu Wang: disable os_unix.c for the browser GUI
-#ifndef FEAT_GUI_BROWSER
 /*
  * Some systems have a prototype for select() that has (int *) instead of
  * (fd_set *), which is wrong. This define removes that prototype. We define
@@ -32,6 +26,8 @@
 #endif
 
 #include "vim.h"
+
+#include "vimjs.h"
 
 #ifdef FEAT_MZSCHEME
 # include "if_mzsch.h"
@@ -635,44 +631,9 @@ mch_delay(msec, ignoreinput)
 		msec = total;
 	    total -= msec;
 #endif
-#ifdef HAVE_NANOSLEEP
-	{
-	    struct timespec ts;
 
-	    ts.tv_sec = msec / 1000;
-	    ts.tv_nsec = (msec % 1000) * 1000000;
-	    (void)nanosleep(&ts, NULL);
-	}
-#else
-# ifdef HAVE_USLEEP
-	while (msec >= 1000)
-	{
-	    usleep((unsigned int)(999 * 1000));
-	    msec -= 999;
-	}
-	usleep((unsigned int)(msec * 1000));
-# else
-#  ifndef HAVE_SELECT
-	poll(NULL, 0, (int)msec);
-#  else
-#   ifdef __EMX__
-	_sleep2(msec);
-#   else
-	{
-	    struct timeval tv;
+        vimjs_sleep(msec);
 
-	    tv.tv_sec = msec / 1000;
-	    tv.tv_usec = (msec % 1000) * 1000;
-	    /*
-	     * NOTE: Solaris 2.6 has a bug that makes select() hang here.  Get
-	     * a patch from Sun to fix this.  Reported by Gunnar Pedersen.
-	     */
-	    select(0, NULL, NULL, NULL, &tv);
-	}
-#   endif /* __EMX__ */
-#  endif /* HAVE_SELECT */
-# endif /* HAVE_NANOSLEEP */
-#endif /* HAVE_USLEEP */
 #ifdef FEAT_MZSCHEME
 	}
 	while (total > 0);
@@ -7375,4 +7336,3 @@ char CtrlCharTable[]=
 
 
 #endif
-#endif //FEAT_GUI_BROWSER

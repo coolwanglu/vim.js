@@ -10,6 +10,7 @@
 
 #ifdef FEAT_GUI_BROWSER
 #include "vim.h"
+#include "vimjs.h"
 
      void
 gui_mch_mousehide(int hide)
@@ -52,6 +53,7 @@ gui_mch_init_check(void)
     int
 gui_mch_init(void)
 {
+    js_init();
     return OK;
 }
 
@@ -62,6 +64,7 @@ gui_mch_init(void)
     void
 gui_mch_new_colors(void)
 {
+    //TODO
 }
 
 /*
@@ -95,6 +98,7 @@ gui_mch_get_winpos(int *x, int *y)
     void
 gui_mch_set_winpos(int x, int y)
 {
+    //TODO
 }
 
     void
@@ -107,6 +111,7 @@ gui_mch_set_shellsize(
     int		base_height,
     int		direction)
 {
+    //TODO
 }
 
 /*
@@ -117,7 +122,8 @@ gui_mch_set_shellsize(
     void
 gui_mch_get_screen_dimensions(int *screen_w, int *screen_h)
 {
-    *screen_w = *screen_h = 0;
+    *screen_w = vimjs_get_screen_width();
+    *screen_h = vimjs_get_screen_height();
 }
 
 /*
@@ -127,6 +133,7 @@ gui_mch_get_screen_dimensions(int *screen_w, int *screen_h)
     int
 gui_mch_init_font(char_u *font_name, int fontset)
 {
+    //TODO
     return OK;
 }
 
@@ -136,6 +143,7 @@ gui_mch_init_font(char_u *font_name, int fontset)
     int
 gui_mch_adjust_charheight(void)
 {
+    //TODO
     return OK;
 }
 
