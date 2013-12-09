@@ -15,6 +15,7 @@ function async_load(url, onload, onerror) {
 function sleep(cb, ms) {
     setTimeout(cb, ms);
 }
+
 Narcissus.interpreter.asyncFunctions[sleep] = true;
 
 function run_script(script, cb) {

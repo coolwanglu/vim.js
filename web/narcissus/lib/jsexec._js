@@ -41,7 +41,16 @@
  * the provisions above, a recipient may use your version of this file under
  * the terms of any one of the MPL, the GPL or the LGPL.
  *
+ *
+ *
+ * Copyright (c) 2013 Lu Wang <coolwanglu@gmail.com>
+ * Modified for hypnotic:
+ *  - removed conditional catch() for streamlinejs
+ *  - converted into an async interpreter
+ *  - support external async functions
+ *
  * ***** END LICENSE BLOCK ***** */
+
 
 /*
  * Narcissus - JS implemented in JS.
@@ -116,6 +125,7 @@ Narcissus.interpreter = (function() {
                      *
                      * See bug 152646.
                      */
+                    console.log('internal error:',e);
                     x.result = e;
                     throw THROW;
                 } else {
@@ -172,6 +182,7 @@ Narcissus.interpreter = (function() {
             if (typeof s !== "string")
                 return s;
 
+            console.log('TODO:load()!!!');
             evaluate(snarf(s), s, 1)
         },
         version: function() { return Narcissus.options.version; },
@@ -615,7 +626,7 @@ Narcissus.interpreter = (function() {
                     if (hasDirectProperty(s.object, t))
                         break;
                 }
-                u = getValue(execute(u, x), _);
+                u = getValue(execute(u, x, _));
                 if (n.type === CONST)
                     definitions.defineProperty(s.object, t, u, x.type !== EVAL_CODE, true);
                 else
