@@ -196,38 +196,28 @@
  * Disable some functions not supported by emscripten
  * need to do this before including feature.h
  */
-#ifdef HAVE_TGETENT
-#  undef HAVE_TGETENT
-#endif
-#ifdef HAVE_SIGSTACK
-#  undef HAVE_SIGSTACK
-#endif
-#ifdef HAVE_SIGALTSTACK
-#  undef HAVE_SIGALTSTACK
-#endif
-#ifdef HAVE_SIGSET
-#  undef HAVE_SIGSET
-#endif
-#ifdef HAVE_SYSINFO
-#  undef HAVE_SYSINFO
-#endif
+// no term lib
+#undef HAVE_TGETENT
+#undef TERMINFO
+#undef HAVE_TERMCAP_H
+#undef HAVE_TERMIOS_H
+#undef HAVE_TERMIO_H
+
+// no signals
+#undef HAVE_SIGSTACK
+#undef HAVE_SIGALTSTACK
+#undef HAVE_SIGSET
+#undef HAVE_SYSINFO
+
 // emscripten's select does not work with a parameter
-#ifdef HAVE_SELECT
-#  undef HAVE_SELECT
-#endif
+#undef HAVE_SELECT
+
 // always use async sleep
-#ifdef HAVE_NANOSEELP
-#  undef HAVE_NANOSEELP
-#endif
-#ifdef HAVE_USLEEP
-#  undef HAVE_USLEEP
-#endif
-#ifdef FEAT_NEATBEANS_INTG
-#  undef FEAT_NEATBEANS_INTG
-#endif
-#ifdef HAVE_PTHREAD_NP_H
-#  undef HAVE_PTHREAD_NP_H
-#endif
+#undef HAVE_NANOSEELP
+#undef HAVE_USLEEP
+#undef FEAT_NEATBEANS_INTG
+#undef HAVE_PTHREAD_NP_H
+
 #endif // FEAT_GUI_BROWSER
 
 #include "feature.h"	/* #defines for optionals and features */

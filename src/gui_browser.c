@@ -559,7 +559,7 @@ gui_mch_start_blink(void)
     long_u
 gui_mch_get_rgb(guicolor_T pixel)
 {
-    return 0;
+    return vimjs_get_rgb(pixel);
 }
 
 
@@ -658,7 +658,6 @@ gui_mch_show_popupmenu(vimmenu_T *menu)
 #ifdef FEAT_TITLE
 /*
  * Set the window title and icon.
- * (The icon is not taken care of).
  */
     void
 gui_mch_settitle(char_u *title, char_u *icon)

@@ -1,3 +1,4 @@
+
 mergeInto(LibraryManager.library, {
     vimjs_container: null,
     vimjs_rows: 40,
@@ -75,6 +76,37 @@ mergeInto(LibraryManager.library, {
     vimjs_print_stacktrace: function() {
         console.log((new Error).stack);
     },
+
+    /* https://github.com/harthur/color-string */
+    /* MIT License */
+    vimjs_get_rgb: function (string) {
+        string = Pointer_stringify(string);
+        if (!string) {
+            return 0;
+        }
+        var abbr = /^#([a-fA-F0-9]{3})$/;
+        var hex = /^#([a-fA-F0-9]{6})$/;
+
+        var rgb = [0, 0, 0];
+        var match = string.match(abbr);
+        if (match) {
+            match = match[1];
+            for (var i = 0; i < rgb.length; i++) {
+                rgb[i] = parseInt(match[i] + match[i], 16);
+            }
+        }
+        else if (match = string.match(hex)) {
+            match = match[1];
+            for (var i = 0; i < rgb.length; i++) {
+                rgb[i] = parseInt(match.slice(i * 2, i * 2 + 2), 16);
+            }
+        }
+        var ret = 0;
+        for (var i = 0; i < rgb.length; i++) {
+            ret = (ret << 8) + rgb[i];
+        }
+        return ret;
+    }
 
     __dummy__: null 
 });

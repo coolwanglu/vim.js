@@ -24,7 +24,6 @@
 
 #define tgetstr tgetstr_defined_wrong
 #include "vim.h"
-#include "vimjs.h"
 
 #ifdef HAVE_TGETENT
 # ifdef HAVE_TERMIOS_H
@@ -2402,7 +2401,6 @@ tgoto(cm, x, y)
     char *cm;
     int x, y;
 {
-    vimjs_print_stacktrace();
     static char buf[30];
     char *p, *s, *e;
 

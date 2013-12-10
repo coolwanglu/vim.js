@@ -21,4 +21,6 @@ void vimjs_clear_all();
 
 void vimjs_print_stacktrace();
 
+long_u vimjs_get_rgb(char *);
+
 #endif //VIMJS_H__
