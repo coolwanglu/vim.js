@@ -7,24 +7,31 @@
     <style>
         #vimjs-container { border:1px solid; }
         .vimjs-line { font-family: monospace; }
-        .vimjs-char { white-space: pre; }
+        .vimjs-line span { white-space: pre; }
+        .trans { color:transparent; }
+        .bold { font-weight: bold; }
+        .underl { text-decoration: underline; }
+        /* todo */
+        .underc { text-decoration: underline; }
     </style>
   </head>
   <body>
     <div id="vimjs-container">
     </div>
     <script>
-      // connect to canvas
       var Module = {
         noInitialRun: true,
+        noExitRuntime: true,
         preRun: [],
         postRun: [],
         print: function() { 
-            console.log.apply(console, arguments); 
+            console.group.apply(console, arguments); 
+            console.groupEnd();
         },
         printErr: function() { 
+            console.group.apply(console, arguments); 
             console.log((new Error).stack);
-            console.log.apply(console, arguments); 
+            console.groupEnd();
         },
       };
     </script>

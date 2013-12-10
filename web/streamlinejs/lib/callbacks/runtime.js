@@ -1,5 +1,6 @@
 /**
  * Copyright (c) 2011 Bruno Jouhier <bruno.jouhier@sage.com>
+ * Copyright (c) 2013 Lu Wang <coolwanglu@gmail.com>
  * MIT License
  */
 (function(exports) {
@@ -30,7 +31,16 @@
 		__g.oldStyleFutures = oldStyleFutures;
 		function __func(_, __this, __arguments, fn, index, frame, body) {
 			if (typeof _ !== 'function') {
-				if (_ !== false && !__g.oldStyleFutures) throw new Error("invalid argument #" + index + ": you must pass _ or !_ (https://github.com/Sage/streamlinejs/issues/164)");
+                if (_ !== false && !__g.oldStyleFutures) {
+                    console.log("invalid argument #" + index + ": you must pass _ ");
+                    console.log((new Error).stack);
+                    (function(){
+                        console.log('async stack:');
+                        for(var f = frame; f; f = f.prev)
+                            console.log(f.name, f.line);
+                    })();
+                    throw new Error("invalid argument #" + index + ": you must pass _ ");
+                }
 				return;
 			}
 			frame.file = filename;

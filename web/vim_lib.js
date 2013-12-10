@@ -1,41 +1,67 @@
-
 mergeInto(LibraryManager.library, {
-    vimjs_container: null,
-    vimjs_rows: 40,
-    vimjs_cols: 80,
-    vimjs_elements: [],
+    $vimjs: {
+        container: null,
+        rows: 0,
+        cols: 0,
+        elements: [],
+        fg_color: null,
+        bg_color: null,
+        sp_color: null,
+        gui_browser_add_to_input_buf: null,
+        input_available: null,
+
+        __dummy__: null
+    },
 
 
-    vimjs_init__deps: ['vimjs_container', 'vimjs_rows', 'vimjs_cols', 'vimjs_elements'],
+    vimjs_init__deps: ['$vimjs'],
     vimjs_init: function () {
-        _vimjs_container = document.getElementById('vimjs-container');
-        for(var r = 0; r < _vimjs_rows; ++r) {
+        vimjs.rows = 40;
+        vimjs.cols = 80;
+        vimjs.fg_color = "#000";
+        vimjs.bg_color = "#fff";
+        vimjs.sp_color = "#777";
+        vimjs.gui_browser_add_to_input_buf = Module['cwrap']('gui_browser_add_to_input_buf', null, ['number']);
+        vimjs.input_available = Module['cwrap']('input_available', 'number', []);
+
+        vimjs.container = document.getElementById('vimjs-container');
+        for(var r = 0; r < vimjs.rows; ++r) {
             var row_ele = document.createElement('div');
             row_ele.classList.add('vimjs-line');
             var row_ele_list = [];
-            for(var c = 0; c < _vimjs_cols; ++c) {
+            for(var c = 0; c < vimjs.cols; ++c) {
                 var col_ele = document.createElement('span');
-                col_ele.classList.add('vimjs-char');
                 col_ele.textContent = ' ';
                 row_ele.appendChild(col_ele);
                 row_ele_list.push(col_ele);
             }
-            _vimjs_container.appendChild(row_ele);
-            _vimjs_elements.push(row_ele_list);
+            vimjs.container.appendChild(row_ele);
+            vimjs.elements.push(row_ele_list);
         }
+
+        document.addEventListener('keypress', function(e) {
+            var c = e.which;
+            if (c === null) {
+                c = e.charCode;
+                if(c === null) {
+                    c = e.keyCode;
+                }
+            }
+            vimjs.gui_browser_add_to_input_buf(c);
+        });
     },
     vimjs_sleep: function (cb, ms) {
         setTimeout(cb, ms);
     },
 
-    vimjs_get_screen_width__deps: ['vimjs_container'],
+    vimjs_get_screen_width__deps: ['$vimjs'],
     vimjs_get_screen_width: function() {
-        return _vimjs_container.clientWidth;
+        return vimjs.container.clientWidth;
     },
 
-    vimjs_get_screen_height__deps: ['vimjs_container'],
+    vimjs_get_screen_height__deps: ['$vimjs'],
     vimjs_get_screen_height: function() {
-        return _vimjs_container.clientHeight;
+        return vimjs.container.clientHeight;
     },
 
     vimjs_is_valid_color: function(colorp) {
@@ -43,32 +69,54 @@ mergeInto(LibraryManager.library, {
         return /(^#[0-9A-F]{6}$)|(^#[0-9A-F]{3}$)/i.test(color);
     },
 
-    vimjs_draw_string__deps: ['vimjs_elements'],
+    vimjs_draw_string__deps: ['$vimjs'],
     vimjs_draw_string: function(row, col, s, len, flags) {
+        var class_name = '';
+        var style = '';
+
+        // TODO: use macros
+        if(flags & 0x01) class_name += ' trans';
+        else style += 'color:' + vimjs.fg_color + ';';
+
+        if(flags & 0x02) class_name += ' bold';
+        if(flags & 0x04) class_name += ' underl';
+        if(flags & 0x08) class_name += ' underc';
+
+        style += 'background-color:' + vimjs.bg_color + ';';
+
         s = Pointer_stringify(s);
-        var row_ele_list = _vimjs_elements[row];
+        var row_ele_list = vimjs.elements[row];
         for(var i = 0; i < len; ++i) {
             var c = s[i];
-            row_ele_list[col+i].textContent = c;
+            var cur_ele = row_ele_list[col+i];
+            cur_ele.className = class_name;
+            cur_ele.style = style;
+            cur_ele.textContent = c;
         }
     },
 
-    vimjs_clear_block__deps: ['vimjs_elements'],
+    vimjs_clear_block__deps: ['$vimjs'],
     vimjs_clear_block: function(row1, col1, row2, col2) {
         for(var r = row1; r <= row2; ++r) {
-            var cur_row  = _vimjs_elements[r];
+            var cur_row  = vimjs.elements[r];
             for(var c = col1; c <= col2; ++c) {
-                cur_row[c].textContent = ' ';
+                var cur_ele = cur_row[c];
+                cur_ele.className = 'trans';
+                cur_ele.style = 'background-color:' + vimjs.bg_color + ';';
+                cur_ele.textContent = ' ';
             }
         }
     },   
 
-    vimjs_clear_all__deps: ['vimjs_elements'],
+    vimjs_clear_all__deps: ['$vimjs'],
     vimjs_clear_all: function() {
-        for(var r = 0, rl = _vimjs_elements.length; r < rl; ++r) {
-            var cur_row  = _vimjs_elements[r];
+        for(var r = 0, rl = vimjs.elements.length; r < rl; ++r) {
+            var cur_row  = vimjs.elements[r];
             for(var c = 0, cl = cur_row.length; c < cl; ++c) {
-                cur_row[c].textContent = ' ';
+                var cur_ele = cur_row[c];
+                cur_ele.className = 'trans';
+                cur_ele.style = 'background-color:' + vimjs.bg_color + ';';
+                cur_ele.textContent = ' ';
             }
         }
     },
@@ -106,7 +154,40 @@ mergeInto(LibraryManager.library, {
             ret = (ret << 8) + rgb[i];
         }
         return ret;
-    }
+    },
+
+    vimjs_set_fg_color__deps: ['$vimjs'],
+    vimjs_set_fg_color: function(color) {
+        vimjs.fg_color = Pointer_stringify(color);
+    },
+    vimjs_set_bg_color__deps: ['$vimjs'],
+    vimjs_set_bg_color: function(color) {
+        vimjs.bg_color = Pointer_stringify(color);
+    },
+    vimjs_set_sp_color__deps: ['$vimjs'],
+    vimjs_set_sp_color: function(color) {
+        vimjs.sp_color = Pointer_stringify(color);
+    },
+
+    vimjs_wait_for_chars: function(_, wtime) {
+        if(wtime > 0) {
+            var stop_time = Date.now() + wtime;
+        }        
+        // TODO: use macros of OK/FAIL
+        do {
+            if(vimjs.input_available())
+                return 1; // OK
+            setTimeout(_, 10);
+        } while((wtime == -1) || (Date.now() < stop_time));
+        return 0; // FAIL
+    },
+
+    vimjs_async_cmd_call: function(_, func, arg) {
+        if(func.length == 1)
+            return func(arg);
+        else
+            return func(_, arg);
+    },
 
     __dummy__: null 
 });

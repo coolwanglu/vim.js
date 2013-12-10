@@ -1,7 +1,6 @@
 /*
- * Transform functions to formats accepts by streamlinejs
+ * Transform async functions into formats accepts by streamlinejs
  * Taking output of emscripten as input
- *
  *
  * Copyright (c) 2013 Lu Wang <coolwanglu@gmail.com>
  */
@@ -741,10 +740,6 @@ function work() {
 
     var root = window.Narcissus.parser.parse(in_src);
 
-    //debug
-    exports.root = root;
-
-
     console.log('Generating call graph...')
 
 
@@ -767,11 +762,12 @@ function work() {
         }
     });
 
-    //debug
-    exports.call_graph = call_graph;
+    console.log('Looking for async functions...');
 
-    console.log('Looking for async functions...')
-
+    // initial async functions should not be changed
+    for(var i = 0, l = async_func_names_to_check.length; i < l; ++i) {
+        async_func_names_no_change[async_func_names_to_check[i]] = 1;
+    }
 
     while(async_func_names_to_check.length > 0) {
         var cur_fn = async_func_names_to_check.pop();
@@ -802,9 +798,6 @@ function work() {
     console.log('Saving...');
     var out_src = pp(root);
     fs.writeFileSync(out_filename, out_src);
-
-    //debug
-    exports.async_func_names = async_func_names;
 }
 
 // ugly preparation of narcissus
@@ -818,13 +811,15 @@ eval(window.Narcissus.definitions.consts);
 var lexer = window.Narcissus.lexer;
 const tokens = window.Narcissus.definitions.tokens;
 
-// b in call_graph[a] means b call a
+// b in call_graph[a] means b calls a
 var call_graph = {};
 
 var fs = require('fs');
 var async_func_names = {};
-var async_func_names_to_check = ['_SDL_Delay', '_vimjs_sleep'];
-var async_func_names_no_change = { '_vimjs_sleep':1 };
+// initiall functions insided async_func_names_to_check are not transformed
+// but you can write in the streamline fashion directly
+var async_func_names_to_check = ['_SDL_Delay', '_vimjs_sleep', '_vimjs_wait_for_chars', '_vimjs_async_cmd_call'];
+var async_func_names_no_change = {};
 
 
 in_filename = 'vim.js'

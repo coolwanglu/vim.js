@@ -200,7 +200,6 @@
 #undef HAVE_TGETENT
 #undef TERMINFO
 #undef HAVE_TERMCAP_H
-#undef HAVE_TERMIOS_H
 #undef HAVE_TERMIO_H
 
 // no signals

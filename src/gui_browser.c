@@ -54,6 +54,18 @@ gui_mch_init_check(void)
 gui_mch_init(void)
 {
     vimjs_init();
+    gui.char_width = 7;
+    gui.char_height = 11;
+    gui.char_ascent = 6;
+    gui.num_rows = 40;
+    gui.num_cols = 80;
+    gui.in_focus = TRUE; /* For the moment -> syn. of front application */
+    gui.border_width = 0;
+    gui.back_pixel = "#000000";
+    gui.norm_pixel = "#ffffff";
+    gui.def_back_pixel = "#000000";
+    gui.def_norm_pixel = "#ffffff";
+
     return OK;
 }
 
@@ -209,7 +221,7 @@ gui_mch_get_color(char_u *name)
     void
 gui_mch_set_fg_color(guicolor_T color)
 {
-    // TODO
+    vimjs_set_fg_color(color);
 }
 
 /*
@@ -218,7 +230,7 @@ gui_mch_set_fg_color(guicolor_T color)
     void
 gui_mch_set_bg_color(guicolor_T color)
 {
-    // TODO
+    vimjs_set_bg_color(color);
 }
 
 /*
@@ -227,7 +239,7 @@ gui_mch_set_bg_color(guicolor_T color)
     void
 gui_mch_set_sp_color(guicolor_T color)
 {
-    // TODO
+    vimjs_set_sp_color(color);
 }
     void
 gui_mch_draw_string(int row, int col, char_u *s, int len, int flags)
@@ -322,11 +334,16 @@ gui_mch_update(void)
     int
 gui_mch_wait_for_chars(int wtime)
 {
-    //debug
-    vimjs_sleep(1000);
-    add_to_input_buf('i', 1);
-    return OK;
+    return vimjs_wait_for_chars(wtime);
 }
+
+    void
+gui_browser_add_to_input_buf(int which)
+{
+    char_u s = (char_u)which;
+    add_to_input_buf(&s, 1);
+}
+
 
 /*
  * Output routines.

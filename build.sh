@@ -10,6 +10,7 @@ $EM_DIR/emconfigure ./configure \
     --enable-gui=browser \
     --with-features=tiny \
     --disable-nls \
+    --with-modified-by="Lu Wang" \
 
 }
 
@@ -20,8 +21,17 @@ $EM_DIR/emmake make
 do_link() {
 pushd web
 cp ../src/vim vim.bc
-$EM_DIR/emcc vim.bc -o vim.js --js-library vim_lib.js --post-js vim_post.js
+$EM_DIR/emcc vim.bc \
+    -o vim.js \
+    --js-library vim_lib.js \
+    --post-js vim_post.js \
+    -s EXPORTED_FUNCTIONS="['_main', '_input_available', '_gui_browser_add_to_input_buf']" \
 
+popd
+}
+
+do_transform() {
+pushd web
 echo "Transfoming..."
 js transform.js
 
@@ -34,4 +44,4 @@ popd
 #do_config
 do_make
 do_link
-
+do_transform

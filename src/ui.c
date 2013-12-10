@@ -64,7 +64,7 @@ ui_write(s, len)
 #endif
 }
 
-#if defined(UNIX) || defined(VMS) || defined(PROTO) || defined(WIN3264)
+#if (defined(UNIX) || defined(VMS) || defined(PROTO) || defined(WIN3264)) && !defined(FEAT_GUI_BROWSER)
 /*
  * When executing an external program, there may be some typed characters that
  * are not consumed by it.  Give them back to ui_inchar() and they are stored
@@ -125,7 +125,7 @@ ui_inchar(buf, maxlen, wtime, tb_change_cnt)
 {
     int		retval = 0;
 
-#if defined(FEAT_GUI) && (defined(UNIX) || defined(VMS))
+#if defined(FEAT_GUI) && (defined(UNIX) || defined(VMS)) && !defined(FEAT_GUI_BROWSER)
     /*
      * Use the typeahead if there is any.
      */

@@ -6,6 +6,7 @@
 #ifndef VIMJS_H__
 #define VIMJS_H__
 
+#ifdef FEAT_GUI_BROWSER
 void vimjs_init();
 void vimjs_sleep(int msec);
 
@@ -23,4 +24,13 @@ void vimjs_print_stacktrace();
 
 long_u vimjs_get_rgb(char *);
 
+void vimjs_set_fg_color(char *);
+void vimjs_set_bg_color(char *);
+void vimjs_set_sp_color(char *);
+
+int vimjs_wait_for_chars(int);
+
+void vimjs_async_cmd_call(void (*)(void*), void*); 
+
+#endif // FEAT_GUI_BROWSER
 #endif //VIMJS_H__

@@ -5058,7 +5058,7 @@ gui_find_iconfile(name, buffer, ext)
 # endif
 #endif
 
-#if defined(FEAT_GUI_GTK) || defined(FEAT_GUI_X11) || defined(PROTO)
+#if defined(FEAT_GUI_GTK) || defined(FEAT_GUI_X11) || defined(FEAT_GUI_BROWSER) || defined(PROTO)
     void
 display_errors()
 {

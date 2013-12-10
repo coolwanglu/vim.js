@@ -13,6 +13,7 @@
  */
 
 #include "vim.h"
+#include "vimjs.h"
 
 #ifdef FEAT_VISUAL
 /*
@@ -1197,7 +1198,13 @@ getcount:
      * Call the command function found in the commands table.
      */
     ca.arg = nv_cmds[idx].cmd_arg;
+    
+#ifdef FEAT_GUI_BROWSER
+    // Lu Wang: mark as async function
+    vimjs_async_cmd_call((nv_cmds[idx].cmd_func), (&ca));
+#else
     (nv_cmds[idx].cmd_func)(&ca);
+#endif
 
     /*
      * If we didn't start or finish an operator, reset oap->regname, unless we

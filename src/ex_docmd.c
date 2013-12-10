@@ -12,6 +12,7 @@
  */
 
 #include "vim.h"
+#include "vimjs.h"
 
 static int	quitmore = 0;
 static int	ex_pressedreturn = FALSE;
@@ -2692,7 +2693,12 @@ do_one_cmd(cmdlinep, sourcing,
 	 * Call the function to execute the command.
 	 */
 	ea.errmsg = NULL;
+#ifdef FEAT_GUI_BROWSER
+        // Lu Wang: mark as async function
+        vimjs_async_cmd_call((cmdnames[ea.cmdidx].cmd_func), (&ea));
+#else
 	(cmdnames[ea.cmdidx].cmd_func)(&ea);
+#endif
 	if (ea.errmsg != NULL)
 	    errormsg = (char_u *)_(ea.errmsg);
     }
