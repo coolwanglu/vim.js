@@ -37,7 +37,7 @@ static void gui_set_fg_color __ARGS((char_u *name));
 static void gui_set_bg_color __ARGS((char_u *name));
 static win_T *xy2win __ARGS((int x, int y));
 
-#if defined(UNIX) && !defined(MACOS_X) && !defined(__APPLE__)
+#if defined(UNIX) && !defined(MACOS_X) && !defined(__APPLE__) && !defined(FEAT_GUI_BROWSER)
 # define MAY_FORK
 static void gui_do_fork __ARGS((void));
 

@@ -213,7 +213,7 @@
 #endif
 // emscripten's select does not work with a parameter
 #ifdef HAVE_SELECT
-#  undef HAVE_SECECT
+#  undef HAVE_SELECT
 #endif
 // always use async sleep
 #ifdef HAVE_NANOSEELP

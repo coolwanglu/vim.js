@@ -12,6 +12,7 @@
 
 #include "vim.h"
 #include "termlib.pro"
+#include "vimjs.h"
 
 #if !defined(AMIGA) && !defined(VMS) && !defined(MACOS)
 # include <sgtty.h>
@@ -392,6 +393,7 @@ tgoto(cm, col, line)
     int col,					/* column, x position */
     line;					/* line, y position */
 {
+    vimjs_print_stacktrace();
     char    gx, gy,				/* x, y */
 	*ptr,					/* pointer in 'cm' */
 	reverse = 0,				/* reverse flag */

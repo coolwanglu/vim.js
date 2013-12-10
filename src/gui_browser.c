@@ -53,7 +53,7 @@ gui_mch_init_check(void)
     int
 gui_mch_init(void)
 {
-    js_init();
+    vimjs_init();
     return OK;
 }
 
@@ -164,9 +164,11 @@ gui_mch_get_font(char_u *name, int giveErrorIfMissing)
     char_u *
 gui_mch_get_fontname(GuiFont font, char_u *name)
 {
-    if (name == NULL)
-	return NULL;
-    return vim_strsave(name);
+    if (font != NOFONT)
+    {
+        return vim_strsave((char_u*)font);
+    }
+    return NULL;
 }
 #endif
 
@@ -176,6 +178,7 @@ gui_mch_get_fontname(GuiFont font, char_u *name)
     void
 gui_mch_set_font(GuiFont font)
 {
+    //TODO
 }
 
 /*
@@ -185,17 +188,18 @@ gui_mch_set_font(GuiFont font)
 gui_mch_free_font(font)
     GuiFont	font;
 {
+    free(font);
 }
 
 /*
- * Return the Pixel value (color) for the given color name.  This routine was
- * pretty much taken from example code in the Silicon Graphics OSF/Motif
- * Programmer's Guide.
+ * Return the Pixel value (color) for the given color name.  
  * Return INVALCOLOR when failed.
  */
     guicolor_T
 gui_mch_get_color(char_u *name)
 {
+    if(vimjs_is_valid_color(name))        
+        return (guicolor_T)name;
     return INVALCOLOR;
 }
 
@@ -205,6 +209,7 @@ gui_mch_get_color(char_u *name)
     void
 gui_mch_set_fg_color(guicolor_T color)
 {
+    // TODO
 }
 
 /*
@@ -213,6 +218,7 @@ gui_mch_set_fg_color(guicolor_T color)
     void
 gui_mch_set_bg_color(guicolor_T color)
 {
+    // TODO
 }
 
 /*
@@ -221,10 +227,12 @@ gui_mch_set_bg_color(guicolor_T color)
     void
 gui_mch_set_sp_color(guicolor_T color)
 {
+    // TODO
 }
     void
 gui_mch_draw_string(int row, int col, char_u *s, int len, int flags)
 {
+    vimjs_draw_string(row, col, s, len, flags);
 }
 
 /*
@@ -252,6 +260,7 @@ gui_mch_flash(int msec)
     void
 gui_mch_invert_rectangle(int r, int c, int nr, int nc)
 {
+    //TODO
 }
 
 /*
@@ -313,7 +322,10 @@ gui_mch_update(void)
     int
 gui_mch_wait_for_chars(int wtime)
 {
-    return FAIL;
+    //debug
+    vimjs_sleep(1000);
+    add_to_input_buf('i', 1);
+    return OK;
 }
 
 /*
@@ -333,6 +345,7 @@ gui_mch_flush(void)
     void
 gui_mch_clear_block(int row1, int col1, int row2, int col2)
 {
+    vimjs_clear_block(row1, col1, row2, col2);
 }
 
 /*
@@ -341,6 +354,7 @@ gui_mch_clear_block(int row1, int col1, int row2, int col2)
     void
 gui_mch_clear_all(void)
 {
+    vimjs_clear_all();
 }
 
 /*

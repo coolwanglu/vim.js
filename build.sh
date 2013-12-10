@@ -20,7 +20,9 @@ $EM_DIR/emmake make
 do_link() {
 pushd web
 cp ../src/vim vim.bc
-$EM_DIR/emcc vim.bc -o vim.js --js-library vimjs.js
+$EM_DIR/emcc vim.bc -o vim.js --js-library vim_lib.js --post-js vim_post.js
+js transform.js
+_node -c vim._js
 popd
 }
 

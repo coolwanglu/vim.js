@@ -5,25 +5,33 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <title>Vim.js</title>
     <style>
+        #vimjs-container { border:1px solid; }
+        .vimjs-line { font-family: monospace; }
+        .vimjs-char { white-space: pre; }
     </style>
   </head>
   <body>
-    <div id="container">
+    <div id="vimjs-container">
     </div>
     <script>
       // connect to canvas
       var Module = {
+        noInitialRun: true,
         preRun: [],
         postRun: [],
-        print: function() { console.log.apply(console, arguments); },
-        printErr: function() { console.log.apply(console, arguments); },
+        print: function() { 
+            console.log.apply(console, arguments); 
+        },
+        printErr: function() { 
+            console.log((new Error).stack);
+            console.log.apply(console, arguments); 
+        },
       };
     </script>
     <script src="streamlinejs/lib/callbacks/require-stub.js"></script>
     <script src="streamlinejs/lib/version.js"></script>
     <script src="streamlinejs/lib/callbacks/runtime.js"></script>
     <script src="streamlinejs/lib/callbacks/builtins.js"></script>
-    <script src="vimjs.js"></script>
     <script src="vim.js"></script>
   </body>
 </html>

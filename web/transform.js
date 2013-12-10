@@ -138,7 +138,7 @@ function pp(n, d, inLetHead) {
       case FUNCTION:
         p += "function";
         p += (n.name ? " " + n.name : "") + "(";
-        if(n.name in async_func_names) {
+        if ((n.name in async_func_names) && (!(n.name in async_func_names_no_change))) {
             p += "_";
             for (var i = 0, j = n.params.length; i < j; i++)
                 p += ", " + pp(n.params[i], d);
@@ -787,10 +787,17 @@ function work() {
         }
     }
 
+    var cnt = 0;
+    for(var fn in async_func_names)
+        ++ cnt;
+    console.log(cnt + ' aync functions found.')
+
+    /*
     console.log('Aync functions:')
     for(var fn in async_func_names)
         console.log('    ' + fn);
     console.log();
+    */
 
     console.log('Saving...');
     var out_src = pp(root);
@@ -816,7 +823,8 @@ var call_graph = {};
 
 var fs = require('fs');
 var async_func_names = {};
-var async_func_names_to_check = ['_SDL_Delay', '_js_sleep'];
+var async_func_names_to_check = ['_SDL_Delay', '_vimjs_sleep'];
+var async_func_names_no_change = { '_vimjs_sleep':1 };
 
 
 in_filename = 'vim.js'
