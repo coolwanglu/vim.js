@@ -183,6 +183,7 @@ mergeInto(LibraryManager.library, {
     },
 
     vimjs_async_cmd_call: function(_, func, arg) {
+        func = FUNCTION_TABLE[func];
         if(func.length == 1)
             return func(arg);
         else
