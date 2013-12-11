@@ -1,11 +1,19 @@
 /*
- * Transform async functions into formats accepts by streamlinejs
- * Taking output of emscripten as input
+ * Identify and transform ransform async functions for streamlinejs
  *
  * Copyright (c) 2013 Lu Wang <coolwanglu@gmail.com>
  */
 
 /*
+ * The transformation routine
+ *
+ * Taking the output of emscripten as input
+ * A few functions are initially marked as async manually 
+ * All async functions are identified based on the rule:
+ *     Any function that calls an async function is also async
+ * Add the _ parameter in the definition and calls of all async functions (except for intial ones)
+ * The transformed code is to be further transformed by streamline.js
+ *
  * Assumptions on the input
  *
  * All the async functions have the '_' prefix in their names
