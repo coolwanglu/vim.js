@@ -8,6 +8,13 @@
  * See README.txt for an overview of the Vim source code.
  */
 
+/*
+ * gui_browser.c 
+ * gui functions for vim.js
+ *
+ * Copyright (c) 2013 Lu Wang <coolwanglu@gmail.com>
+ */
+
 #ifdef FEAT_GUI_BROWSER
 #include "vim.h"
 #include "vimjs.h"
@@ -66,7 +73,6 @@ gui_mch_init(void)
     gui.norm_pixel = "#ffffff";
     gui.def_back_pixel = "#000000";
     gui.def_norm_pixel = "#ffffff";
-
     return OK;
 }
 
@@ -86,6 +92,11 @@ gui_mch_new_colors(void)
     int
 gui_mch_open(void)
 {
+    /* TODO
+    int w, h;
+    gui_mch_get_screen_dimensions(&w, &h);
+    gui_resize_shell(w, h);
+    */
     return OK;
 }
 
@@ -324,6 +335,7 @@ gui_mch_draw_part_cursor(int w, int h, guicolor_T color)
     void
 gui_mch_update(void)
 {
+    vimjs_update();
 }
 
 /*

@@ -1,6 +1,12 @@
+## emscripten / async transformation
 some parts may be implemented natively in javascript (e.g. regexp)
 rewrite some async functions, to make them sync (e.g MSG, EMSG)
 use cDefine when possible
+
+## core
+scroll
+resize
+
 
 ## UI stuffs
 tabline

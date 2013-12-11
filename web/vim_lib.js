@@ -1,3 +1,8 @@
+/*
+ * vim_lib.js: connect DOM and user inputs to VIM
+ *
+ * Copyright (c) 2013 Lu Wang <coolwanglu@gmail.com>
+ */
 mergeInto(LibraryManager.library, {
     $vimjs: {
         container: null,
@@ -289,6 +294,11 @@ mergeInto(LibraryManager.library, {
             args.push(row_ele_list);
         }
         Array.prototype.splice.apply(vimjs.elements, args);
+    },
+
+    /* process pending events */
+    vimjs_update: function(_) {
+        setTimeout(_, 1);
     },
 
     /* func is a function pointer */

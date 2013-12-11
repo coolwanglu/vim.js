@@ -5,9 +5,20 @@
  * Copyright (c) 2013 Lu Wang <coolwanglu@gmail.com>
  */
 
+/*
+ * Assumptions on the input
+ *
+ * All the async functions have the '_' prefix in their names
+ * There may be other functions (without the '_' prefix), which never call async functions
+ * _ is never used as a parameter -- for streamline.js
+ * No function pointers of async functions -- will be wrapped with vimjs_async_cmd_call in the source code
+ * No complicated structures that may confuse streamline.js -- fall throughs in swtich, and break to labels
+ */
+
 
 /*
  * decompiler.js taken from Narcissus
+ * search for END_OF_DECOMPILER for the end {{{1
  */
 
 /* ***** BEGIN LICENSE BLOCK *****
@@ -73,11 +84,11 @@ function isNonEmptyBlock(n) {
 
 function nodeStrEscape(str) {
     return str.replace(/\\/g, "\\\\")
-              .replace(/"/g, "\\\"")
-              .replace(/\n/g, "\\n")
-              .replace(/\r/g, "\\r")
-              .replace(/</g, "\\u003C")
-              .replace(/>/g, "\\u003E");
+        .replace(/"/g, "\\\"")
+        .replace(/\n/g, "\\n")
+        .replace(/\r/g, "\\r")
+        .replace(/</g, "\\u003C")
+        .replace(/>/g, "\\u003E");
 }
 
 function nodeStr(n) {
@@ -121,441 +132,441 @@ function pp(n, d, inLetHead) {
         p += "(";
 
     switch (n.type) {
-      case GETTER:
-      case SETTER:
-        if (n.type === GETTER)
-            p += "get";
-        else
-            p += "set";
+        case GETTER:
+        case SETTER:
+            if (n.type === GETTER)
+                p += "get";
+            else
+                p += "set";
 
-        p += (n.name ? " " + n.name : "") + "(";
-        for (var i = 0, j = n.params.length; i < j; i++)
-            p += (i > 0 ? ", " : "") + pp(n.params[i], d);
-        p += ") " + pp(n.body, d);
-        break;
-
-      case FUNCTION:
-        p += "function";
-        p += (n.name ? " " + n.name : "") + "(";
-        if ((n.name in async_func_names) && (!(n.name in async_func_names_no_change))) {
-            p += "_";
-            for (var i = 0, j = n.params.length; i < j; i++)
-                p += ", " + pp(n.params[i], d);
-        } else {
+            p += (n.name ? " " + n.name : "") + "(";
             for (var i = 0, j = n.params.length; i < j; i++)
                 p += (i > 0 ? ", " : "") + pp(n.params[i], d);
-        }
-        p += ") " + pp(n.body, d);
-        break;
+            p += ") " + pp(n.body, d);
+            break;
 
-      case SCRIPT:
-      case BLOCK:
-        var nc = n.children;
-        if (topScript) {
-            // No indentation.
+        case FUNCTION:
+            p += "function";
+            p += (n.name ? " " + n.name : "") + "(";
+            if ((n.name in async_func_names) && (!(n.name in async_func_names_no_change))) {
+                p += "_";
+                for (var i = 0, j = n.params.length; i < j; i++)
+                    p += ", " + pp(n.params[i], d);
+            } else {
+                for (var i = 0, j = n.params.length; i < j; i++)
+                    p += (i > 0 ? ", " : "") + pp(n.params[i], d);
+            }
+            p += ") " + pp(n.body, d);
+            break;
+
+        case SCRIPT:
+        case BLOCK:
+            var nc = n.children;
+            if (topScript) {
+                // No indentation.
+                for (var i = 0, j = nc.length; i < j; i++) {
+                    if (i > 0)
+                        p += "\n";
+                    p += pp(nc[i], d);
+                    var eoc = p[p.length - 1];
+                    if (eoc != ";")
+                        p += ";";
+                }
+
+                break;
+            }
+
+            p += "{";
+            if (n.id !== undefined)
+                p += " /* " + n.id + " */";
+            p += "\n";
             for (var i = 0, j = nc.length; i < j; i++) {
                 if (i > 0)
                     p += "\n";
-                p += pp(nc[i], d);
+                p += indent(4, pp(nc[i], d));
                 var eoc = p[p.length - 1];
                 if (eoc != ";")
                     p += ";";
             }
-
+            p += "\n}";
             break;
-        }
 
-        p += "{";
-        if (n.id !== undefined)
-            p += " /* " + n.id + " */";
-        p += "\n";
-        for (var i = 0, j = nc.length; i < j; i++) {
-            if (i > 0)
-                p += "\n";
-            p += indent(4, pp(nc[i], d));
-            var eoc = p[p.length - 1];
-            if (eoc != ";")
-                p += ";";
-        }
-        p += "\n}";
-        break;
+        case LET_BLOCK:
+            p += "let (" + pp(n.variables, d, true) + ") ";
+            if (n.expression)
+                p += pp(n.expression, d);
+            else
+                p += pp(n.block, d);
+            break;
 
-      case LET_BLOCK:
-        p += "let (" + pp(n.variables, d, true) + ") ";
-        if (n.expression)
-            p += pp(n.expression, d);
-        else
-            p += pp(n.block, d);
-        break;
+        case IF:
+            p += "if (" + pp(n.condition, d) + ") ";
 
-      case IF:
-        p += "if (" + pp(n.condition, d) + ") ";
-
-        var tp = n.thenPart, ep = n.elsePart;
-        var b = isBlock(tp) || isBlock(ep);
-        if (!b)
-            p += "{\n";
-        p += (b ? pp(tp, d) : indent(4, pp(tp, d))) + "\n";
-
-        if (ep) {
+            var tp = n.thenPart, ep = n.elsePart;
+            var b = isBlock(tp) || isBlock(ep);
             if (!b)
-                p += "} else {\n";
-            else
-                p += " else ";
+                p += "{\n";
+            p += (b ? pp(tp, d) : indent(4, pp(tp, d))) + "\n";
 
-            p += (b ? pp(ep, d) : indent(4, pp(ep, d))) + "\n";
-        }
-        if (!b)
+            if (ep) {
+                if (!b)
+                    p += "} else {\n";
+                else
+                    p += " else ";
+
+                p += (b ? pp(ep, d) : indent(4, pp(ep, d))) + "\n";
+            }
+            if (!b)
+                p += "}";
+            break;
+
+        case SWITCH:
+            p += "switch (" + pp(n.discriminant, d) + ") {\n";
+            for (var i = 0, j = n.cases.length; i < j; i++) {
+                var ca = n.cases[i];
+                if (ca.type === CASE)
+                    p += "  case " + pp(ca.caseLabel, d) + ":\n";
+                else
+                    p += "  default:\n";
+                ps = pp(ca.statements, d);
+                p += ps.slice(2, ps.length - 2) + "\n";
+            }
             p += "}";
-        break;
+            break;
 
-      case SWITCH:
-        p += "switch (" + pp(n.discriminant, d) + ") {\n";
-        for (var i = 0, j = n.cases.length; i < j; i++) {
-            var ca = n.cases[i];
-            if (ca.type === CASE)
-                p += "  case " + pp(ca.caseLabel, d) + ":\n";
+        case FOR:
+            p += "for (" + pp(n.setup, d) + "; "
+                + pp(n.condition, d) + "; "
+                + pp(n.update, d) + ") ";
+
+            var pb = pp(n.body, d);
+            if (!isBlock(n.body))
+                p += "{\n" + indent(4, pb) + ";\n}";
+            else if (n.body)
+                p += pb;
+            break;
+
+        case WHILE:
+            p += "while (" + pp(n.condition, d) + ") ";
+
+            var pb = pp(n.body, d);
+            if (!isBlock(n.body))
+                p += "{\n" + indent(4, pb) + ";\n}";
             else
-                p += "  default:\n";
-            ps = pp(ca.statements, d);
-            p += ps.slice(2, ps.length - 2) + "\n";
-        }
-        p += "}";
-        break;
+                p += pb;
+            break;
 
-      case FOR:
-        p += "for (" + pp(n.setup, d) + "; "
-            + pp(n.condition, d) + "; "
-            + pp(n.update, d) + ") ";
+        case FOR_IN:
+            var u = n.varDecl;
+            p += n.isEach ? "for each (" : "for (";
+            p += (u ? pp(u, d) : pp(n.iterator, d)) + " in " +
+                pp(n.object, d) + ") ";
 
-        var pb = pp(n.body, d);
-        if (!isBlock(n.body))
-            p += "{\n" + indent(4, pb) + ";\n}";
-        else if (n.body)
-            p += pb;
-        break;
+            var pb = pp(n.body, d);
+            if (!isBlock(n.body))
+                p += "{\n" + indent(4, pb) + ";\n}";
+            else if (n.body)
+                p += pb;
+            break;
 
-      case WHILE:
-        p += "while (" + pp(n.condition, d) + ") ";
+        case DO:
+            p += "do " + pp(n.body, d);
+            p += " while (" + pp(n.condition, d) + ");";
+            break;
 
-        var pb = pp(n.body, d);
-        if (!isBlock(n.body))
-            p += "{\n" + indent(4, pb) + ";\n}";
-        else
-            p += pb;
-        break;
+        case BREAK:
+            p += "break" + (n.label ? " " + n.label : "") + ";";
+            break;
 
-      case FOR_IN:
-        var u = n.varDecl;
-        p += n.isEach ? "for each (" : "for (";
-        p += (u ? pp(u, d) : pp(n.iterator, d)) + " in " +
-            pp(n.object, d) + ") ";
+        case CONTINUE:
+            p += "continue" + (n.label ? " " + n.label : "") + ";";
+            break;
 
-        var pb = pp(n.body, d);
-        if (!isBlock(n.body))
-            p += "{\n" + indent(4, pb) + ";\n}";
-        else if (n.body)
-            p += pb;
-        break;
+        case TRY:
+            p += "try ";
+            p += pp(n.tryBlock, d);
+            for (var i = 0, j = n.catchClauses.length; i < j; i++) {
+                var t = n.catchClauses[i];
+                p += " catch (" + pp(t.varName, d) +
+                    (t.guard ? " if " + pp(t.guard, d) : "") +
+                    ") ";
+                p += pp(t.block, d);
+            }
+            if (n.finallyBlock) {
+                p += " finally ";
+                p += pp(n.finallyBlock, d);
+            }
+            break;
 
-      case DO:
-        p += "do " + pp(n.body, d);
-        p += " while (" + pp(n.condition, d) + ");";
-        break;
+        case THROW:
+            p += "throw " + pp(n.exception, d);
+            break;
 
-      case BREAK:
-        p += "break" + (n.label ? " " + n.label : "") + ";";
-        break;
+        case RETURN:
+            p += "return";
+            if (n.value)
+                p += " " + pp(n.value, d);
+            break;
 
-      case CONTINUE:
-        p += "continue" + (n.label ? " " + n.label : "") + ";";
-        break;
+        case YIELD:
+            p += "yield";
+            if (n.value)
+                p += " " + pp(n.value, d);
+            break;
 
-      case TRY:
-        p += "try ";
-        p += pp(n.tryBlock, d);
-        for (var i = 0, j = n.catchClauses.length; i < j; i++) {
-            var t = n.catchClauses[i];
-            p += " catch (" + pp(t.varName, d) +
-                (t.guard ? " if " + pp(t.guard, d) : "") +
-                ") ";
-            p += pp(t.block, d);
-        }
-        if (n.finallyBlock) {
-            p += " finally ";
-            p += pp(n.finallyBlock, d);
-        }
-        break;
+        case GENERATOR:
+            p += pp(n.expression, d) + " " + pp(n.tail, d);
+            break;
 
-      case THROW:
-        p += "throw " + pp(n.exception, d);
-        break;
+        case WITH:
+            p += "with (" + pp(n.object, d) + ") ";
+            p += pp(n.body, d);
+            break;
 
-      case RETURN:
-        p += "return";
-        if (n.value)
-            p += " " + pp(n.value, d);
-        break;
+        case LET:
+        case VAR:
+        case CONST:
+            var nc = n.children;
+            if (!inLetHead) {
+                p += tokens[n.type] + " ";
+            }
+            for (var i = 0, j = nc.length; i < j; i++) {
+                if (i > 0)
+                    p += ", ";
+                var u = nc[i];
+                p += pp(u.name, d);
+                if (u.initializer)
+                    p += " = " + pp(u.initializer, d);
+            }
+            break;
 
-      case YIELD:
-        p += "yield";
-        if (n.value)
-            p += " " + pp(n.value, d);
-        break;
+        case DEBUGGER:
+            p += "debugger NYI\n";
+            break;
 
-      case GENERATOR:
-        p += pp(n.expression, d) + " " + pp(n.tail, d);
-        break;
+        case SEMICOLON:
+            if (n.expression) {
+                p += pp(n.expression, d) + ";";
+            }
+            break;
 
-      case WITH:
-        p += "with (" + pp(n.object, d) + ") ";
-        p += pp(n.body, d);
-        break;
+        case LABEL:
+            p += n.label + ":\n" + pp(n.statement, d);
+            break;
 
-      case LET:
-      case VAR:
-      case CONST:
-        var nc = n.children;
-        if (!inLetHead) {
-            p += tokens[n.type] + " ";
-        }
-        for (var i = 0, j = nc.length; i < j; i++) {
-            if (i > 0)
-                p += ", ";
-            var u = nc[i];
-            p += pp(u.name, d);
-            if (u.initializer)
-                p += " = " + pp(u.initializer, d);
-        }
-        break;
-
-      case DEBUGGER:
-        p += "debugger NYI\n";
-        break;
-
-      case SEMICOLON:
-        if (n.expression) {
-            p += pp(n.expression, d) + ";";
-        }
-        break;
-
-      case LABEL:
-        p += n.label + ":\n" + pp(n.statement, d);
-        break;
-
-      case COMMA:
-      case LIST:
-        var nc = n.children;
-        for (var i = 0, j = nc.length; i < j; i++) {
-            if (i > 0)
-                p += ", ";
-            p += pp(nc[i], d);
-        }
-        break;
-
-      case ASSIGN:
-        var nc = n.children;
-        var t = n.assignOp;
-        p += pp(nc[0], d) + " " + (t ? tokens[t] : "") + "="
-            + " " + pp(nc[1], d);
-        break;
-
-      case HOOK:
-        var nc = n.children;
-        p += "(" + pp(nc[0], d) + " ? "
-            + pp(nc[1], d) + " : "
-            + pp(nc[2], d);
-        p += ")";
-        break;
-
-      case OR:
-      case AND:
-        var nc = n.children;
-        p += "(" + pp(nc[0], d) + " " + tokens[n.type] + " "
-            + pp(nc[1], d);
-        p += ")";
-        break;
-
-      case BITWISE_OR:
-      case BITWISE_XOR:
-      case BITWISE_AND:
-      case EQ:
-      case NE:
-      case STRICT_EQ:
-      case STRICT_NE:
-      case LT:
-      case LE:
-      case GE:
-      case GT:
-      case IN:
-      case INSTANCEOF:
-      case LSH:
-      case RSH:
-      case URSH:
-      case PLUS:
-      case MINUS:
-      case MUL:
-      case DIV:
-      case MOD:
-        var nc = n.children;
-        p += "(" + pp(nc[0], d) + " " + tokens[n.type] + " "
-            + pp(nc[1], d) + ")";
-        break;
-
-      case DELETE:
-      case VOID:
-      case TYPEOF:
-        p += tokens[n.type] + " "  + pp(n.children[0], d);
-        break;
-
-      case NOT:
-      case BITWISE_NOT:
-        p += tokens[n.type] + pp(n.children[0], d);
-        break;
-
-      case UNARY_PLUS:
-        p += "+" + pp(n.children[0], d);
-        break;
-
-      case UNARY_MINUS:
-        p += "-" + pp(n.children[0], d);
-        break;
-
-      case INCREMENT:
-      case DECREMENT:
-        if (n.postfix) {
-            p += pp(n.children[0], d) + tokens[n.type];
-        } else {
-            p += tokens[n.type] + pp(n.children[0], d);
-        }
-        break;
-
-      case DOT:
-        var nc = n.children;
-        p += pp(nc[0], d) + "." + pp(nc[1], d);
-        break;
-
-      case INDEX:
-        var nc = n.children;
-        p += pp(nc[0], d) + "[" + pp(nc[1], d) + "]";
-        break;
-
-      case CALL:
-        var nc = n.children;
-        p += pp(nc[0], d) + "(";
-        if(nc[0].type === IDENTIFIER && (nc[0].value in async_func_names)) {
-            p += '_';
-            if(nc[1].children.length > 0)
-                p += ', ';
-        }
-        p += pp(nc[1], d) + ")";
-        break;
-
-      case NEW:
-      case NEW_WITH_ARGS:
-        var nc = n.children;
-        p += "new " + pp(nc[0], d);
-        if (nc[1])
-            p += "(" + pp(nc[1], d) + ")";
-        break;
-
-      case ARRAY_INIT:
-        p += "[";
-        var nc = n.children;
-        for (var i = 0, j = nc.length; i < j; i++) {
-            if(nc[i])
+        case COMMA:
+        case LIST:
+            var nc = n.children;
+            for (var i = 0, j = nc.length; i < j; i++) {
+                if (i > 0)
+                    p += ", ";
                 p += pp(nc[i], d);
-            p += ","
-        }
-        p += "]";
-        break;
-
-      case ARRAY_COMP:
-        p += "[" + pp (n.expression, d) + " ";
-        p += pp(n.tail, d);
-        p += "]";
-        break;
-
-      case COMP_TAIL:
-        var nc = n.children;
-        for (var i = 0, j = nc.length; i < j; i++) {
-            if (i > 0)
-                p += " ";
-            p += pp(nc[i], d);
-        }
-        if (n.guard)
-            p += " if (" + pp(n.guard, d) + ")";
-        break;
-
-      case OBJECT_INIT:
-        var nc = n.children;
-        if (nc[0] && nc[0].type === PROPERTY_INIT)
-            p += "{\n";
-        else
-            p += "{";
-        for (var i = 0, j = nc.length; i < j; i++) {
-            if (i > 0) {
-                p += ",\n";
             }
+            break;
 
-            var t = nc[i];
-            if (t.type === PROPERTY_INIT) {
-                var tc = t.children;
-                var l;
-                /*
-                 * See if the left needs to be quoted.
-                 *
-                 * N.B. If negative numeral prop names ever get converted
-                 * internally to numbers by the parser, we need to quote
-                 * those also.
-                 */
-                var propName = tc[0].value;
-                if (typeof propName === "string" && !lexer.isIdentifier(propName)) {
-                    l = nodeStr(tc[0]);
-                } else {
-                    l = pp(tc[0], d);
-                }
-                p += indent(4, l) + ": " +
-                    indent(4, pp(tc[1], d)).substring(4);
+        case ASSIGN:
+            var nc = n.children;
+            var t = n.assignOp;
+            p += pp(nc[0], d) + " " + (t ? tokens[t] : "") + "="
+                + " " + pp(nc[1], d);
+            break;
+
+        case HOOK:
+            var nc = n.children;
+            p += "(" + pp(nc[0], d) + " ? "
+                + pp(nc[1], d) + " : "
+                + pp(nc[2], d);
+            p += ")";
+            break;
+
+        case OR:
+        case AND:
+            var nc = n.children;
+            p += "(" + pp(nc[0], d) + " " + tokens[n.type] + " "
+                + pp(nc[1], d);
+            p += ")";
+            break;
+
+        case BITWISE_OR:
+        case BITWISE_XOR:
+        case BITWISE_AND:
+        case EQ:
+        case NE:
+        case STRICT_EQ:
+        case STRICT_NE:
+        case LT:
+        case LE:
+        case GE:
+        case GT:
+        case IN:
+        case INSTANCEOF:
+        case LSH:
+        case RSH:
+        case URSH:
+        case PLUS:
+        case MINUS:
+        case MUL:
+        case DIV:
+        case MOD:
+            var nc = n.children;
+            p += "(" + pp(nc[0], d) + " " + tokens[n.type] + " "
+                + pp(nc[1], d) + ")";
+            break;
+
+        case DELETE:
+        case VOID:
+        case TYPEOF:
+            p += tokens[n.type] + " "  + pp(n.children[0], d);
+            break;
+
+        case NOT:
+        case BITWISE_NOT:
+            p += tokens[n.type] + pp(n.children[0], d);
+            break;
+
+        case UNARY_PLUS:
+            p += "+" + pp(n.children[0], d);
+            break;
+
+        case UNARY_MINUS:
+            p += "-" + pp(n.children[0], d);
+            break;
+
+        case INCREMENT:
+        case DECREMENT:
+            if (n.postfix) {
+                p += pp(n.children[0], d) + tokens[n.type];
             } else {
-                p += indent(4, pp(t, d));
+                p += tokens[n.type] + pp(n.children[0], d);
             }
-        }
-        p += "\n}";
-        break;
+            break;
 
-      case NULL:
-        p += "null";
-        break;
+        case DOT:
+            var nc = n.children;
+            p += pp(nc[0], d) + "." + pp(nc[1], d);
+            break;
 
-      case THIS:
-        p += "this";
-        break;
+        case INDEX:
+            var nc = n.children;
+            p += pp(nc[0], d) + "[" + pp(nc[1], d) + "]";
+            break;
 
-      case TRUE:
-        p += "true";
-        break;
+        case CALL:
+            var nc = n.children;
+            p += pp(nc[0], d) + "(";
+            if(nc[0].type === IDENTIFIER && (nc[0].value in async_func_names)) {
+                p += '_';
+                if(nc[1].children.length > 0)
+                    p += ', ';
+            }
+            p += pp(nc[1], d) + ")";
+            break;
 
-      case FALSE:
-        p += "false";
-        break;
+        case NEW:
+        case NEW_WITH_ARGS:
+            var nc = n.children;
+            p += "new " + pp(nc[0], d);
+            if (nc[1])
+                p += "(" + pp(nc[1], d) + ")";
+            break;
 
-      case IDENTIFIER:
-      case NUMBER:
-      case REGEXP:
-        p += n.value;
-        break;
+        case ARRAY_INIT:
+            p += "[";
+            var nc = n.children;
+            for (var i = 0, j = nc.length; i < j; i++) {
+                if(nc[i])
+                    p += pp(nc[i], d);
+                p += ","
+            }
+            p += "]";
+            break;
 
-      case STRING:
-        p += nodeStr(n);
-        break;
+        case ARRAY_COMP:
+            p += "[" + pp (n.expression, d) + " ";
+            p += pp(n.tail, d);
+            p += "]";
+            break;
 
-      case GROUP:
-        p += "(" + pp(n.children[0], d) + ")";
-        break;
+        case COMP_TAIL:
+            var nc = n.children;
+            for (var i = 0, j = nc.length; i < j; i++) {
+                if (i > 0)
+                    p += " ";
+                p += pp(nc[i], d);
+            }
+            if (n.guard)
+                p += " if (" + pp(n.guard, d) + ")";
+            break;
 
-      default:
-        throw "PANIC: unknown operation " + tokens[n.type] + " " + n.toSource();
+        case OBJECT_INIT:
+            var nc = n.children;
+            if (nc[0] && nc[0].type === PROPERTY_INIT)
+                p += "{\n";
+            else
+                p += "{";
+            for (var i = 0, j = nc.length; i < j; i++) {
+                if (i > 0) {
+                    p += ",\n";
+                }
+
+                var t = nc[i];
+                if (t.type === PROPERTY_INIT) {
+                    var tc = t.children;
+                    var l;
+                    /*
+                     * See if the left needs to be quoted.
+                     *
+                     * N.B. If negative numeral prop names ever get converted
+                     * internally to numbers by the parser, we need to quote
+                     * those also.
+                     */
+                    var propName = tc[0].value;
+                    if (typeof propName === "string" && !lexer.isIdentifier(propName)) {
+                        l = nodeStr(tc[0]);
+                    } else {
+                        l = pp(tc[0], d);
+                    }
+                    p += indent(4, l) + ": " +
+                        indent(4, pp(tc[1], d)).substring(4);
+                } else {
+                    p += indent(4, pp(t, d));
+                }
+            }
+            p += "\n}";
+            break;
+
+        case NULL:
+            p += "null";
+            break;
+
+        case THIS:
+            p += "this";
+            break;
+
+        case TRUE:
+            p += "true";
+            break;
+
+        case FALSE:
+            p += "false";
+            break;
+
+        case IDENTIFIER:
+        case NUMBER:
+        case REGEXP:
+            p += n.value;
+            break;
+
+        case STRING:
+            p += nodeStr(n);
+            break;
+
+        case GROUP:
+            p += "(" + pp(n.children[0], d) + ")";
+            break;
+
+        default:
+            throw "PANIC: unknown operation " + tokens[n.type] + " " + n.toSource();
     }
 
     if (n.parenthesized)
@@ -563,6 +574,16 @@ function pp(n, d, inLetHead) {
 
     return p;
 }
+
+/*
+ * END_OF_DECOMPILER }}}1
+ */
+
+
+
+
+
+
 
 function get_emscripten_function_names(funDecls) {
     var names = []
@@ -813,9 +834,9 @@ var async_func_names = {};
 // initiall functions insided async_func_names_to_check are not transformed
 // but you can write in the streamline fashion directly
 var async_func_names_to_check = [
-    '_SDL_Delay', 
     '_vimjs_sleep', 
     '_vimjs_wait_for_chars', 
+    '_vimjs_update',
     '_vimjs_async_cmd_call1', 
     '_vimjs_async_cmd_call2', 
     '_vimjs_async_cmd_call3', 

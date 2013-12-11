@@ -33,6 +33,8 @@ int vimjs_wait_for_chars(int);
 void vimjs_delete_lines(int, int);
 void vimjs_insert_lines(int, int);
 
+void vimjs_update();
+
 /*
  * some function pointers may point to async functions, which cannot be automatically detected
  * Instead, use these functions to mark the call
