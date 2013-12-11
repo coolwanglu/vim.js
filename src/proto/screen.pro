@@ -19,9 +19,7 @@ void status_redraw_all __ARGS((void));
 void status_redraw_curbuf __ARGS((void));
 void redraw_statuslines __ARGS((void));
 void win_redraw_last_status __ARGS((frame_T *frp));
-void win_redr_status_matches __ARGS((expand_T *xp, int num_matches, char_u **matches, int match, int showtail));
 void win_redr_status __ARGS((win_T *wp));
-int stl_connected __ARGS((win_T *wp));
 int get_keymap_str __ARGS((win_T *wp, char_u *buf, int len));
 void screen_putchar __ARGS((int c, int row, int col, int attr));
 void screen_getbytes __ARGS((int row, int col, char_u *bytes, int *attrp));
@@ -46,11 +44,9 @@ int screen_ins_lines __ARGS((int off, int row, int line_count, int end, win_T *w
 int screen_del_lines __ARGS((int off, int row, int line_count, int end, int force, win_T *wp));
 int showmode __ARGS((void));
 void unshowmode __ARGS((int force));
-void get_trans_bufname __ARGS((buf_T *buf));
 int redrawing __ARGS((void));
 int messaging __ARGS((void));
 void showruler __ARGS((int always));
-int number_width __ARGS((win_T *wp));
 int screen_screencol __ARGS((void));
 int screen_screenrow __ARGS((void));
 /* vim: set ft=c : */

@@ -30,7 +30,12 @@ void vimjs_set_sp_color(char *);
 
 int vimjs_wait_for_chars(int);
 
-void vimjs_async_cmd_call(void (*)(void*), void*); 
+/*
+ * some function pointers may point to async functions, which cannot be automatically detected
+ * Instead, use these functions to mark the call
+ */
+void * vimjs_async_cmd_call1(void (*)(void*), void*);
+void * vimjs_async_cmd_call3(void (*)(void*,void*,void*), void*,void*,void*);
 
 #endif // FEAT_GUI_BROWSER
 #endif //VIMJS_H__

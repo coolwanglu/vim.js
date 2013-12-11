@@ -41,6 +41,9 @@
 # if defined(MSDOS) || defined(WIN16)
 #  include "os_msdos.pro"
 # endif
+# ifdef FEAT_GUI_BROWSER
+#  include "os_browser.pro"
+# endif
 # ifdef WIN16
    typedef LPSTR LPWSTR;
    typedef LPCSTR LPCWSTR;

@@ -81,7 +81,6 @@ void xim_init __ARGS((void));
 void im_shutdown __ARGS((void));
 int im_xim_isvalid_imactivate __ARGS((void));
 void xim_reset __ARGS((void));
-int xim_queue_key_press_event __ARGS((GdkEventKey *event, int down));
 int im_get_status __ARGS((void));
 int preedit_get_status __ARGS((void));
 int im_is_preediting __ARGS((void));

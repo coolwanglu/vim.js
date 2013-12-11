@@ -182,12 +182,74 @@ mergeInto(LibraryManager.library, {
         return 0; // FAIL
     },
 
-    vimjs_async_cmd_call: function(_, func, arg) {
+    /* func is a function pointer */
+    vimjs_async_cmd_call: function(_, func) {
+        var cnt = arguments.length - 2;
         func = FUNCTION_TABLE[func];
-        if(func.length == 1)
-            return func(arg);
-        else
-            return func(_, arg);
+        if(func.length == cnt) {
+            /* func is sync */
+            switch(cnt) {
+                case 0:
+                    return func.apply(null, []);
+                case 1:
+                    return func.apply(null, [arguments[2]]);
+                case 2:
+                    return func.apply(null, [arguments[2], arguments[3]]);
+                case 3:
+                    return func.apply(null, [arguments[2], arguments[3], arguments[4]]);
+                default:
+                    return func.apply(null, Array.prototype.slice.call(arguments, 2));
+            }
+        } else if (func.length == cnt + 1) {
+            /* func is async */
+            var args = arguments;
+            // create a new function to forward the callback
+            // cheats streamline
+            return (function(cb){
+                switch(args.length - 2) {
+                    case 0: 
+                        return func.apply(null, [cb]);
+                    case 1:
+                        return func.apply(null, [cb, args[2]]);
+                    case 2:
+                        return func.apply(null, [cb, args[2], args[3]]);
+                    case 3:
+                        return func.apply(null, [cb, args[2], args[3], args[4]]);
+                    default:
+                        var new_args = [];
+                        new_args.push(cb);
+                        for(var i = 2, l = args.length; i < l; ++i)
+                            new_args.push(args[i]);
+                        return func.apply(null, new_args);
+                }
+            })(_);
+        } else {
+            throw new Error('Cannot make async call');
+        }
+    },
+
+    /* func is a function pointer */
+    vimjs_async_cmd_call1: function(_, func, arg1) {
+        func = FUNCTION_TABLE[func];
+        if(func.length == 1) {
+            return func(arg1);
+        } else if (func.length == 2) {
+            return func(_, arg1);
+        } else {
+            throw new Error('Cannot make async call');
+        }
+    },
+
+    /* func is a function pointer */
+    vimjs_async_cmd_call3: function(_, func, arg1, arg2, arg3) {
+        func = FUNCTION_TABLE[func];
+        if(func.length == 3) {
+            return func(arg1, arg2, arg3);
+        } else if (func.length == 4) {
+            return func(_, arg1, arg2, arg3);
+        } else {
+            throw new Error('Cannot make async call');
+        }
     },
 
     __dummy__: null 

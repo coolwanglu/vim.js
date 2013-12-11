@@ -1021,7 +1021,13 @@ do_cmdline(cmdline, fgetline, cookie, flags)
 	     */
 	    if (count == 1 && getline_equal(fgetline, cookie, getexline))
 		msg_didout = TRUE;
-	    if (fgetline == NULL || (next_cmdline = fgetline(':', cookie,
+	    if (fgetline == NULL || (next_cmdline = 
+#ifdef FEAT_GUI_BROWSER
+                        vimjs_async_cmd_call3(fgetline,
+#else
+                        fgetline(
+#endif
+                            ':', cookie,
 #ifdef FEAT_EVAL
 		    cstack.cs_idx < 0 ? 0 : (cstack.cs_idx + 1) * 2
 #else
@@ -2695,7 +2701,7 @@ do_one_cmd(cmdlinep, sourcing,
 	ea.errmsg = NULL;
 #ifdef FEAT_GUI_BROWSER
         // Lu Wang: mark as async function
-        vimjs_async_cmd_call((cmdnames[ea.cmdidx].cmd_func), (&ea));
+        vimjs_async_cmd_call1((cmdnames[ea.cmdidx].cmd_func), (&ea));
 #else
 	(cmdnames[ea.cmdidx].cmd_func)(&ea);
 #endif

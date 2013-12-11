@@ -2,7 +2,6 @@
 int qf_init __ARGS((win_T *wp, char_u *efile, char_u *errorformat, int newlist, char_u *qf_title));
 void qf_free_all __ARGS((win_T *wp));
 void copy_loclist __ARGS((win_T *from, win_T *to));
-void qf_jump __ARGS((qf_info_T *qi, int dir, int errornr, int forceit));
 void qf_list __ARGS((exarg_T *eap));
 void qf_age __ARGS((exarg_T *eap));
 void qf_mark_adjust __ARGS((win_T *wp, linenr_T line1, linenr_T line2, long amount, long amount_after));

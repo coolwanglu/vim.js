@@ -1201,7 +1201,7 @@ getcount:
     
 #ifdef FEAT_GUI_BROWSER
     // Lu Wang: mark as async function
-    vimjs_async_cmd_call((nv_cmds[idx].cmd_func), (&ca));
+    vimjs_async_cmd_call1((nv_cmds[idx].cmd_func), (&ca));
 #else
     (nv_cmds[idx].cmd_func)(&ca);
 #endif

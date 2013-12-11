@@ -1827,6 +1827,10 @@ os_beos.pro: os_beos.c
 	$(CPROTO) -D__BEOS__ -UHAVE_CONFIG_H $< > proto/$@
 	echo "/* vim: set ft=c : */" >> proto/$@
 
+os_browser.pro: os_browser.c
+	$(CPROTO) -DFEAT_GUI_BROWSER -UHAVE_CONFIG_H $< > proto/$@
+	echo "/* vim: set ft=c : */" >> proto/$@
+
 os_vms.pro: os_vms.c
 # must use os_vms_conf.h for auto/config.h
 	mv auto/config.h auto/config.h.save

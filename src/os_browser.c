@@ -19,48 +19,12 @@
 
 #include "os_unixx.h"	    /* unix includes for os_unix.c only */
 
-/*
- * Use this prototype for select, some include files have a wrong prototype
- */
-#ifndef __TANDEM
-# undef select
-# ifdef __BEOS__
-#  define select	beos_select
-# endif
-#endif
-
-#ifdef __CYGWIN__
-# ifndef WIN32
-#  include <cygwin/version.h>
-#  include <sys/cygwin.h>	/* for cygwin_conv_to_posix_path() and/or
-				 * for cygwin_conv_path() */
-#  ifdef FEAT_CYGWIN_WIN32_CLIPBOARD
-#   define WIN32_LEAN_AND_MEAN
-#   include <windows.h>
-#   include "winclip.pro"
-#  endif
-# endif
-#endif
-
 
 /*
  * end of autoconf section. To be extended...
  */
 
 /* Are the following #ifdefs still required? And why? Is that for X11? */
-
-#if defined(ESIX) || defined(M_UNIX) && !defined(SCO)
-# ifdef SIGWINCH
-#  undef SIGWINCH
-# endif
-# ifdef TIOCGWINSZ
-#  undef TIOCGWINSZ
-# endif
-#endif
-
-#if defined(SIGWINDOW) && !defined(SIGWINCH)	/* hpux 9.01 has it */
-# define SIGWINCH SIGWINDOW
-#endif
 
 static void may_core_dump __ARGS((void));
 
@@ -69,16 +33,9 @@ typedef union wait waitstatus;
 #else
 typedef int waitstatus;
 #endif
-static pid_t wait4pid __ARGS((pid_t, waitstatus *));
 
-static int  WaitForChar __ARGS((long));
 static int  RealWaitForChar __ARGS((int, long, int *));
 
-static void handle_resize __ARGS((void));
-
-#if defined(SIGWINCH)
-static RETSIGTYPE sig_winch __ARGS(SIGPROTOARG);
-#endif
 #if defined(SIGINT)
 static RETSIGTYPE catch_sigint __ARGS(SIGPROTOARG);
 #endif
@@ -110,8 +67,6 @@ static int save_patterns __ARGS((int num_pat, char_u **pat, int *num_file, char_
 # define SIG_ERR	((RETSIGTYPE (*)())-1)
 #endif
 
-/* volatile because it is used in signal handler sig_winch(). */
-static volatile int do_resize = FALSE;
 #ifndef __EMX__
 static char_u	*extra_shell_arg = NULL;
 static int	show_shell_mess = TRUE;
@@ -251,12 +206,6 @@ mch_write(s, len)
 mch_inchar(buf, maxlen, wtime, tb_change_cnt)
 */
 
-    static void
-handle_resize()
-{
-    do_resize = FALSE;
-    shell_resized();
-}
 
 /*
  * return non-zero if a character is available
@@ -373,6 +322,11 @@ mch_total_mem(special)
 }
 #endif
 
+/*
+ * Lu Wang:
+ * ignoreinput should always be true
+ * see ui.c
+ */
     void
 mch_delay(msec, ignoreinput)
     long	msec;
@@ -380,29 +334,21 @@ mch_delay(msec, ignoreinput)
 {
     int		old_tmode;
 
-    if (ignoreinput)
-    {
-	/* Go to cooked mode without echo, to allow SIGINT interrupting us
-	 * here.  But we don't want QUIT to kill us (CTRL-\ used in a
-	 * shell may produce SIGQUIT). */
-	in_mch_delay = TRUE;
-	old_tmode = curr_tmode;
-	if (curr_tmode == TMODE_RAW)
-	    settmode(TMODE_SLEEP);
+    if (!ignoreinput)
+        EMSG(_("ignoreinput should always be true in Vim.js!"));
 
-	/*
-	 * Everybody sleeps in a different way...
-	 * Prefer nanosleep(), some versions of usleep() can only sleep up to
-	 * one second.
-	 */
+    /* Go to cooked mode without echo, to allow SIGINT interrupting us
+     * here.  But we don't want QUIT to kill us (CTRL-\ used in a
+     * shell may produce SIGQUIT). */
+    in_mch_delay = TRUE;
+    old_tmode = curr_tmode;
+    if (curr_tmode == TMODE_RAW)
+        settmode(TMODE_SLEEP);
 
-        vimjs_sleep(msec);
+    vimjs_sleep(msec);
 
-	settmode(old_tmode);
-	in_mch_delay = FALSE;
-    }
-    else
-	WaitForChar(msec);
+    settmode(old_tmode);
+    in_mch_delay = FALSE;
 }
 
 #if defined(HAVE_STACK_LIMIT) \
@@ -575,21 +521,6 @@ init_signal_stack()
 }
 #endif
 
-/*
- * We need correct prototypes for a signal function, otherwise mean compilers
- * will barf when the second argument to signal() is ``wrong''.
- * Let me try it with a few tricky defines from my own osdef.h	(jw).
- */
-#if defined(SIGWINCH)
-    static RETSIGTYPE
-sig_winch SIGDEFARG(sigarg)
-{
-    /* this is not required on all systems, but it doesn't hurt anybody */
-    signal(SIGWINCH, (RETSIGTYPE (*)())sig_winch);
-    do_resize = TRUE;
-    SIGRETURN;
-}
-#endif
 
 #if defined(SIGINT)
     static RETSIGTYPE
@@ -1014,12 +945,6 @@ mch_init()
     static void
 set_signals()
 {
-#if defined(SIGWINCH)
-    /*
-     * WINDOW CHANGE signal is handled with sig_winch().
-     */
-    signal(SIGWINCH, (RETSIGTYPE (*)())sig_winch);
-#endif
 
     /*
      * We want the STOP signal to work, to make mch_suspend() work.
@@ -2652,44 +2577,6 @@ mch_new_shellsize()
     /* Nothing to do. */
 }
 
-/*
- * Wait for process "child" to end.
- * Return "child" if it exited properly, <= 0 on error.
- */
-    static pid_t
-wait4pid(child, status)
-    pid_t	child;
-    waitstatus	*status;
-{
-    pid_t wait_pid = 0;
-
-    while (wait_pid != child)
-    {
-	/* When compiled with Python threads are probably used, in which case
-	 * wait() sometimes hangs for no obvious reason.  Use waitpid()
-	 * instead and loop (like the GUI). Also needed for other interfaces,
-	 * they might call system(). */
-# ifdef __NeXT__
-	wait_pid = wait4(child, status, WNOHANG, (struct rusage *)0);
-# else
-	wait_pid = waitpid(child, status, WNOHANG);
-# endif
-	if (wait_pid == 0)
-	{
-	    /* Wait for 10 msec before trying again. */
-	    mch_delay(10L, TRUE);
-	    continue;
-	}
-	if (wait_pid <= 0
-# ifdef ECHILD
-		&& errno == ECHILD
-# endif
-	   )
-	    break;
-    }
-    return wait_pid;
-}
-
     int
 mch_call_shell(cmd, options)
     char_u	*cmd;
@@ -2710,23 +2597,6 @@ mch_breakcheck()
 	fill_input_buf(FALSE);
 }
 
-/*
- * Wait "msec" msec until a character is available from the keyboard or from
- * inbuf[]. msec == -1 will block forever.
- * When a GUI is being used, this will never get called -- webb
- */
-    static int
-WaitForChar(msec)
-    long	msec;
-{
-    int		avail;
-
-    if (input_available())	    /* something in inbuf[] */
-	return 1;
-
-    avail = RealWaitForChar(read_cmd_fd, msec, NULL);
-    return avail;
-}
 
 /*
  * Wait "msec" msec until a character is available from file descriptor "fd".
@@ -2736,11 +2606,7 @@ WaitForChar(msec)
  * Returns also, when a request from Sniff is waiting -- toni.
  * Or when a Linux GPM mouse event is waiting.
  */
-#if defined(__BEOS__)
-    int
-#else
     static  int
-#endif
 RealWaitForChar(fd, msec, check_for_gpm)
     int		fd;
     long	msec;

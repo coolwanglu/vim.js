@@ -818,7 +818,14 @@ var fs = require('fs');
 var async_func_names = {};
 // initiall functions insided async_func_names_to_check are not transformed
 // but you can write in the streamline fashion directly
-var async_func_names_to_check = ['_SDL_Delay', '_vimjs_sleep', '_vimjs_wait_for_chars', '_vimjs_async_cmd_call'];
+var async_func_names_to_check = [
+    '_SDL_Delay', 
+    '_vimjs_sleep', 
+    '_vimjs_wait_for_chars', 
+    '_vimjs_async_cmd_call', 
+    '_vimjs_async_cmd_call1', 
+    '_vimjs_async_cmd_call3', 
+    ];
 var async_func_names_no_change = {};
 
 
