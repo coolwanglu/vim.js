@@ -9,6 +9,7 @@
  * Assumptions on the input
  *
  * All the async functions have the '_' prefix in their names
+ * Functions are never got renamed, assigned -- functions can be uniquely identified by their names
  * There may be other functions (without the '_' prefix), which never call async functions
  * _ is never used as a parameter -- for streamline.js
  * No function pointers of async functions -- will be wrapped with vimjs_async_cmd_call in the source code
