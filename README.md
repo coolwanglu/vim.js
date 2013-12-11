@@ -8,7 +8,7 @@ by Lu Wang
 
 vim is built with `--with-features=tiny`.
 
-Very unstable, only tested on Firefox + Ubuntu
+Runnable, but very unstable, only tested on Firefox + Ubuntu
 
 ### Instructions
 
