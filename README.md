@@ -14,11 +14,11 @@ Runnable, but very unstable, only tested on Firefox + Ubuntu
 
 - Prepare the dependencies:
   - emscripten
-  - closure compiler
-- Get yourself familiar with
-  - emscripten
   - streamline.js
+  - closure compiler
+- Get yourself familiar with everything above and also:
   - source code of vim
+  - JavaScript
 - Setup paths in `build.sh`
 - Run `build.sh`
 
@@ -30,7 +30,7 @@ Patches are welcome for
 - UI improvements
 - Other stuffs in `TODO`
 
-Please contact me if you want to work on other features
+If you want to work on other features to be merged, please file an issue and discuss with me first.
 
 ### Contact
 
