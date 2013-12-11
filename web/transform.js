@@ -786,14 +786,8 @@ function work() {
     var cnt = 0;
     for(var fn in async_func_names)
         ++ cnt;
-    console.log(cnt + ' aync functions found.')
-
-    /*
-    console.log('Aync functions:')
-    for(var fn in async_func_names)
-        console.log('    ' + fn);
-    console.log();
-    */
+    fs.writeFileSync('async_function_list', JSON.stringify(async_func_names, null, 2));
+    console.log(cnt + ' aync functions found, written to async_function_list.')
 
     console.log('Saving...');
     var out_src = pp(root);
@@ -822,13 +816,14 @@ var async_func_names_to_check = [
     '_SDL_Delay', 
     '_vimjs_sleep', 
     '_vimjs_wait_for_chars', 
-    '_vimjs_async_cmd_call', 
     '_vimjs_async_cmd_call1', 
+    '_vimjs_async_cmd_call2', 
     '_vimjs_async_cmd_call3', 
+    '_vimjs_async_cmd_call6', 
     ];
 var async_func_names_no_change = {};
 
 
-in_filename = 'vim.js'
-out_filename = 'vim._js'
+in_filename = 'vim.pre.js'
+out_filename = 'vim.pre._js'
 work();

@@ -1,0 +1,11 @@
+some parts may be implemented natively in javascript (e.g. regexp)
+rewrite some async functions, to make them sync (e.g MSG, EMSG)
+use cDefine when possible
+
+## UI stuffs
+tabline
+scrollbar
+do_dialog
+
+## Web integration
+Load .vimrc -- from github gist

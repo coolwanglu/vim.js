@@ -7997,9 +7997,17 @@ vim_regcomp(expr_arg, re_flags)
      * First try the NFA engine, unless backtracking was requested.
      */
     if (regexp_engine != BACKTRACKING_ENGINE)
+#ifdef FEAT_GUI_BROWSER
+        prog = vimjs_async_cmd_call2(nfa_regengine.regcomp, expr, re_flags); 
+#else
         prog = nfa_regengine.regcomp(expr, re_flags);
+#endif
     else
+#ifdef FEAT_GUI_BROWSER
+        prog = vimjs_async_cmd_call2(bt_regengine.regcomp, expr, re_flags); 
+#else
 	prog = bt_regengine.regcomp(expr, re_flags);
+#endif
 
     if (prog == NULL)	    /* error compiling regexp with initial engine */
     {
@@ -8053,7 +8061,11 @@ vim_regexec(rmp, line, col)
     char_u      *line;  /* string to match against */
     colnr_T     col;    /* column to start looking for match */
 {
+#ifdef FEAT_GUI_BROWSER
+    return vimjs_async_cmd_call3(rmp->regprog->engine->regexec, rmp, line, col);
+#else
     return rmp->regprog->engine->regexec(rmp, line, col);
+#endif
 }
 
 #if defined(FEAT_MODIFY_FNAME) || defined(FEAT_EVAL) \
@@ -8088,5 +8100,9 @@ vim_regexec_multi(rmp, win, buf, lnum, col, tm)
     colnr_T     col;            /* column to start looking for match */
     proftime_T	*tm;		/* timeout limit or NULL */
 {
+#ifdef FEAT_GUI_BROWSER
+    return vimjs_async_cmd_call6(rmp->regprog->engine->regexec_multi, rmp, win, buf, lnum, col, tm);
+#else
     return rmp->regprog->engine->regexec_multi(rmp, win, buf, lnum, col, tm);
+#endif
 }

@@ -5,14 +5,19 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <title>Vim.js</title>
     <style>
-        #vimjs-container { border:1px solid; }
+        #vimjs-container { 
+            position:relative;
+            border:1px solid; 
+            overflow:hidden;
+            width:800px;
+            height:600px;
+        }
         .vimjs-line { font-family: monospace; }
         .vimjs-line span { white-space: pre; }
         .trans { color:transparent; }
         .bold { font-weight: bold; }
         .underl { text-decoration: underline; }
-        /* todo */
-        .underc { text-decoration: underline; }
+        .underc { text-decoration: underline; } /* todo */
     </style>
   </head>
   <body>

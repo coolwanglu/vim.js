@@ -12,6 +12,7 @@
  */
 
 #include "vim.h"
+#include "vimjs.h"
 #include "version.h"
 
 #ifdef FEAT_EX_EXTRA
@@ -3977,7 +3978,11 @@ ex_append(eap)
 	    eap->nextcmd = p;
 	}
 	else
+#ifdef FEAT_GUI_BROWSER
+            theline = vimjs_async_cmd_call3(eap->getline,
+#else
 	    theline = eap->getline(
+#endif
 #ifdef FEAT_EVAL
 		    eap->cstack->cs_looplevel > 0 ? -1 :
 #endif

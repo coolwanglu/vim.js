@@ -31,17 +31,14 @@
 		__g.oldStyleFutures = oldStyleFutures;
 		function __func(_, __this, __arguments, fn, index, frame, body) {
 			if (typeof _ !== 'function') {
-                if (_ !== false && !__g.oldStyleFutures) {
-                    console.log("invalid argument #" + index + ": you must pass _ ");
-                    console.log((new Error).stack);
-                    (function(){
-                        console.log('async stack:');
-                        for(var f = frame; f; f = f.prev)
-                            console.log(f.name, f.line);
-                    })();
-                    throw new Error("invalid argument #" + index + ": you must pass _ ");
-                }
-				return;
+                console.log("callback function is not specified!");
+                console.log((new Error).stack);
+                (function(){
+                    console.log('async stack:');
+                    for(var f = frame; f; f = f.prev)
+                        console.log(f.name, f.line);
+                })();
+                throw new Error("invalid argument #" + index + ": you must pass _ ");
 			}
 			frame.file = filename;
 			frame.prev = __g.frame;

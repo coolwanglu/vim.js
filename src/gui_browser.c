@@ -34,6 +34,7 @@ gui_mch_prepare(int *argc, char **argv)
 }
 
 
+
 #ifndef ALWAYS_USE_GUI
 /*
  * Check if the GUI can be started.  Called before gvimrc is sourced.
@@ -59,7 +60,7 @@ gui_mch_init(void)
     gui.char_ascent = 6;
     gui.num_rows = 40;
     gui.num_cols = 80;
-    gui.in_focus = TRUE; /* For the moment -> syn. of front application */
+    gui.in_focus = TRUE; 
     gui.border_width = 0;
     gui.back_pixel = "#000000";
     gui.norm_pixel = "#ffffff";
@@ -165,7 +166,7 @@ gui_mch_adjust_charheight(void)
     GuiFont
 gui_mch_get_font(char_u *name, int giveErrorIfMissing)
 {
-    return 0;
+    return NOFONT;
 }
 
 #if defined(FEAT_EVAL) || defined(PROTO)
@@ -210,7 +211,7 @@ gui_mch_free_font(font)
     guicolor_T
 gui_mch_get_color(char_u *name)
 {
-    if(vimjs_is_valid_color(name))        
+    if(vimjs_is_valid_color((char*)name))        
         return (guicolor_T)name;
     return INVALCOLOR;
 }
@@ -241,6 +242,7 @@ gui_mch_set_sp_color(guicolor_T color)
 {
     vimjs_set_sp_color(color);
 }
+
     void
 gui_mch_draw_string(int row, int col, char_u *s, int len, int flags)
 {
@@ -259,11 +261,13 @@ gui_mch_haskey(char_u *name)
     void
 gui_mch_beep(void)
 {
+    // TODO
 }
 
     void
 gui_mch_flash(int msec)
 {
+    // TODO
 }
 
 /*
@@ -337,11 +341,45 @@ gui_mch_wait_for_chars(int wtime)
     return vimjs_wait_for_chars(wtime);
 }
 
+
     void
-gui_browser_add_to_input_buf(int which)
+gui_browser_handle_key(int code, int modifiers, char_u special1, char_u special2)
 {
-    char_u s = (char_u)which;
-    add_to_input_buf(&s, 1);
+#define BUF_SIZE  64
+    char_u buf[BUF_SIZE];
+    int buf_len = 0;
+
+    if(special1) 
+    {
+        code = TO_SPECIAL(special1, special2);
+        code = simplify_key(code, &modifiers);
+        if(code == CSI)
+            code = K_CSI;
+    }
+    if(code == 'c' && (modifiers & MOD_MASK_CTRL))
+        got_int = TRUE;
+
+    if(modifiers) 
+    {
+        buf[buf_len++] = CSI;
+        buf[buf_len++] = KS_MODIFIER;
+        buf[buf_len++] = modifiers;
+    }
+
+    if(special1 && IS_SPECIAL(code))
+    {
+        buf[buf_len++] = CSI;
+        buf[buf_len++] = K_SECOND(code);
+        buf[buf_len++] = K_THIRD(code);
+    }
+    else
+    {
+        // TODO: support Unicode
+        buf[buf_len++] = code;
+    }
+
+    if(buf_len)
+        add_to_input_buf(buf, buf_len);
 }
 
 
@@ -381,6 +419,7 @@ gui_mch_clear_all(void)
     void
 gui_mch_delete_lines(int row, int num_lines)
 {
+    vimjs_delete_lines(row, num_lines);
 }
 
 /*
@@ -390,6 +429,7 @@ gui_mch_delete_lines(int row, int num_lines)
     void
 gui_mch_insert_lines(int row, int num_lines)
 {
+    vimjs_insert_lines(row, num_lines);
 }
 
     void
