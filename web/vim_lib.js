@@ -40,13 +40,8 @@ mergeInto(LibraryManager.library, {
         }
 
         document.addEventListener('keypress', function(e) {
-            var c = e.which;
-            if (c === null) {
-                c = e.charCode;
-                if(c === null) {
-                    c = e.keyCode;
-                }
-            }
+            e.preventDefault();
+            var c = e.charCode || e.keyCode;
             vimjs.gui_browser_add_to_input_buf(c);
         });
     },
