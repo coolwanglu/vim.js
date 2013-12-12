@@ -24,7 +24,7 @@ vim is built with `--with-features=tiny`. More features will be enabled graduall
   - GCC & cproto (in case you need to generate the .pro files)
 - Get yourself familiar with everything above and also:
   - source code of vim
-  - JavaScript
+  - JavaScript, and also HTML/CSS
 - Setup paths in `build.sh`
 - Uncomment the last few lines in `build.sh`
 - Run `build.sh`
