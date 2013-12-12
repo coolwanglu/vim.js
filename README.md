@@ -13,7 +13,7 @@ by Lu Wang
 
 ### Features
 
-vim is built with `--with-features=small`. More features will be enabled gradually.
+vim is built with `--with-features=tiny`. More features will be enabled gradually.
 
 ### Instructions for hackers
 

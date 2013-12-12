@@ -59,7 +59,7 @@ java -jar $CC_DIR/compiler.jar \
 popd
 }
 
-#do_config
+do_config
 do_make
 do_link
 do_transform
