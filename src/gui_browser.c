@@ -62,17 +62,27 @@ gui_mch_init_check(void)
 gui_mch_init(void)
 {
     vimjs_init();
+    gui.border_width = 0;
+    gui.scrollbar_width = 0;
+    gui.scrollbar_height = 0;
+
+    gui.back_pixel = gui_get_color("black");
+    gui.norm_pixel = gui_get_color("white");
+
+    set_normal_colors();
+    gui_check_colors();
+
+    gui.def_back_pixel = gui.back_pixel;
+    gui.def_norm_pixel = gui.norm_pixel;
+
+/* TODO
     gui.char_width = 7;
     gui.char_height = 11;
     gui.char_ascent = 6;
-    gui.num_rows = 40;
-    gui.num_cols = 80;
     gui.in_focus = TRUE; 
-    gui.border_width = 0;
-    gui.back_pixel = "#000000";
-    gui.norm_pixel = "#ffffff";
-    gui.def_back_pixel = "#000000";
-    gui.def_norm_pixel = "#ffffff";
+*/
+
+
     return OK;
 }
 
@@ -92,11 +102,9 @@ gui_mch_new_colors(void)
     int
 gui_mch_open(void)
 {
-    /* TODO
     int w, h;
     gui_mch_get_screen_dimensions(&w, &h);
     gui_resize_shell(w, h);
-    */
     return OK;
 }
 
@@ -135,7 +143,7 @@ gui_mch_set_shellsize(
     int		base_height,
     int		direction)
 {
-    //TODO
+    // TODO
 }
 
 /*
@@ -157,7 +165,11 @@ gui_mch_get_screen_dimensions(int *screen_w, int *screen_h)
     int
 gui_mch_init_font(char_u *font_name, int fontset)
 {
-    //TODO
+    vimjs_init_font((char*)font_name);
+
+    gui.char_width = vimjs_get_char_width();
+    gui.char_height = vimjs_get_char_height();
+
     return OK;
 }
 
@@ -223,7 +235,7 @@ gui_mch_free_font(font)
 gui_mch_get_color(char_u *name)
 {
     if(vimjs_is_valid_color((char*)name))        
-        return (guicolor_T)name;
+        return (guicolor_T)vimjs_get_rgb((char*)name);
     return INVALCOLOR;
 }
 
@@ -272,13 +284,13 @@ gui_mch_haskey(char_u *name)
     void
 gui_mch_beep(void)
 {
-    // TODO
+    vimjs_beep();
 }
 
     void
 gui_mch_flash(int msec)
 {
-    // TODO
+    vimjs_flash();
 }
 
 /*
@@ -434,6 +446,13 @@ gui_mch_delete_lines(int row, int num_lines)
     vimjs_delete_lines(row, num_lines);
 }
 
+    void
+gui_mch_set_text_area_pos(int x, int y, int w, int h)
+{
+    // TODO
+}
+
+
 /*
  * Insert the given number of lines before the given row, scrolling down any
  * following text within the scroll region.
@@ -469,11 +488,6 @@ clip_mch_set_selection(VimClipboard *cbd)
 {
 }
 
-
-    void
-gui_mch_set_text_area_pos(int x, int y, int w, int h)
-{
-}
 
 /*
  * Menu stuff.

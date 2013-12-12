@@ -12,6 +12,7 @@
  */
 
 #include "vim.h"
+#include "vimjs.h"
 #include "version.h"
 
 static void	cmd_source __ARGS((char_u *fname, exarg_T *eap));
@@ -2800,7 +2801,11 @@ do_in_runtimepath(name, all, callback, cookie)
 	    copy_option_part(&rtp, buf, MAXPATHL, ",");
 	    if (name == NULL)
 	    {
+#ifdef FEAT_GUI_BROWSER
+                vimjs_async_cmd_call2(*callback, buf, (void*)&cookie);
+#else
 		(*callback)(buf, (void *) &cookie);
+#endif
 		if (!did_one)
 		    did_one = (cookie == NULL);
 	    }
@@ -2830,7 +2835,11 @@ do_in_runtimepath(name, all, callback, cookie)
 		    {
 			for (i = 0; i < num_files; ++i)
 			{
+#ifdef FEAT_GUI_BROWSER
+                            vimjs_async_cmd_call2(*callback, files[i], &cookie);
+#else
 			    (*callback)(files[i], cookie);
+#endif
 			    did_one = TRUE;
 			    if (!all)
 				break;

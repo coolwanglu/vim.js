@@ -4,8 +4,9 @@ rewrite some async functions, to make them sync (e.g MSG, EMSG)
 use cDefine when possible
 
 ## core
-scroll
+gettext
 resize
+Chrome support
 
 
 ## UI stuffs
@@ -14,4 +15,5 @@ scrollbar
 do_dialog
 
 ## Web integration
+Load vim components from the web (colors, syntax etc)
 Load .vimrc -- from github gist

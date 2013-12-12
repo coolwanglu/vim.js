@@ -1,30 +1,14 @@
 <!doctype html>
+<!--  vim: set sw=2 ts=2 et : --> 
 <html lang="en-us">
   <head>
     <meta charset="utf-8">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <title>Vim.js</title>
-    <style>
-        #vimjs-container { 
-            position:relative;
-            border:1px solid; 
-            overflow:hidden;
-            width:800px;
-            height:600px;
-        }
-        .vimjs-line { font-family: monospace; }
-        .vimjs-line span { white-space: pre; }
-        .trans { color:transparent; }
-        .bold { font-weight: bold; }
-        .underl { text-decoration: underline; }
-        .underc { text-decoration: underline; } /* todo */
-    </style>
-  </head>
-  <body>
-    <h3>Vim.js - ported by Lu Wang</h3>
-    <a href="https://github.com/coolwanglu/vim.js">project page</a>
-    <div id="vimjs-container">
-    </div>
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap-theme.min.css">
+    <link rel="stylesheet" href="vim.css">
+    <script src="streamline.min.js"></script>
     <script>
       var Module = {
         noInitialRun: true,
@@ -42,10 +26,26 @@
         },
       };
     </script>
-    <script src="streamlinejs/lib/callbacks/require-stub.js"></script>
-    <script src="streamlinejs/lib/version.js"></script>
-    <script src="streamlinejs/lib/callbacks/runtime.js"></script>
-    <script src="streamlinejs/lib/callbacks/builtins.js"></script>
-    <script src="vim.js"></script>
+    <script async src="vim.js"></script>
+  </head>
+  <body>
+    <a href="https://github.com/coolwanglu/vim.js"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_orange_ff7600.png" alt="Fork me on GitHub"></a>
+    <div class="container">
+      <div class="jumbotron">
+        <div class="pull-right">
+          <iframe src="http://ghbtns.com/github-btn.html?user=coolwanglu&repo=vim.js&type=watch&count=true&size=large" allowtransparency="true" frameborder="0" scrolling="0" width="170" height="30"></iframe>
+        </div>
+        <h1>Vim.js</h1>
+        <h2>JavaScript port of Vim</h2>
+        <p class="text-muted"><small>Firefox only (for now)</small></p>
+      </div>
+      <div id="vimjs-container" class="container">
+      </div>
+      <br>
+      <br>
+      <div class="footer">
+        <p>© <a target="_blank" href="http://coolwanglu.github.io/">Lu Wang</a> 2013</p>
+      </div>
+    </div>
   </body>
 </html>

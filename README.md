@@ -1,4 +1,4 @@
-### Vim.js : Vim ported to JavaScript
+### Vim.js : JavaScript port of Vim
 
 A Tool/Toy for Non-Beginners
 
@@ -6,9 +6,11 @@ by Lu Wang
 
 ### Status
 
-vim is built with `--with-features=tiny`.
-
 Runnable, but very unstable, only tested on Firefox + Ubuntu
+
+### Features
+
+vim is built with `--with-features=tiny`. More features will be enabled gradually.
 
 ### Instructions
 
@@ -27,6 +29,7 @@ Runnable, but very unstable, only tested on Firefox + Ubuntu
 ### Development
 
 Patches are welcome for
+- Wrapping async functions &mdash; [learn more](https://github.com/coolwanglu/vim.js/wiki/Sync-to-Async-Transformation)
 - Multi-browser/platform support
 - Stability improvements
 - UI improvements

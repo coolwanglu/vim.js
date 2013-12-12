@@ -1,0 +1,37 @@
+/*  vim: set sw=2 ts=2 et : */
+/*
+ * vim.css
+ * Copyright (c) 2013 Lu Wang <coolwanglu@gmail.com>
+ */
+
+#vimjs-container { 
+  border:1px solid; 
+  overflow:hidden;
+  width:800px;
+  height:600px;
+  line-height:1;
+  border-color: rgb(102, 175, 233);
+  box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.075) inset, 0px 0px 8px rgba(102, 175, 233, 0.6);
+}
+.vimjs-line { font-family: monospace; }
+.vimjs-line span { 
+  white-space: pre; 
+  border:0;
+  margin:0;
+}
+.trans { color:transparent; }
+.bold { font-weight: bold; }
+.underl { text-decoration: underline; }
+.underc { text-decoration: underline; } /* todo */
+
+/* overrides some bootstrap styles */
+.jumbotron { 
+  padding-top: 32px;
+  padding-bottom: 32px;
+  margin-bottom: 0px;
+  background-color: transparent;
+  text-align: center;
+}
+.jumbotron h1 {
+  margin-top: 0px;
+}

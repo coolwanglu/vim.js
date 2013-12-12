@@ -1,0 +1,18 @@
+" Default .vimrc for vim.js
+" By Lu Wang
+
+set go=
+set ruler
+set number
+set mouse=
+set wildmenu
+set tabstop=4
+set expandtab
+set smartindent
+set nocompatible
+set cindent shiftwidth=4
+set fileencodings=utf8
+set backspace=indent,eol,start
+set wildmode=longest,list,full
+syntax on
+colorscheme Darkside

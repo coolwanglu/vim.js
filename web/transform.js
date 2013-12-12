@@ -1,3 +1,4 @@
+/* vim: set sw=2 ts=2 et foldmethod=marker: */
 /*
  * Identify and transform ransform async functions for streamlinejs
  *
@@ -26,8 +27,7 @@
 
 
 /*
- * decompiler.js taken from Narcissus
- * search for END_OF_DECOMPILER for the end {{{1
+ * decompiler.js taken from Narcissus and modified {{{1
  */
 
 /* ***** BEGIN LICENSE BLOCK *****
@@ -585,7 +585,7 @@ function pp(n, d, inLetHead) {
 }
 
 /*
- * END_OF_DECOMPILER }}}1
+ * End of decompilier.js }}}1
  */
 
 
@@ -854,6 +854,10 @@ var async_func_names_to_check = [
 var async_func_names_no_change = {};
 
 
-in_filename = 'vim.pre.js'
-out_filename = 'vim.pre._js'
-work();
+
+in_filename = process.argv[2]
+out_filename = process.argv[3]
+if(in_filename && out_filename)
+  work();
+else
+  console.error('Cannot understand the arguments');
