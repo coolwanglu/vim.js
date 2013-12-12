@@ -4,16 +4,23 @@
  * Copyright (c) 2013 Lu Wang <coolwanglu@gmail.com>
  */
 
+#github-star {
+  position:absolute;
+  top: 32px;
+  right: 128px;
+}
+
 #vimjs-container { 
   border:1px solid; 
+  padding:0;
   overflow:hidden;
   width:800px;
   height:600px;
   line-height:1;
   border-color: rgb(102, 175, 233);
   box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.075) inset, 0px 0px 8px rgba(102, 175, 233, 0.6);
+  font: 12px monospace;
 }
-.vimjs-line { font-family: monospace; }
 .vimjs-line span { 
   white-space: pre; 
   border:0;

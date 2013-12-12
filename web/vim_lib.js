@@ -16,7 +16,6 @@ mergeInto(LibraryManager.library, {
     sp_color: null,
     gui_browser_add_to_input_buf: null,
     input_available: null,
-    gui_resize_shell: null,
     special_keys: [],
     color_map: {},
 
@@ -47,6 +46,10 @@ mergeInto(LibraryManager.library, {
       return 'rgb('+bgr[2]+','+bgr[1]+','+bgr[0]+')';
     },
 
+    /*
+     * this function should call gui_resize_shell
+     * but it is a 
+     */
     resize: function() {
       var screen_w = _vimjs_get_screen_width();
       var screen_h = _vimjs_get_screen_height();
@@ -69,8 +72,6 @@ mergeInto(LibraryManager.library, {
         }
         container.appendChild(row_ele);
       }
-
-      vimjs.gui_resize_shell(screen_w, screen_h); 
     },
 
     __dummy__: null
@@ -78,9 +79,9 @@ mergeInto(LibraryManager.library, {
 
   vimjs_init__deps: ['$vimjs', 'vimjs_init_font'],
   vimjs_init: function () {
+    console.log('vimjs_init');
     vimjs.gui_browser_handle_key = Module['cwrap']('gui_browser_handle_key', null, ['number', 'number', 'number', 'number']);
     vimjs.input_available = Module['cwrap']('input_available', 'number', []);
-    vimjs.gui_resize_shell = Module['cwrap']('gui_resize_shell', null, ['number', 'number'])
 
     vimjs.fg_color = '#fff';
     vimjs.bg_color = '#000';
@@ -466,8 +467,8 @@ mergeInto(LibraryManager.library, {
       container.innerHTML = '<div class="vimjs-line"><span class="trans"> </span></div>';
     }
     var first_ele = container.firstChild.firstChild;
-    vimjs.char_height = first_ele.clientHeight;
-    vimjs.char_width = first_ele.clientWidth;
+    vimjs.char_height = first_ele.offsetHeight;
+    vimjs.char_width = first_ele.offsetWidth;
 
     vimjs.resize();
   },
