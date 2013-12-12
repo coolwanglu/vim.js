@@ -1,11 +1,61 @@
+Vim.js
+Copyright (c) 2013 Lu Wang <coolwanglu@gmail.com>
+
+
+
 Files with different licenses are used, read the list carefully:
 
-All Vim files (modified or not) are licensed under the same one of Vim
 
-web/narcissus/*: MPL 1.1/GPL 2.0/LGPL 2.1
 
-web/streamlinejs/*: MIT License
-web/streamline.min.js: MIT License
+Vim files 
+Copyright Bram Moolenaar et al.
+Modified by Lu Wang for Vim.js
 
-web/transform.js: MPL 1.1/GPL 2.0/LGPL 2.1
-web/vim_lib.js: MIT License
+Vim is Charityware.  You can use and copy it as much as you like, but you are
+encouraged to make a donation to help orphans in Uganda.  Please read the file
+"runtime/doc/uganda.txt" for details (do ":help uganda" inside Vim).
+
+Summary of the license: There are no restrictions on using or distributing an
+unmodified copy of Vim.  Parts of Vim may also be distributed, but the license
+text must always be included.  For modified versions a few restrictions apply.
+The license is GPL compatible, you may compile Vim with GPL libraries and
+distribute it.
+
+
+
+web/narcissus/* 
+Copyright Mozilla
+Modified by Lu Wang for Vim.js
+
+MPL 1.1/GPL 2.0/LGPL 2.1
+read web/narcissus/LICENSE
+
+
+
+web/streamlinejs/*
+web/streamline.min.js
+Copyright Bruno Jouhier et al.
+Modified and tailored by Lu Wang for Vim.js
+
+MIT License
+
+
+web/transform.js: 
+decompiler.js from Narcissus is modified and included
+Copyright (c) 2013 Lu Wang <coolwanglu@gmail.com>
+
+MPL 1.1/GPL 2.0/LGPL 2.1
+
+
+
+web/vim_lib.js
+Copyright (c) 2013 Lu Wang <coolwanglu@gmail.com>
+
+MIT License
+
+
+
+web/drip.ogg
+Copyright: 1998,99,2000 Free Software Foundation, Inc.
+
+GPL 2.0 or later: http://www.gnu.org/licenses/gpl.html

@@ -25,15 +25,20 @@
 mergeInto(LibraryManager.library, {
   $vimjs: {
     container: null,
+    beep: null,
+
     rows: 0,
     cols: 0,
     char_width: 0,
     char_height: 1,
+
     fg_color: null,
     bg_color: null,
     sp_color: null,
+
     gui_browser_add_to_input_buf: null,
     input_available: null,
+
     special_keys: [],
     color_map: {},
 
@@ -103,6 +108,8 @@ mergeInto(LibraryManager.library, {
     vimjs.fg_color = '#fff';
     vimjs.bg_color = '#000';
     vimjs.sp_color = '#f00';
+
+    vimjs.beep = document.getElementById('vimjs-beep');
 
     var container = vimjs.container = document.getElementById('vimjs-container');
     // there might be text nodes of other stuffs before loading vim
@@ -482,8 +489,9 @@ mergeInto(LibraryManager.library, {
     setTimeout(_, 1);
   },
 
+  vimjs_beep__deps: ['$vimjs'],
   vimjs_beep: function() {
-    console.log('TODO: vimjs_beep');
+    vimjs.beep.play();
   },
 
   vimjs_flash: function() {
@@ -492,12 +500,12 @@ mergeInto(LibraryManager.library, {
 
   vimjs_get_screen_width__deps: ['$vimjs'],
   vimjs_get_screen_width: function() {
-    return vimjs.container.offsetWidth;
+    return vimjs.container.clientWidth;
   },
 
   vimjs_get_screen_height__deps: ['$vimjs'],
   vimjs_get_screen_height: function() {
-    return vimjs.container.offsetHeight;
+    return vimjs.container.clientHeight;
   },
 
   vimjs_draw_string__deps: ['$vimjs'],
@@ -609,9 +617,11 @@ mergeInto(LibraryManager.library, {
     var container = vimjs.container;
     container.style.font = font;
     if(!container.hasChildNodes()) {
+      /* the content will be cleared in resize() anyway */
       container.innerHTML = '<div class="vimjs-line"><span class="trans"> </span></div>';
     }
     var first_ele = container.firstChild.firstChild;
+    /* clientWidth/Height won't work */
     vimjs.char_height = first_ele.offsetHeight;
     vimjs.char_width = first_ele.offsetWidth;
 
