@@ -59,7 +59,7 @@ popd
 }
 
 #do_config
-#do_make
-#do_link
-#do_transform
+do_make
+do_link
+do_transform
 do_compress
