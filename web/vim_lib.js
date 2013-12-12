@@ -438,10 +438,21 @@ mergeInto(LibraryManager.library, {
       e.preventDefault();
       vimjs.handle_key(e.charCode, e.keyCode, e);
     });
+
+    /* 
+     * Most keys can be handled during the keypress event
+     * But some special keys must be handled during the keydown event in order to prevent default actions
+     */
+    var keys_to_intercept_upon_keydown = {};
+    [ KeyEvent.DOM_VK_ESCAPE, 
+      KeyEvent.DOM_VK_TAB, // actually works on FF, but need it for Chrome
+    ].forEach(function(k) {
+      keys_to_intercept_upon_keydown[k] = 1;
+    });
+
     /* capture some special keys that won't trigger 'keypress' */
     document.addEventListener('keydown', function(e) {
-      // TODO, create an array for all needed key codes
-      if(e.keyCode == 27)  {// ESC
+      if(e.keyCode in keys_to_intercept_upon_keydown)  {
         e.preventDefault();
         vimjs.handle_key(0, e.keyCode, e);
       }

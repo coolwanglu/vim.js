@@ -53,13 +53,13 @@ java -jar $CC_DIR/compiler.jar \
     --language_in ECMASCRIPT5 \
     --js vim-2.js\
     --js_output_file vim.js \
-    2>/dev/null
+    --externs externs.js \
 
 popd
 }
 
 #do_config
-do_make
-do_link
-do_transform
+#do_make
+#do_link
+#do_transform
 do_compress
