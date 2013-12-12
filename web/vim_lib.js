@@ -491,7 +491,9 @@ mergeInto(LibraryManager.library, {
 
   vimjs_beep__deps: ['$vimjs'],
   vimjs_beep: function() {
-    vimjs.beep.play();
+    /* sometimes this is called before vimjs.beep is initialized */
+    if(vimjs.beep)
+      vimjs.beep.play();
   },
 
   vimjs_flash: function() {

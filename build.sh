@@ -9,9 +9,10 @@ CPPFLAGS="-DFEAT_GUI_BROWSER" \
 CPP="gcc -E" \
 $EM_DIR/emconfigure ./configure \
     --enable-gui=browser \
-    --with-features=tiny \
+    --with-features=small \
     --disable-nls \
     --with-modified-by="Lu Wang" \
+    --with-compiledby="Lu Wang" \
 
 }
 

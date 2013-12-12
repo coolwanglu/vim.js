@@ -9,12 +9,11 @@ by Lu Wang
 ### Status
 
 - Works but unstable, only tested on Firefox/Chrome + Ubuntu
-- Some special keys not working on Chrome
 - Faster on Chrome than Firefox
 
 ### Features
 
-vim is built with `--with-features=tiny`. More features will be enabled gradually.
+vim is built with `--with-features=small`. More features will be enabled gradually.
 
 ### Instructions for hackers
 

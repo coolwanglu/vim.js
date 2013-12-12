@@ -233,9 +233,6 @@ mch_char_avail()
 mch_total_mem(special)
     int special UNUSED;
 {
-# ifdef __EMX__
-    return ulimit(3, 0L) >> 10;   /* always 32MB? */
-# else
     long_u	mem = 0;
     long_u	shiftright = 10;  /* how much to shift "mem" right for Kbyte */
 
@@ -318,7 +315,6 @@ mch_total_mem(special)
     if (mem > 0)
 	return mem >> shiftright;
     return (long_u)0x1fffff;
-# endif
 }
 #endif
 

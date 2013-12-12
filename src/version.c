@@ -1260,6 +1260,10 @@ list_version()
 #	 else
 #	  if defined(MACOS)
     MSG_PUTS(_("with (classic) GUI."));
+#         else
+#          ifdef FEAT_GUI_BROWSER
+    MSG_PUTS(_("with Browser GUI."));
+#          endif
 #	  endif
 #	 endif
 #	endif
