@@ -1,0 +1,11 @@
+Files with different licenses are used, read the list carefully:
+
+All Vim files (modified or not) are licensed under the same one of Vim
+
+web/narcissus/*: MPL 1.1/GPL 2.0/LGPL 2.1
+
+web/streamlinejs/*: MIT License
+web/streamline.min.js: MIT License
+
+web/transform.js: MPL 1.1/GPL 2.0/LGPL 2.1
+web/vim_lib.js: MIT License

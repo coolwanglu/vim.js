@@ -13,6 +13,8 @@ Chrome support
 tabline
 scrollbar
 do_dialog
+keypad keys
+special keys (ctrl etc)
 
 ## Web integration
 Load vim components from the web (colors, syntax etc)

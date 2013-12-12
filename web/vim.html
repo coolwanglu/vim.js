@@ -1,15 +1,22 @@
 <!doctype html>
 <!--  vim: set sw=2 ts=2 et : --> 
-<html lang="en-us">
+<html>
   <head>
     <meta charset="utf-8">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <title>Vim.js</title>
+    <title>Vim.js - JavaScript port of Vim</title>
     <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap-theme.min.css">
     <link rel="stylesheet" href="vim.css">
     <script src="streamline.min.js"></script>
     <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+      ga('create', 'UA-46390065-1', 'coolwanglu.github.io');
+      ga('send', 'pageview');
+
       var Module = {
         noInitialRun: true,
         noExitRuntime: true,
@@ -36,9 +43,17 @@
       <div class="jumbotron">
         <h1>Vim.js</h1>
         <h2>JavaScript port of Vim</h2>
-        <p class="text-muted"><small>Firefox only (for now)</small></p>
       </div>
       <div id="vimjs-container" class="container">
+        <div style="text-align:center">
+          <br>
+          <br>
+          <br>
+          <h3>Brought to you by <em>Lu Wang</em></h3>
+          <br>
+          <br>
+          <h3>Loading...(~1MB to download, ~3.5MB uncompressed)</h3>
+        </div>
       </div>
       <br>
       <br>

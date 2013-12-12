@@ -3,6 +3,24 @@
  * vim_lib.js: connect DOM and user inputs to VIM
  *
  * Copyright (c) 2013 Lu Wang <coolwanglu@gmail.com>
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
  */
 mergeInto(LibraryManager.library, {
   $vimjs: {
@@ -29,12 +47,15 @@ mergeInto(LibraryManager.library, {
       if(e.altKey) modifiers |= 0x08;
       if(e.metaKey) modifiers |= 0x10;
 
-      var special = vimjs.special_keys[keyCode];
-      if(special !== undefined) {
-        vimjs.gui_browser_handle_key(charCode || keyCode, modifiers, special.charCodeAt(0), special.charCodeAt(1));
-      } else {
-        vimjs.gui_browser_handle_key(charCode || keyCode, modifiers, 0, 0);
+      if(charCode == 0) {
+        var special = vimjs.special_keys[keyCode];
+        if(special !== undefined) {
+          vimjs.gui_browser_handle_key(charCode || keyCode, modifiers, special.charCodeAt(0), special.charCodeAt(1));
+          return;
+        } 
       }
+
+      vimjs.gui_browser_handle_key(charCode || keyCode, modifiers, 0, 0);
     },
 
     get_color_string: function(color) {
@@ -46,29 +67,26 @@ mergeInto(LibraryManager.library, {
       return 'rgb('+bgr[2]+','+bgr[1]+','+bgr[0]+')';
     },
 
-    /*
-     * this function should call gui_resize_shell
-     * but it is a 
-     */
     resize: function() {
       var screen_w = _vimjs_get_screen_width();
       var screen_h = _vimjs_get_screen_height();
       var rows = vimjs.rows = Math.floor(screen_h / vimjs.char_height) + 1;
       var cols = vimjs.cols = Math.floor(screen_w / vimjs.char_width) + 1;
       var container = vimjs.container;
+      container.style.height = rows * vimjs.char_height + 'px';
+      container.style.width = cols * vimjs.char_width + 'px';
       // TODO: optimize: reuse old elements
       // clear old elements
       container.innerHTML = '';
-      var style= 'background-color:' + vimjs.bg_color + ';';
       for(var r = 0; r < rows; ++r) {
         var row_ele = document.createElement('div');
         row_ele.classList.add('vimjs-line');
         for(var c = 0; c < cols; ++c) {
-          var col_ele = document.createElement('span');
-          col_ele.className='trans';
-          col_ele.style = style;
-          col_ele.textContent = ' ';
-          row_ele.appendChild(col_ele);
+          var cur_ele = document.createElement('span');
+          cur_ele.className = 'trans';
+          cur_ele.style.backgroundColor = vimjs.bg_color;
+          cur_ele.textContent = ' ';
+          row_ele.appendChild(cur_ele);
         }
         container.appendChild(row_ele);
       }
@@ -79,7 +97,6 @@ mergeInto(LibraryManager.library, {
 
   vimjs_init__deps: ['$vimjs', 'vimjs_init_font'],
   vimjs_init: function () {
-    console.log('vimjs_init');
     vimjs.gui_browser_handle_key = Module['cwrap']('gui_browser_handle_key', null, ['number', 'number', 'number', 'number']);
     vimjs.input_available = Module['cwrap']('input_available', 'number', []);
 
@@ -96,6 +113,127 @@ mergeInto(LibraryManager.library, {
 
     /* initialize special_keys VIMJS_FOLD_START*/
     vimjs.special_keys = [];
+    /* for Chrome */
+    /* http://stackoverflow.com/questions/1465374/javascript-event-keycode-constants/1465409#1465409 */
+    if (typeof KeyEvent == "undefined") {
+        var KeyEvent = {
+            DOM_VK_CANCEL: 3,
+            DOM_VK_HELP: 6,
+            DOM_VK_BACK_SPACE: 8,
+            DOM_VK_TAB: 9,
+            DOM_VK_CLEAR: 12,
+            DOM_VK_RETURN: 13,
+            DOM_VK_ENTER: 14,
+            DOM_VK_SHIFT: 16,
+            DOM_VK_CONTROL: 17,
+            DOM_VK_ALT: 18,
+            DOM_VK_PAUSE: 19,
+            DOM_VK_CAPS_LOCK: 20,
+            DOM_VK_ESCAPE: 27,
+            DOM_VK_SPACE: 32,
+            DOM_VK_PAGE_UP: 33,
+            DOM_VK_PAGE_DOWN: 34,
+            DOM_VK_END: 35,
+            DOM_VK_HOME: 36,
+            DOM_VK_LEFT: 37,
+            DOM_VK_UP: 38,
+            DOM_VK_RIGHT: 39,
+            DOM_VK_DOWN: 40,
+            DOM_VK_PRINTSCREEN: 44,
+            DOM_VK_INSERT: 45,
+            DOM_VK_DELETE: 46,
+            DOM_VK_0: 48,
+            DOM_VK_1: 49,
+            DOM_VK_2: 50,
+            DOM_VK_3: 51,
+            DOM_VK_4: 52,
+            DOM_VK_5: 53,
+            DOM_VK_6: 54,
+            DOM_VK_7: 55,
+            DOM_VK_8: 56,
+            DOM_VK_9: 57,
+            DOM_VK_SEMICOLON: 59,
+            DOM_VK_EQUALS: 61,
+            DOM_VK_A: 65,
+            DOM_VK_B: 66,
+            DOM_VK_C: 67,
+            DOM_VK_D: 68,
+            DOM_VK_E: 69,
+            DOM_VK_F: 70,
+            DOM_VK_G: 71,
+            DOM_VK_H: 72,
+            DOM_VK_I: 73,
+            DOM_VK_J: 74,
+            DOM_VK_K: 75,
+            DOM_VK_L: 76,
+            DOM_VK_M: 77,
+            DOM_VK_N: 78,
+            DOM_VK_O: 79,
+            DOM_VK_P: 80,
+            DOM_VK_Q: 81,
+            DOM_VK_R: 82,
+            DOM_VK_S: 83,
+            DOM_VK_T: 84,
+            DOM_VK_U: 85,
+            DOM_VK_V: 86,
+            DOM_VK_W: 87,
+            DOM_VK_X: 88,
+            DOM_VK_Y: 89,
+            DOM_VK_Z: 90,
+            DOM_VK_CONTEXT_MENU: 93,
+            DOM_VK_NUMPAD0: 96,
+            DOM_VK_NUMPAD1: 97,
+            DOM_VK_NUMPAD2: 98,
+            DOM_VK_NUMPAD3: 99,
+            DOM_VK_NUMPAD4: 100,
+            DOM_VK_NUMPAD5: 101,
+            DOM_VK_NUMPAD6: 102,
+            DOM_VK_NUMPAD7: 103,
+            DOM_VK_NUMPAD8: 104,
+            DOM_VK_NUMPAD9: 105,
+            DOM_VK_MULTIPLY: 106,
+            DOM_VK_ADD: 107,
+            DOM_VK_SEPARATOR: 108,
+            DOM_VK_SUBTRACT: 109,
+            DOM_VK_DECIMAL: 110,
+            DOM_VK_DIVIDE: 111,
+            DOM_VK_F1: 112,
+            DOM_VK_F2: 113,
+            DOM_VK_F3: 114,
+            DOM_VK_F4: 115,
+            DOM_VK_F5: 116,
+            DOM_VK_F6: 117,
+            DOM_VK_F7: 118,
+            DOM_VK_F8: 119,
+            DOM_VK_F9: 120,
+            DOM_VK_F10: 121,
+            DOM_VK_F11: 122,
+            DOM_VK_F12: 123,
+            DOM_VK_F13: 124,
+            DOM_VK_F14: 125,
+            DOM_VK_F15: 126,
+            DOM_VK_F16: 127,
+            DOM_VK_F17: 128,
+            DOM_VK_F18: 129,
+            DOM_VK_F19: 130,
+            DOM_VK_F20: 131,
+            DOM_VK_F21: 132,
+            DOM_VK_F22: 133,
+            DOM_VK_F23: 134,
+            DOM_VK_F24: 135,
+            DOM_VK_NUM_LOCK: 144,
+            DOM_VK_SCROLL_LOCK: 145,
+            DOM_VK_COMMA: 188,
+            DOM_VK_PERIOD: 190,
+            DOM_VK_SLASH: 191,
+            DOM_VK_BACK_QUOTE: 192,
+            DOM_VK_OPEN_BRACKET: 219,
+            DOM_VK_BACK_SLASH: 220,
+            DOM_VK_CLOSE_BRACKET: 221,
+            DOM_VK_QUOTE: 222,
+            DOM_VK_META: 224
+        };
+    }
     [
       [KeyEvent.DOM_VK_UP,  'ku'],
       [KeyEvent.DOM_VK_DOWN,  'kd'],
@@ -354,24 +492,24 @@ mergeInto(LibraryManager.library, {
   vimjs_draw_string__deps: ['$vimjs'],
   vimjs_draw_string: function(row, col, s, len, flags) {
     var class_name = '';
-    var style = '';
-
+    var set_fg_color = true;
     // TODO: use macros
-    if(flags & 0x01) class_name += ' trans';
-    else style += 'color:' + vimjs.fg_color + ';';
-
+    if(flags & 0x01) {
+      class_name += ' trans';
+      set_fg_color = false;
+    }
     if(flags & 0x02) class_name += ' bold';
     if(flags & 0x04) class_name += ' underl';
     if(flags & 0x08) class_name += ' underc';
-
-    style += 'background-color:' + vimjs.bg_color + ';';
 
     s = Pointer_stringify(s);
     var row_list = vimjs.container.childNodes[row].childNodes;
     for(var i = 0; i < len; ++i) {
       var cur_ele = row_list[col+i];
       cur_ele.className = class_name;
-      cur_ele.style = style;
+      if(set_fg_color) 
+        cur_ele.style.color = vimjs.fg_color;
+      cur_ele.style.backgroundColor = vimjs.bg_color;
       cur_ele.textContent = s[i];
     }
   },
@@ -379,13 +517,12 @@ mergeInto(LibraryManager.library, {
   vimjs_clear_block__deps: ['$vimjs'],
   vimjs_clear_block: function(row1, col1, row2, col2) {
     var row_list = vimjs.container.childNodes;
-    var style= 'background-color:' + vimjs.bg_color + ';';
     for(var r = row1; r <= row2; ++r) {
       var cur_row  = row_list[r].childNodes;
       for(var c = col1; c <= col2; ++c) {
         var cur_ele = cur_row[c];
         cur_ele.className = 'trans';
-        cur_ele.style = style;
+        cur_ele.style.backgroundColor = vimjs.bg_color;
         cur_ele.textContent = ' ';
       }
     }
@@ -394,13 +531,12 @@ mergeInto(LibraryManager.library, {
   vimjs_clear_all__deps: ['$vimjs'],
   vimjs_clear_all: function() {
     var row_list = vimjs.container.childNodes;
-    var style= 'background-color:' + vimjs.bg_color + ';';
     for(var r = 0, rl = row_list.length; r < rl; ++r) {
       var cur_row  = row_list[r].childNodes;
       for(var c = 0, cl = cur_row.length; c < cl; ++c) {
         var cur_ele = cur_row[c];
         cur_ele.className = 'trans';
-        cur_ele.style = style;
+        cur_ele.style.backgroundColor = vimjs.bg_color;
         cur_ele.textContent = ' ';
       }
     }
@@ -413,17 +549,16 @@ mergeInto(LibraryManager.library, {
     for(var i = row, l = row + num_lines; i < l; ++i)
       container.removeChild(cur_children[i]);
     // append some new lines in the end
-    var style= 'background-color:' + vimjs.bg_color + ';';
     var cols = vimjs.cols;
     for(var r = 0; r < num_lines; ++r) {
       var row_ele = document.createElement('div');
       row_ele.classList.add('vimjs-line');
       for(var c = 0; c < cols; ++c) {
-        var col_ele = document.createElement('span');
-        col_ele.className='trans';
-        col_ele.style = style;
-        col_ele.textContent = ' ';
-        row_ele.appendChild(col_ele);
+        var cur_ele = document.createElement('span');
+        cur_ele.className='trans';
+        cur_ele.style.backgroundColor = vimjs.bg_color;
+        cur_ele.textContent = ' ';
+        row_ele.appendChild(cur_ele);
       }
       container.appendChild(row_ele);
     }
@@ -434,18 +569,17 @@ mergeInto(LibraryManager.library, {
     var container = vimjs.container;
     var cur_children = container.childNodes;
     var ref_child = (cur_children.length > row ? cur_children[row] : null);
-    var style= 'background-color:' + vimjs.bg_color + ';';
     for(var r = 0; r < num_lines; ++r) {
       var row_ele = document.createElement('div');
       row_ele.classList.add('vimjs-line');
       var row_ele_list = [];
       for(var c = 0; c < vimjs.cols; ++c) {
-        var col_ele = document.createElement('span');
-        col_ele.className='trans';
-        col_ele.style = style;
-        col_ele.textContent = ' ';
-        row_ele.appendChild(col_ele);
-        row_ele_list.push(col_ele);
+        var cur_ele = document.createElement('span');
+        cur_ele.className='trans';
+        cur_ele.style.backgroundColor = vimjs.bg_color;
+        cur_ele.textContent = ' ';
+        row_ele.appendChild(cur_ele);
+        row_ele_list.push(cur_ele);
       }
       container.insertBefore(row_ele, ref_child); 
     }
@@ -513,7 +647,7 @@ mergeInto(LibraryManager.library, {
       if(builtin_rgb)
         rgb = builtin_rgb;
       else
-        console.log(string, 'vimjs_get_rgb: invalid color: which should not happen!');
+        console.log(string, 'vimjs_get_rgb(): invalid color: *' + string + '* which should not happen!');
     }
     var ret = 0;
     for (var i = 0; i < rgb.length; i++) {
