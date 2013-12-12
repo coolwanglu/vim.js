@@ -14,8 +14,10 @@ Runnable, but very unstable, only tested on Firefox + Ubuntu
 
 - Prepare the dependencies:
   - emscripten
+  - node.js
   - streamline.js
   - closure compiler
+  - cproto (maybe)
 - Get yourself familiar with everything above and also:
   - source code of vim
   - JavaScript
