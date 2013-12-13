@@ -12,13 +12,13 @@
  * A few functions are initially marked as async manually 
  * All async functions are identified based on the rule:
  *     Any function that calls an async function is also async
- * Add the _ parameter in the definition and calls of all async functions (except for intial ones)
+ * Add the _ parameter in the definition and calls of all async functions (except for initial ones)
  * The transformed code is to be further transformed by streamline.js
  *
  * Assumptions on the input
  *
  * All the async functions have the '_' prefix in their names
- * Functions are never got renamed, assigned -- functions can be uniquely identified by their names
+ * Functions are never got renamed or assigned -- functions can be uniquely identified by their names
  * There may be other functions (without the '_' prefix), which never call async functions
  * _ is never used as a parameter -- for streamline.js
  * No function pointers of async functions -- will be wrapped with vimjs_async_cmd_call in the source code
@@ -758,8 +758,6 @@ function traverse(n, callback) {
 }
 
 
-console.log('Preparation...');
-
 
 function work() {
 
@@ -813,16 +811,18 @@ function work() {
         }
     }
 
+    fs.writeFileSync('async_function_list', JSON.stringify(async_func_names, null, 2));
     var cnt = 0;
     for(var fn in async_func_names)
         ++ cnt;
-    fs.writeFileSync('async_function_list', JSON.stringify(async_func_names, null, 2));
     console.log(cnt + ' aync functions found, written to async_function_list.')
 
     console.log('Saving...');
     var out_src = pp(root);
     fs.writeFileSync(out_filename, out_src);
 }
+
+console.log('Preparation...');
 
 // ugly preparation of narcissus
 window = this;
