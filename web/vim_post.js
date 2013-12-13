@@ -30,6 +30,7 @@
   argv = allocate(argv, "i32", ALLOC_NORMAL);
   initialStackTop = STACKTOP;
   try {
+    var crashed = false;
     var ret = Module["_main"](_, argc, argv, 0);
     if (!Module["noExitRuntime"]) {
       exit(ret); 
@@ -41,6 +42,8 @@
       Module["noExitRuntime"] = true;
       return; 
     } else {
+      crashed = true;
+
       if (e && (typeof e === "object") && e.stack) {
         Module.printErr("exception thrown: " + [e,e.stack,]); 
       }
@@ -48,5 +51,6 @@
     }
   } finally {
     calledMain = true; 
+    Module["vimjs-exit"](crashed);
   }
-})(Module["vimjs-exit"], [/* command line args for vim */]);
+})(, [/* command line args for vim */]);

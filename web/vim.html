@@ -31,8 +31,11 @@
             console.log((new Error).stack);
             console.groupEnd();
         },
-        'vimjs-exit': function() {
-          document.getElementById('vimjs-container').innerHTML = '<div style="text-align:center"><br><br><br><h3>Did you enjoy Vim.js?</h3><br><br><p>You can refresh the page to start over. Why not get involved and help developing Vim.js?</p></div>';
+        'vimjs-exit': function(crashed) {
+          var msg = crashed 
+            ? '<div style="text-align:center"><br><br><br><h3>Oops! Something went wrong.</h3><br><br><p>Plesae check out the messages in the browser console and file an issue at GitHub.</p></div>'
+            : '<div style="text-align:center"><br><br><br><h3>Did you enjoy Vim.js?</h3><br><br><p>You can refresh the page to start over.</p></p>Why not get involved and help developing Vim.js?</p></div>';
+          document.getElementById('vimjs-container').innerHTML = msg;
         },
       };
     </script>

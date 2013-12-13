@@ -38,6 +38,7 @@ gui_mch_mousehide(int hide)
     void
 gui_mch_prepare(int *argc, char **argv)
 {
+    // nothing to do
 }
 
 
@@ -46,6 +47,8 @@ gui_mch_prepare(int *argc, char **argv)
 /*
  * Check if the GUI can be started.  Called before gvimrc is sourced.
  * Return OK or FAIL.
+ *
+ * Not needed by vim.js
  */
     int
 gui_mch_init_check(void)
@@ -75,14 +78,11 @@ gui_mch_init(void)
     gui.def_back_pixel = gui.back_pixel;
     gui.def_norm_pixel = gui.norm_pixel;
 
-/* TODO
-    gui.char_width = 7;
-    gui.char_height = 11;
-    gui.char_ascent = 6;
     gui.in_focus = TRUE; 
+
+/* TODO
+    gui.char_ascent = 6;
 */
-
-
     return OK;
 }
 
@@ -93,14 +93,14 @@ gui_mch_init(void)
     void
 gui_mch_new_colors(void)
 {
-    //TODO
+    // Nothing to do
 }
 
 /*
  * Recalculate Rows and Columns
  * Keep the text area fully occupied
  */
-    void
+    static void
 gui_browser_resize(void)
 {
     int w, h;
@@ -121,6 +121,7 @@ gui_mch_open(void)
     void
 gui_mch_exit(int rc)
 {
+    // Nothing to do
 }
 
 /*
@@ -140,7 +141,8 @@ gui_mch_get_winpos(int *x, int *y)
     void
 gui_mch_set_winpos(int x, int y)
 {
-    //TODO
+    // Nothing to do
+    // we never change winpos
 }
 
     void
@@ -153,7 +155,7 @@ gui_mch_set_shellsize(
     int		base_height,
     int		direction)
 {
-    // TODO
+    vimjs_check_dimension(gui.num_rows, gui.num_cols);
 }
 
 /*
@@ -436,6 +438,7 @@ gui_mch_flush(void)
     void
 gui_mch_clear_block(int row1, int col1, int row2, int col2)
 {
+    gui_mch_set_bg_color(gui.back_pixel);
     vimjs_clear_block(row1, col1, row2, col2);
 }
 
@@ -445,6 +448,7 @@ gui_mch_clear_block(int row1, int col1, int row2, int col2)
     void
 gui_mch_clear_all(void)
 {
+    gui_mch_set_bg_color(gui.back_pixel);
     vimjs_clear_all();
 }
 
@@ -455,6 +459,7 @@ gui_mch_clear_all(void)
     void
 gui_mch_delete_lines(int row, int num_lines)
 {
+    gui_mch_set_bg_color(gui.back_pixel);
     vimjs_delete_lines(row, num_lines);
 }
 
@@ -472,6 +477,7 @@ gui_mch_set_text_area_pos(int x, int y, int w, int h)
     void
 gui_mch_insert_lines(int row, int num_lines)
 {
+    gui_mch_set_bg_color(gui.back_pixel);
     vimjs_insert_lines(row, num_lines);
 }
 

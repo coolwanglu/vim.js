@@ -75,11 +75,13 @@ mergeInto(LibraryManager.library, {
       return 'rgb('+bgr[2]+','+bgr[1]+','+bgr[0]+')';
     },
 
-    resize: function() {
+    resize: function(rows, cols) {
       var screen_w = _vimjs_get_screen_width();
       var screen_h = _vimjs_get_screen_height();
-      var rows = vimjs.rows = Math.floor(screen_h / vimjs.char_height) + 1;
-      var cols = vimjs.cols = Math.floor(screen_w / vimjs.char_width) + 1;
+      rows = rows || (Math.floor(screen_h / vimjs.char_height) + 1);
+      cols = cols || (Math.floor(screen_w / vimjs.char_width) + 1);
+      vimjs.rows = rows;
+      vimjs.cols = cols;
       var container = vimjs.container;
       container.style.height = rows * vimjs.char_height + 'px';
       container.style.width = cols * vimjs.char_width + 'px';
@@ -533,6 +535,17 @@ mergeInto(LibraryManager.library, {
   vimjs_get_screen_height__deps: ['$vimjs'],
   vimjs_get_screen_height: function() {
     return vimjs.container.clientHeight;
+  },
+
+  // ensure that we have enough blocks
+  vimjs_check_dimension__deps: ['$vimjs'],
+  vimjs_check_dimension: function(rows, cols) {
+    try {
+      if (vimjs.container.childNodes[rows-1].childNodes[cols-1] === undefined)
+        resize(rows, cols);
+    } catch (e) {
+        resize(rows, cols);
+    }
   },
 
   vimjs_draw_string__deps: ['$vimjs'],

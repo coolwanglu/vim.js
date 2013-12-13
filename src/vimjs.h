@@ -18,6 +18,7 @@ void vimjs_flash();
 // merics
 int vimjs_get_screen_width();
 int vimjs_get_screen_height();
+void vimjs_check_dimension(int, int);
 
 // text
 void vimjs_draw_string(int row, int col, char_u *s, int len, int flags);

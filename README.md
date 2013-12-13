@@ -27,7 +27,8 @@ Run `:version` to check.
   - node.js
   - streamline.js
   - closure compiler
-  - GCC & cproto (sometimes you need to run `make proto`)
+  - GCC & cproto (maybe)
+    - Sometimes you need to run `make proto` when you see errors about 'undeclared variables/functions/structs'
 - Get yourself familiar with everything above and also:
   - source code of vim
   - JavaScript, and also HTML/CSS
@@ -45,6 +46,8 @@ Patches are welcome and wanted for
 - Other stuffs in `TODO`
 
 If you want to work on other features to be merged, please file an issue and discuss with me first.
+
+Do not override `vim.js` or `build.sh`!
 
 ### Contact
 
