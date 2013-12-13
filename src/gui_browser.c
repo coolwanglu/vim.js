@@ -155,6 +155,7 @@ gui_mch_set_shellsize(
     int		base_height,
     int		direction)
 {
+    // TODO: this is not working properly,  gui.num_*** are too small
     vimjs_check_dimension(gui.num_rows, gui.num_cols);
 }
 

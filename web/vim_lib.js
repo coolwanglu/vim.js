@@ -124,6 +124,7 @@ mergeInto(LibraryManager.library, {
     var container = vimjs.container = document.getElementById('vimjs-container');
     // there might be text nodes of other stuffs before loading vim
     container.innerHTML = '';
+    container.style.backgroundColor = 'black';
 
     // will call the resize function
     _vimjs_init_font('');
