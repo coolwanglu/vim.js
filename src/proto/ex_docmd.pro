@@ -25,7 +25,7 @@ int parse_compl_arg __ARGS((char_u *value, int vallen, int *complp, long *argt, 
 void not_exiting __ARGS((void));
 void tabpage_close __ARGS((int forceit));
 void tabpage_close_other __ARGS((tabpage_T *tp, int forceit));
-void ex_ni __ARGS((exarg_T *eap));
+void ex_all __ARGS((exarg_T *eap));
 void handle_drop __ARGS((int filec, char_u **filev, int split));
 void alist_clear __ARGS((alist_T *al));
 void alist_init __ARGS((alist_T *al));
@@ -35,6 +35,8 @@ void alist_expand __ARGS((int *fnum_list, int fnum_len));
 void alist_set __ARGS((alist_T *al, int count, char_u **files, int use_curbuf, int *fnum_list, int fnum_len));
 void alist_add __ARGS((alist_T *al, char_u *fname, int set_fnum));
 void alist_slash_adjust __ARGS((void));
+void ex_splitview __ARGS((exarg_T *eap));
+void tabpage_new __ARGS((void));
 void do_exedit __ARGS((exarg_T *eap, win_T *old_curwin));
 void free_cd_dir __ARGS((void));
 void post_chdir __ARGS((int local));
