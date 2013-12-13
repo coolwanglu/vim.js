@@ -22,7 +22,7 @@ vim is built with `--with-features=tiny`. More features will be enabled graduall
   - node.js
   - streamline.js
   - closure compiler
-  - GCC & cproto (in case you need to generate the .pro files)
+  - GCC & cproto (sometimes you need to run `make proto`)
 - Get yourself familiar with everything above and also:
   - source code of vim
   - JavaScript, and also HTML/CSS
