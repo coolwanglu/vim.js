@@ -36,139 +36,24 @@ typedef int waitstatus;
 
 static int  RealWaitForChar __ARGS((int, long, int *));
 
-#if defined(SIGINT)
-static RETSIGTYPE catch_sigint __ARGS(SIGPROTOARG);
-#endif
-#if defined(SIGPWR)
-static RETSIGTYPE catch_sigpwr __ARGS(SIGPROTOARG);
-#endif
-#if defined(SIGALRM) && defined(FEAT_X11) \
-	&& defined(FEAT_TITLE) && !defined(FEAT_GUI_GTK)
-# define SET_SIG_ALARM
-static RETSIGTYPE sig_alarm __ARGS(SIGPROTOARG);
-/* volatile because it is used in signal handler sig_alarm(). */
-static volatile int sig_alarm_called;
-#endif
-static RETSIGTYPE deathtrap __ARGS(SIGPROTOARG);
-
-static void catch_int_signal __ARGS((void));
-static void set_signals __ARGS((void));
-static void catch_signals __ARGS((RETSIGTYPE (*func_deadly)(), RETSIGTYPE (*func_other)()));
-#ifndef __EMX__
 static int  have_wildcard __ARGS((int, char_u **));
 static int  have_dollars __ARGS((int, char_u **));
-#endif
 
-#ifndef __EMX__
 static int save_patterns __ARGS((int num_pat, char_u **pat, int *num_file, char_u ***file));
-#endif
 
-#ifndef SIG_ERR
-# define SIG_ERR	((RETSIGTYPE (*)())-1)
-#endif
 
-#ifndef __EMX__
 static char_u	*extra_shell_arg = NULL;
 static int	show_shell_mess = TRUE;
-#endif
-/* volatile because it is used in signal handler deathtrap(). */
-static volatile int deadly_signal = 0;	    /* The signal we caught */
-/* volatile because it is used in signal handler deathtrap(). */
-static volatile int in_mch_delay = FALSE;    /* sleeping in mch_delay() */
 
 static int curr_tmode = TMODE_COOK;	/* contains current terminal mode */
 
-#ifdef SYS_SIGLIST_DECLARED
-/*
- * I have seen
- *  extern char *_sys_siglist[NSIG];
- * on Irix, Linux, NetBSD and Solaris. It contains a nice list of strings
- * that describe the signals. That is nearly what we want here.  But
- * autoconf does only check for sys_siglist (without the underscore), I
- * do not want to change everything today.... jw.
- * This is why AC_DECL_SYS_SIGLIST is commented out in configure.in
- */
-#endif
 
-static struct signalinfo
-{
-    int	    sig;	/* Signal number, eg. SIGSEGV etc */
-    char    *name;	/* Signal name (not char_u!). */
-    char    deadly;	/* Catch as a deadly signal? */
-} signal_info[] =
-{
-#ifdef SIGHUP
-    {SIGHUP,	    "HUP",	TRUE},
-#endif
-#ifdef SIGQUIT
-    {SIGQUIT,	    "QUIT",	TRUE},
-#endif
-#ifdef SIGILL
-    {SIGILL,	    "ILL",	TRUE},
-#endif
-#ifdef SIGTRAP
-    {SIGTRAP,	    "TRAP",	TRUE},
-#endif
-#ifdef SIGABRT
-    {SIGABRT,	    "ABRT",	TRUE},
-#endif
-#ifdef SIGEMT
-    {SIGEMT,	    "EMT",	TRUE},
-#endif
-#ifdef SIGFPE
-    {SIGFPE,	    "FPE",	TRUE},
-#endif
-#ifdef SIGBUS
-    {SIGBUS,	    "BUS",	TRUE},
-#endif
-#if defined(SIGSEGV)
-    /* MzScheme uses SEGV in its garbage collector */
-    {SIGSEGV,	    "SEGV",	TRUE},
-#endif
-#ifdef SIGSYS
-    {SIGSYS,	    "SYS",	TRUE},
-#endif
-#ifdef SIGALRM
-    {SIGALRM,	    "ALRM",	FALSE},	/* Perl's alarm() can trigger it */
-#endif
-#ifdef SIGTERM
-    {SIGTERM,	    "TERM",	TRUE},
-#endif
-#if defined(SIGVTALRM) && !defined(FEAT_RUBY)
-    {SIGVTALRM,	    "VTALRM",	TRUE},
-#endif
-#if defined(SIGPROF) && !defined(WE_ARE_PROFILING)
-    /* MzScheme uses SIGPROF for its own needs; On Linux with profiling
-     * this makes Vim exit.  WE_ARE_PROFILING is defined in Makefile.  */
-    {SIGPROF,	    "PROF",	TRUE},
-#endif
-#ifdef SIGXCPU
-    {SIGXCPU,	    "XCPU",	TRUE},
-#endif
-#ifdef SIGXFSZ
-    {SIGXFSZ,	    "XFSZ",	TRUE},
-#endif
-#ifdef SIGUSR1
-    {SIGUSR1,	    "USR1",	TRUE},
-#endif
-#if defined(SIGUSR2) && !defined(FEAT_SYSMOUSE)
-    /* Used for sysmouse handling */
-    {SIGUSR2,	    "USR2",	TRUE},
-#endif
-#ifdef SIGINT
-    {SIGINT,	    "INT",	FALSE},
-#endif
-#ifdef SIGWINCH
-    {SIGWINCH,	    "WINCH",	FALSE},
-#endif
-#ifdef SIGTSTP
-    {SIGTSTP,	    "TSTP",	FALSE},
-#endif
-#ifdef SIGPIPE
-    {SIGPIPE,	    "PIPE",	FALSE},
-#endif
-    {-1,	    "Unknown!", FALSE}
-};
+/*
+ * dummy functions to match UNIX interfaces
+ */
+
+    void
+reset_signals() {}
 
     int
 mch_chdir(path)
@@ -180,11 +65,7 @@ mch_chdir(path)
 	smsg((char_u *)"chdir(%s)", path);
 	verbose_leave();
     }
-# ifdef VMS
-    return chdir(vms_fixfilename(path));
-# else
     return chdir(path);
-# endif
 }
 
 /*
@@ -336,7 +217,6 @@ mch_delay(msec, ignoreinput)
     /* Go to cooked mode without echo, to allow SIGINT interrupting us
      * here.  But we don't want QUIT to kill us (CTRL-\ used in a
      * shell may produce SIGQUIT). */
-    in_mch_delay = TRUE;
     old_tmode = curr_tmode;
     if (curr_tmode == TMODE_RAW)
         settmode(TMODE_SLEEP);
@@ -344,11 +224,9 @@ mch_delay(msec, ignoreinput)
     vimjs_sleep(msec);
 
     settmode(old_tmode);
-    in_mch_delay = FALSE;
 }
 
-#if defined(HAVE_STACK_LIMIT) \
-	|| (!defined(HAVE_SIGALTSTACK) && defined(HAVE_SIGSTACK))
+#if defined(HAVE_STACK_LIMIT) 
 # define HAVE_CHECK_STACK_GROWTH
 /*
  * Support for checking for an almost-out-of-stack-space situation.
@@ -378,10 +256,6 @@ check_stack_growth(p)
 #if defined(HAVE_STACK_LIMIT) || defined(PROTO)
 static char *stack_limit = NULL;
 
-#if defined(_THREAD_SAFE) && defined(HAVE_PTHREAD_NP_H)
-# include <pthread.h>
-# include <pthread_np.h>
-#endif
 
 /*
  * Find out until how var the stack can grow without getting into trouble.
@@ -405,23 +279,6 @@ get_stack_limit()
        )
     {
 	lim = (long)rlp.rlim_cur;
-#if defined(_THREAD_SAFE) && defined(HAVE_PTHREAD_NP_H)
-	{
-	    pthread_attr_t  attr;
-	    size_t	    size;
-
-	    /* On FreeBSD the initial thread always has a fixed stack size, no
-	     * matter what the limits are set to.  Normally it's 1 Mbyte. */
-	    pthread_attr_init(&attr);
-	    if (pthread_attr_get_np(pthread_self(), &attr) == 0)
-	    {
-		pthread_attr_getstacksize(&attr, &size);
-		if (lim > (long)size)
-		    lim = (long)size;
-	    }
-	    pthread_attr_destroy(&attr);
-	}
-#endif
 	if (stack_grows_downwards)
 	{
 	    stack_limit = (char *)((long)&i - (lim / 16L * 15L));
@@ -457,342 +314,6 @@ mch_stackcheck(p)
 	    return FAIL;
     }
     return OK;
-}
-#endif
-
-#if defined(HAVE_SIGALTSTACK) || defined(HAVE_SIGSTACK)
-/*
- * Support for using the signal stack.
- * This helps when we run out of stack space, which causes a SIGSEGV.  The
- * signal handler then must run on another stack, since the normal stack is
- * completely full.
- */
-
-#if defined(HAVE_AVAILABILITYMACROS_H)
-# include <AvailabilityMacros.h>
-#endif
-
-#ifndef SIGSTKSZ
-# define SIGSTKSZ 8000    /* just a guess of how much stack is needed... */
-#endif
-
-# ifdef HAVE_SIGALTSTACK
-static stack_t sigstk;			/* for sigaltstack() */
-# else
-static struct sigstack sigstk;		/* for sigstack() */
-# endif
-
-static void init_signal_stack __ARGS((void));
-static char *signal_stack;
-
-    static void
-init_signal_stack()
-{
-    if (signal_stack != NULL)
-    {
-# ifdef HAVE_SIGALTSTACK
-#  if defined(__APPLE__) && (!defined(MAC_OS_X_VERSION_MAX_ALLOWED) \
-		|| MAC_OS_X_VERSION_MAX_ALLOWED <= 1040)
-	/* missing prototype.  Adding it to osdef?.h.in doesn't work, because
-	 * "struct sigaltstack" needs to be declared. */
-	extern int sigaltstack __ARGS((const struct sigaltstack *ss, struct sigaltstack *oss));
-#  endif
-
-#  ifdef HAVE_SS_BASE
-	sigstk.ss_base = signal_stack;
-#  else
-	sigstk.ss_sp = signal_stack;
-#  endif
-	sigstk.ss_size = SIGSTKSZ;
-	sigstk.ss_flags = 0;
-	(void)sigaltstack(&sigstk, NULL);
-# else
-	sigstk.ss_sp = signal_stack;
-	if (stack_grows_downwards)
-	    sigstk.ss_sp += SIGSTKSZ - 1;
-	sigstk.ss_onstack = 0;
-	(void)sigstack(&sigstk, NULL);
-# endif
-    }
-}
-#endif
-
-
-#if defined(SIGINT)
-    static RETSIGTYPE
-catch_sigint SIGDEFARG(sigarg)
-{
-    /* this is not required on all systems, but it doesn't hurt anybody */
-    signal(SIGINT, (RETSIGTYPE (*)())catch_sigint);
-    got_int = TRUE;
-    SIGRETURN;
-}
-#endif
-
-#if defined(SIGPWR)
-    static RETSIGTYPE
-catch_sigpwr SIGDEFARG(sigarg)
-{
-    /* this is not required on all systems, but it doesn't hurt anybody */
-    signal(SIGPWR, (RETSIGTYPE (*)())catch_sigpwr);
-    /*
-     * I'm not sure we get the SIGPWR signal when the system is really going
-     * down or when the batteries are almost empty.  Just preserve the swap
-     * files and don't exit, that can't do any harm.
-     */
-    ml_sync_all(FALSE, FALSE);
-    SIGRETURN;
-}
-#endif
-
-#ifdef SET_SIG_ALARM
-/*
- * signal function for alarm().
- */
-    static RETSIGTYPE
-sig_alarm SIGDEFARG(sigarg)
-{
-    /* doesn't do anything, just to break a system call */
-    sig_alarm_called = TRUE;
-    SIGRETURN;
-}
-#endif
-
-#if (defined(HAVE_SETJMP_H) \
-	&& defined(FEAT_LIBCALL)) \
-    || defined(PROTO)
-/*
- * A simplistic version of setjmp() that only allows one level of using.
- * Don't call twice before calling mch_endjmp()!.
- * Usage:
- *	mch_startjmp();
- *	if (SETJMP(lc_jump_env) != 0)
- *	{
- *	    mch_didjmp();
- *	    EMSG("crash!");
- *	}
- *	else
- *	{
- *	    do_the_work;
- *	    mch_endjmp();
- *	}
- * Note: Can't move SETJMP() here, because a function calling setjmp() must
- * not return before the saved environment is used.
- * Returns OK for normal return, FAIL when the protected code caused a
- * problem and LONGJMP() was used.
- */
-    void
-mch_startjmp()
-{
-#ifdef SIGHASARG
-    lc_signal = 0;
-#endif
-    lc_active = TRUE;
-}
-
-    void
-mch_endjmp()
-{
-    lc_active = FALSE;
-}
-
-    void
-mch_didjmp()
-{
-# if defined(HAVE_SIGALTSTACK) || defined(HAVE_SIGSTACK)
-    /* On FreeBSD the signal stack has to be reset after using siglongjmp(),
-     * otherwise catching the signal only works once. */
-    init_signal_stack();
-# endif
-}
-#endif
-
-/*
- * This function handles deadly signals.
- * It tries to preserve any swap files and exit properly.
- * (partly from Elvis).
- * NOTE: Avoid unsafe functions, such as allocating memory, they can result in
- * a deadlock.
- */
-    static RETSIGTYPE
-deathtrap SIGDEFARG(sigarg)
-{
-    static int	entered = 0;	    /* count the number of times we got here.
-				       Note: when memory has been corrupted
-				       this may get an arbitrary value! */
-#ifdef SIGHASARG
-    int		i;
-#endif
-
-#if defined(HAVE_SETJMP_H)
-    /*
-     * Catch a crash in protected code.
-     * Restores the environment saved in lc_jump_env, which looks like
-     * SETJMP() returns 1.
-     */
-    if (lc_active)
-    {
-# if defined(SIGHASARG)
-	lc_signal = sigarg;
-# endif
-	lc_active = FALSE;	/* don't jump again */
-	LONGJMP(lc_jump_env, 1);
-	/* NOTREACHED */
-    }
-#endif
-
-#ifdef SIGHASARG
-# ifdef SIGQUIT
-    /* While in mch_delay() we go to cooked mode to allow a CTRL-C to
-     * interrupt us.  But in cooked mode we may also get SIGQUIT, e.g., when
-     * pressing CTRL-\, but we don't want Vim to exit then. */
-    if (in_mch_delay && sigarg == SIGQUIT)
-	SIGRETURN;
-# endif
-
-    /* When SIGHUP, SIGQUIT, etc. are blocked: postpone the effect and return
-     * here.  This avoids that a non-reentrant function is interrupted, e.g.,
-     * free().  Calling free() again may then cause a crash. */
-    if (entered == 0
-	    && (0
-# ifdef SIGHUP
-		|| sigarg == SIGHUP
-# endif
-# ifdef SIGQUIT
-		|| sigarg == SIGQUIT
-# endif
-# ifdef SIGTERM
-		|| sigarg == SIGTERM
-# endif
-# ifdef SIGPWR
-		|| sigarg == SIGPWR
-# endif
-# ifdef SIGUSR1
-		|| sigarg == SIGUSR1
-# endif
-# ifdef SIGUSR2
-		|| sigarg == SIGUSR2
-# endif
-		)
-	    && !vim_handle_signal(sigarg))
-	SIGRETURN;
-#endif
-
-    /* Remember how often we have been called. */
-    ++entered;
-
-#ifdef FEAT_EVAL
-    /* Set the v:dying variable. */
-    set_vim_var_nr(VV_DYING, (long)entered);
-#endif
-
-#ifdef HAVE_STACK_LIMIT
-    /* Since we are now using the signal stack, need to reset the stack
-     * limit.  Otherwise using a regexp will fail. */
-    get_stack_limit();
-#endif
-
-#if 0
-    /* This is for opening gdb the moment Vim crashes.
-     * You need to manually adjust the file name and Vim executable name.
-     * Suggested by SungHyun Nam. */
-    {
-# define VI_GDB_FILE "/tmp/vimgdb"
-# define VIM_NAME "/usr/bin/vim"
-	FILE *fp = fopen(VI_GDB_FILE, "w");
-	if (fp)
-	{
-	    fprintf(fp,
-		    "file %s\n"
-		    "attach %d\n"
-		    "set height 1000\n"
-		    "bt full\n"
-		    , VIM_NAME, getpid());
-	    fclose(fp);
-	    system("xterm -e gdb -x "VI_GDB_FILE);
-	    unlink(VI_GDB_FILE);
-	}
-    }
-#endif
-
-#ifdef SIGHASARG
-    /* try to find the name of this signal */
-    for (i = 0; signal_info[i].sig != -1; i++)
-	if (sigarg == signal_info[i].sig)
-	    break;
-    deadly_signal = sigarg;
-#endif
-
-    full_screen = FALSE;	/* don't write message to the GUI, it might be
-				 * part of the problem... */
-    /*
-     * If something goes wrong after entering here, we may get here again.
-     * When this happens, give a message and try to exit nicely (resetting the
-     * terminal mode, etc.)
-     * When this happens twice, just exit, don't even try to give a message,
-     * stack may be corrupt or something weird.
-     * When this still happens again (or memory was corrupted in such a way
-     * that "entered" was clobbered) use _exit(), don't try freeing resources.
-     */
-    if (entered >= 3)
-    {
-	reset_signals();	/* don't catch any signals anymore */
-	may_core_dump();
-	if (entered >= 4)
-	    _exit(8);
-	exit(7);
-    }
-    if (entered == 2)
-    {
-	/* No translation, it may call malloc(). */
-	OUT_STR("Vim: Double signal, exiting\n");
-	out_flush();
-	getout(1);
-    }
-
-    /* No translation, it may call malloc(). */
-#ifdef SIGHASARG
-    sprintf((char *)IObuff, "Vim: Caught deadly signal %s\n",
-							 signal_info[i].name);
-#else
-    sprintf((char *)IObuff, "Vim: Caught deadly signal\n");
-#endif
-
-    /* Preserve files and exit.  This sets the really_exiting flag to prevent
-     * calling free(). */
-    preserve_exit();
-
-#ifdef NBDEBUG
-    reset_signals();
-    may_core_dump();
-    abort();
-#endif
-
-    SIGRETURN;
-}
-
-#if defined(_REENTRANT) && defined(SIGCONT)
-/*
- * On Solaris with multi-threading, suspending might not work immediately.
- * Catch the SIGCONT signal, which will be used as an indication whether the
- * suspending has been done or not.
- *
- * On Linux, signal is not always handled immediately either.
- * See https://bugs.launchpad.net/bugs/291373
- *
- * volatile because it is used in signal handler sigcont_handler().
- */
-static volatile int sigcont_received;
-static RETSIGTYPE sigcont_handler __ARGS(SIGPROTOARG);
-
-/*
- * signal handler for SIGCONT
- */
-    static RETSIGTYPE
-sigcont_handler SIGDEFARG(sigarg)
-{
-    sigcont_received = TRUE;
-    SIGRETURN;
 }
 #endif
 
@@ -872,53 +393,7 @@ restore_clipboard()
     void
 mch_suspend()
 {
-    /* BeOS does have SIGTSTP, but it doesn't work. */
-#if defined(SIGTSTP) && !defined(__BEOS__)
-    out_flush();	    /* needed to make cursor visible on some systems */
-    settmode(TMODE_COOK);
-    out_flush();	    /* needed to disable mouse on some systems */
-
-# if defined(FEAT_CLIPBOARD) && defined(FEAT_X11)
-    loose_clipboard();
-# endif
-
-# if defined(_REENTRANT) && defined(SIGCONT)
-    sigcont_received = FALSE;
-# endif
-    kill(0, SIGTSTP);	    /* send ourselves a STOP signal */
-# if defined(_REENTRANT) && defined(SIGCONT)
-    /*
-     * Wait for the SIGCONT signal to be handled. It generally happens
-     * immediately, but somehow not all the time. Do not call pause()
-     * because there would be race condition which would hang Vim if
-     * signal happened in between the test of sigcont_received and the
-     * call to pause(). If signal is not yet received, call sleep(0)
-     * to just yield CPU. Signal should then be received. If somehow
-     * it's still not received, sleep 1, 2, 3 ms. Don't bother waiting
-     * further if signal is not received after 1+2+3+4 ms (not expected
-     * to happen).
-     */
-    {
-	long wait_time;
-	for (wait_time = 0; !sigcont_received && wait_time <= 3L; wait_time++)
-	    /* Loop is not entered most of the time */
-	    mch_delay(wait_time, FALSE);
-    }
-# endif
-
-# ifdef FEAT_TITLE
-    /*
-     * Set oldtitle to NULL, so the current title is obtained again.
-     */
-    vim_free(oldtitle);
-    oldtitle = NULL;
-# endif
-    settmode(TMODE_RAW);
-    need_check_timestamps = TRUE;
-    did_check_timestamps = FALSE;
-#else
-    suspend_shell();
-#endif
+    // TODO
 }
 
     void
@@ -928,135 +403,6 @@ mch_init()
     Rows = 24;
 
     out_flush();
-    set_signals();
-
-#ifdef MACOS_CONVERT
-    mac_conv_init();
-#endif
-#ifdef FEAT_CYGWIN_WIN32_CLIPBOARD
-    win_clip_init();
-#endif
-}
-
-    static void
-set_signals()
-{
-
-    /*
-     * We want the STOP signal to work, to make mch_suspend() work.
-     * For "rvim" the STOP signal is ignored.
-     */
-#ifdef SIGTSTP
-    signal(SIGTSTP, restricted ? SIG_IGN : SIG_DFL);
-#endif
-#if defined(_REENTRANT) && defined(SIGCONT)
-    signal(SIGCONT, sigcont_handler);
-#endif
-
-    /*
-     * We want to ignore breaking of PIPEs.
-     */
-#ifdef SIGPIPE
-    signal(SIGPIPE, SIG_IGN);
-#endif
-
-#ifdef SIGINT
-    catch_int_signal();
-#endif
-
-    /*
-     * Ignore alarm signals (Perl's alarm() generates it).
-     */
-#ifdef SIGALRM
-    signal(SIGALRM, SIG_IGN);
-#endif
-
-    /*
-     * Catch SIGPWR (power failure?) to preserve the swap files, so that no
-     * work will be lost.
-     */
-#ifdef SIGPWR
-    signal(SIGPWR, (RETSIGTYPE (*)())catch_sigpwr);
-#endif
-
-    /*
-     * Arrange for other signals to gracefully shutdown Vim.
-     */
-    catch_signals(deathtrap, SIG_ERR);
-
-#if defined(FEAT_GUI) && defined(SIGHUP)
-    /*
-     * When the GUI is running, ignore the hangup signal.
-     */
-    if (gui.in_use)
-	signal(SIGHUP, SIG_IGN);
-#endif
-}
-
-#if defined(SIGINT) || defined(PROTO)
-/*
- * Catch CTRL-C (only works while in Cooked mode).
- */
-    static void
-catch_int_signal()
-{
-    signal(SIGINT, (RETSIGTYPE (*)())catch_sigint);
-}
-#endif
-
-    void
-reset_signals()
-{
-    catch_signals(SIG_DFL, SIG_DFL);
-#if defined(_REENTRANT) && defined(SIGCONT)
-    /* SIGCONT isn't in the list, because its default action is ignore */
-    signal(SIGCONT, SIG_DFL);
-#endif
-}
-
-    static void
-catch_signals(func_deadly, func_other)
-    RETSIGTYPE (*func_deadly)();
-    RETSIGTYPE (*func_other)();
-{
-    int	    i;
-
-    for (i = 0; signal_info[i].sig != -1; i++)
-	if (signal_info[i].deadly)
-	{
-#if defined(HAVE_SIGALTSTACK) && defined(HAVE_SIGACTION)
-	    struct sigaction sa;
-
-	    /* Setup to use the alternate stack for the signal function. */
-	    sa.sa_handler = func_deadly;
-	    sigemptyset(&sa.sa_mask);
-# if defined(__linux__) && defined(_REENTRANT)
-	    /* On Linux, with glibc compiled for kernel 2.2, there is a bug in
-	     * thread handling in combination with using the alternate stack:
-	     * pthread library functions try to use the stack pointer to
-	     * identify the current thread, causing a SEGV signal, which
-	     * recursively calls deathtrap() and hangs. */
-	    sa.sa_flags = 0;
-# else
-	    sa.sa_flags = SA_ONSTACK;
-# endif
-	    sigaction(signal_info[i].sig, &sa, NULL);
-#else
-# if defined(HAVE_SIGALTSTACK) && defined(HAVE_SIGVEC)
-	    struct sigvec sv;
-
-	    /* Setup to use the alternate stack for the signal function. */
-	    sv.sv_handler = func_deadly;
-	    sv.sv_mask = 0;
-	    sv.sv_flags = SV_ONSTACK;
-	    sigvec(signal_info[i].sig, &sv, NULL);
-# else
-	    signal(signal_info[i].sig, func_deadly);
-# endif
-#endif
-	}
-	else if (func_other != SIG_ERR)
-	    signal(signal_info[i].sig, func_other);
 }
 
 /*
@@ -1091,9 +437,6 @@ vim_handle_signal(sig)
 	default:	     if (!blocked)
 				 return TRUE;	/* exit! */
 			     got_signal = sig;
-#ifdef SIGPWR
-			     if (sig != SIGPWR)
-#endif
 				 got_int = TRUE;    /* break any loops */
 			     break;
     }
@@ -1108,16 +451,8 @@ mch_check_win(argc, argv)
     int	    argc UNUSED;
     char    **argv UNUSED;
 {
-#ifdef OS2
-    /*
-     * Store argv[0], may be used for $VIM.  Only use it if it is an absolute
-     * name, mostly it's just "vim" and found in the path, which is unusable.
-     */
-    if (mch_isFullName(argv[0]))
-	exe_name = vim_strsave((char_u *)argv[0]);
-#endif
     if (isatty(1))
-	return OK;
+        return OK;
     return FAIL;
 }
 
@@ -1128,163 +463,40 @@ mch_check_win(argc, argv)
 mch_input_isatty()
 {
     if (isatty(read_cmd_fd))
-	return TRUE;
+        return TRUE;
     return FALSE;
 }
-
-#ifdef FEAT_X11
-
-# if defined(HAVE_GETTIMEOFDAY) && defined(HAVE_SYS_TIME_H) \
-	&& defined(FEAT_TITLE)
-
-static void xopen_message __ARGS((struct timeval *tvp));
-
-/*
- * Give a message about the elapsed time for opening the X window.
- */
-    static void
-xopen_message(tvp)
-    struct timeval *tvp;	/* must contain start time */
-{
-    struct timeval  end_tv;
-
-    /* Compute elapsed time. */
-    gettimeofday(&end_tv, NULL);
-    smsg((char_u *)_("Opening the X display took %ld msec"),
-	    (end_tv.tv_sec - tvp->tv_sec) * 1000L
-				   + (end_tv.tv_usec - tvp->tv_usec) / 1000L);
-}
-# endif
-#endif
-
 
 #ifdef FEAT_TITLE
-
-
-    static int
-get_x11_title(test_only)
-    int	    test_only UNUSED;
-{
-    return FALSE;
-}
-
-    static int
-get_x11_icon(test_only)
-    int	    test_only;
-{
-    if (!test_only)
-    {
-	if (STRNCMP(T_NAME, "builtin_", 8) == 0)
-	    oldicon = vim_strsave(T_NAME + 8);
-	else
-	    oldicon = vim_strsave(T_NAME);
-    }
-    return FALSE;
-}
 
     int
 mch_can_restore_title()
 {
-    return get_x11_title(TRUE);
+    return FALSE;
 }
 
     int
 mch_can_restore_icon()
 {
-    return get_x11_icon(TRUE);
+    return FALSE;
 }
 
 /*
  * Set the window title and icon.
+ * Lu Wang: this function is quite simplified for browsers
  */
     void
 mch_settitle(title, icon)
     char_u *title;
     char_u *icon;
 {
-    int		type = 0;
-    static int	recursive = 0;
-
-    if (T_NAME == NULL)	    /* no terminal name (yet) */
-	return;
     if (title == NULL && icon == NULL)	    /* nothing to do */
-	return;
+        return;
 
-    /* When one of the X11 functions causes a deadly signal, we get here again
-     * recursively.  Avoid hanging then (something is probably locked). */
-    if (recursive)
-	return;
-    ++recursive;
+    if (!gui.in_use)
+        return;
 
-    /*
-     * if the window ID and the display is known, we may use X11 calls
-     */
-#ifdef FEAT_X11
-    if (get_x11_windis() == OK)
-	type = 1;
-#else
-# if defined(FEAT_GUI_PHOTON) || defined(FEAT_GUI_MAC) || defined(FEAT_GUI_GTK)
-    if (gui.in_use)
-	type = 1;
-# endif
-#endif
-
-    /*
-     * Note: if "t_ts" is set, title is set with escape sequence rather
-     *	     than x11 calls, because the x11 calls don't always work
-     */
-    if ((type || *T_TS != NUL) && title != NULL)
-    {
-	if (oldtitle == NULL
-#ifdef FEAT_GUI
-		&& !gui.in_use
-#endif
-		)		/* first call but not in GUI, save title */
-	    (void)get_x11_title(FALSE);
-
-	if (*T_TS != NUL)		/* it's OK if t_fs is empty */
-	    term_settitle(title);
-#ifdef FEAT_X11
-	else
-# ifdef FEAT_GUI_GTK
-	if (!gui.in_use)		/* don't do this if GTK+ is running */
-# endif
-	    set_x11_title(title);		/* x11 */
-#endif
-#if defined(FEAT_GUI_GTK) \
-	|| defined(FEAT_GUI_PHOTON) || defined(FEAT_GUI_MAC)
-	else
-	    gui_mch_settitle(title, icon);
-#endif
-	did_set_title = TRUE;
-    }
-
-    if ((type || *T_CIS != NUL) && icon != NULL)
-    {
-	if (oldicon == NULL
-#ifdef FEAT_GUI
-		&& !gui.in_use
-#endif
-		)		/* first call, save icon */
-	    get_x11_icon(FALSE);
-
-	if (*T_CIS != NUL)
-	{
-	    out_str(T_CIS);			/* set icon start */
-	    out_str_nf(icon);
-	    out_str(T_CIE);			/* set icon end */
-	    out_flush();
-	}
-#ifdef FEAT_X11
-	else
-# ifdef FEAT_GUI_GTK
-	if (!gui.in_use)		/* don't do this if GTK+ is running */
-# endif
-	    set_x11_icon(icon);			/* x11 */
-#endif
-	did_set_icon = TRUE;
-    }
-    --recursive;
+    gui_mch_settitle(title, icon);
 }
 
 /*
@@ -1298,13 +510,17 @@ mch_settitle(title, icon)
 mch_restore_title(which)
     int which;
 {
-    /* only restore the title or icon when it has been set */
-    mch_settitle(((which & 1) && did_set_title) ?
-			(oldtitle ? oldtitle : p_titleold) : NULL,
-			      ((which & 2) && did_set_icon) ? oldicon : NULL);
+    // TODO
 }
 
 #endif /* FEAT_TITLE */
+
+/*
+ * Lu Wang:
+ * term name checking, only used when UNIX is defined
+ * I don't want to modified the function call in vim
+ * so just leave these functions as they are.
+ */ 
 
 /*
  * Return TRUE if "name" looks like some xterm name.
@@ -1373,12 +589,7 @@ mch_get_user_name(s, len)
     char_u  *s;
     int	    len;
 {
-#ifdef VMS
-    vim_strncpy(s, (char_u *)cuserid(NULL), len - 1);
-    return OK;
-#else
     return mch_get_uname(getuid(), s, len);
-#endif
 }
 
 /*
@@ -1433,11 +644,7 @@ mch_get_host_name(s, len)
     char_u  *s;
     int	    len;
 {
-# ifdef VAXC
-    vaxc$gethostname((char *)s, len);
-# else
     gethostname((char *)s, len);
-# endif
     s[len - 1] = NUL;	/* make sure it's terminated */
 }
 #endif /* HAVE_SYS_UTSNAME_H */
@@ -1490,7 +697,7 @@ mch_dirname(buf, len)
 #endif
 }
 
-#if defined(OS2) || defined(PROTO)
+#if defined(PROTO)
 /*
  * Replace all slashes by backslashes.
  * When 'shellslash' set do it the other way around.
@@ -1520,9 +727,6 @@ mch_FullName(fname, buf, len, force)
     int		force;		/* also expand when already absolute path */
 {
     int		l;
-#ifdef OS2
-    int		only_drive;	/* file name is only a drive letter */
-#endif
 #ifdef HAVE_FCHDIR
     int		fd = -1;
     static int	dont_fchdir = FALSE;	/* TRUE when fchdir() doesn't work */
@@ -1530,26 +734,7 @@ mch_FullName(fname, buf, len, force)
     char_u	olddir[MAXPATHL];
     char_u	*p;
     int		retval = OK;
-#ifdef __CYGWIN__
-    char_u	posix_fname[MAXPATHL];	/* Cygwin docs mention MAX_PATH, but
-					   it's not always defined */
-#endif
 
-#ifdef VMS
-    fname = vms_fixfilename(fname);
-#endif
-
-#ifdef __CYGWIN__
-    /*
-     * This helps for when "/etc/hosts" is a symlink to "c:/something/hosts".
-     */
-# if CYGWIN_VERSION_DLL_MAJOR >= 1007
-    cygwin_conv_path(CCP_WIN_A_TO_POSIX, fname, posix_fname, MAXPATHL);
-# else
-    cygwin_conv_to_posix_path(fname, posix_fname);
-# endif
-    fname = posix_fname;
-#endif
 
     /* expand it if forced or not an absolute path */
     if (force || !mch_isFullName(fname))
@@ -1559,14 +744,7 @@ mch_FullName(fname, buf, len, force)
 	 * and then do the getwd() (and get back to where we were).
 	 * This will get the correct path name with "../" things.
 	 */
-#ifdef OS2
-	only_drive = 0;
-	if (((p = vim_strrchr(fname, '/')) != NULL)
-		|| ((p = vim_strrchr(fname, '\\')) != NULL)
-		|| (((p = vim_strchr(fname,  ':')) != NULL) && ++only_drive))
-#else
 	if ((p = vim_strrchr(fname, '/')) != NULL)
-#endif
 	{
 #ifdef HAVE_FCHDIR
 	    /*
@@ -1600,15 +778,6 @@ mch_FullName(fname, buf, len, force)
 	    }
 	    else
 	    {
-#ifdef OS2
-		/*
-		 * compensate for case where ':' from "D:" was the only
-		 * path separator detected in the file name; the _next_
-		 * character has to be removed, and then restored later.
-		 */
-		if (only_drive)
-		    p++;
-#endif
 		/* The directory is copied into buf[], to be able to remove
 		 * the file name without changing it (could be a string in
 		 * read-only memory) */
@@ -1623,14 +792,6 @@ mch_FullName(fname, buf, len, force)
 			fname = p + 1;
 		    *buf = NUL;
 		}
-#ifdef OS2
-		if (only_drive)
-		{
-		    p--;
-		    if (retval != FAIL)
-			fname--;
-		}
-#endif
 	    }
 	}
 	if (mch_dirname(buf, len) == FAIL)
@@ -1662,11 +823,9 @@ mch_FullName(fname, buf, len, force)
 	l = STRLEN(buf);
 	if (l >= len - 1)
 	    retval = FAIL; /* no space for trailing "/" */
-#ifndef VMS
 	else if (l > 0 && buf[l - 1] != '/' && *fname != NUL
 						   && STRCMP(fname, ".") != 0)
 	    STRCAT(buf, "/");
-#endif
     }
 
     /* Catch file names which are too long. */
@@ -1687,18 +846,7 @@ mch_FullName(fname, buf, len, force)
 mch_isFullName(fname)
     char_u	*fname;
 {
-#ifdef __EMX__
-    return _fnisabs(fname);
-#else
-# ifdef VMS
-    return ( fname[0] == '/'	       || fname[0] == '.'	    ||
-	     strchr((char *)fname,':') || strchr((char *)fname,'"') ||
-	    (strchr((char *)fname,'[') && strchr((char *)fname,']'))||
-	    (strchr((char *)fname,'<') && strchr((char *)fname,'>'))   );
-# else
     return (*fname == '/' || *fname == '~');
-# endif
-#endif
 }
 
 #if defined(USE_FNAME_CASE) || defined(PROTO)
@@ -1777,19 +925,9 @@ mch_getperm(name)
     struct stat statb;
 
     /* Keep the #ifdef outside of stat(), it may be a macro. */
-#ifdef VMS
-    if (stat((char *)vms_fixfilename(name), &statb))
-#else
     if (stat((char *)name, &statb))
-#endif
-	return -1;
-#ifdef __INTERIX
-    /* The top bit makes the value negative, which means the file doesn't
-     * exist.  Remove the bit, we don't use it. */
-    return statb.st_mode & ~S_ADDACE;
-#else
+        return -1;
     return statb.st_mode;
-#endif
 }
 
 /*
@@ -1803,11 +941,7 @@ mch_setperm(name, perm)
     long    perm;
 {
     return (chmod((char *)
-#ifdef VMS
-		    vms_fixfilename(name),
-#else
 		    name,
-#endif
 		    (mode_t)perm) == 0 ? OK : FAIL);
 }
 
@@ -2122,10 +1256,8 @@ mch_nodetype(name)
 	return NODE_NORMAL;
     if (S_ISREG(st.st_mode) || S_ISDIR(st.st_mode))
 	return NODE_NORMAL;
-#ifndef OS2
     if (S_ISBLK(st.st_mode))	/* block device isn't writable */
-	return NODE_OTHER;
-#endif
+        return NODE_OTHER;
     /* Everything else is writable? */
     return NODE_WRITABLE;
 }
@@ -2144,16 +1276,6 @@ mch_early_init()
 
 #endif
 
-    /*
-     * Setup an alternative stack for signals.  Helps to catch signals when
-     * running out of stack space.
-     * Use of sigaltstack() is preferred, it's more portable.
-     * Ignore any errors.
-     */
-#if defined(HAVE_SIGALTSTACK) || defined(HAVE_SIGSTACK)
-    signal_stack = (char *)alloc(SIGSTKSZ);
-    init_signal_stack();
-#endif
 }
 
 #if defined(EXITFREE) || defined(PROTO)
@@ -2257,13 +1379,6 @@ mch_exit(r)
     mac_conv_cleanup();
 #endif
 
-#ifdef __QNX__
-    /* A core dump won't be created if the signal handler
-     * doesn't return, so we can't call exit() */
-    if (deadly_signal != 0)
-	return;
-#endif
-
 #ifdef FEAT_NETBEANS_INTG
     netbeans_send_disconnect();
 #endif
@@ -2278,11 +1393,6 @@ mch_exit(r)
     static void
 may_core_dump()
 {
-    if (deadly_signal != 0)
-    {
-	signal(deadly_signal, SIG_DFL);
-	kill(getpid(), deadly_signal);	/* Die using the signal we caught */
-    }
 }
 
 #ifndef VMS
@@ -2452,103 +1562,15 @@ mch_screenmode(arg)
     return FAIL;
 }
 
-#ifndef VMS
-
 /*
- * Try to get the current window size:
- * 1. with an ioctl(), most accurate method
- * 2. from the environment variables LINES and COLUMNS
- * 3. from the termcap
- * 4. keep using the old values
- * Return OK when size could be determined, FAIL otherwise.
+ * Lu Wang:
+ * should never be called as GUI is always used
  */
     int
 mch_get_shellsize()
 {
-    long	rows = 0;
-    long	columns = 0;
-    char_u	*p;
-
-    /*
-     * For OS/2 use _scrsize().
-     */
-# ifdef __EMX__
-    {
-	int s[2];
-
-	_scrsize(s);
-	columns = s[0];
-	rows = s[1];
-    }
-# endif
-
-    /*
-     * 1. try using an ioctl. It is the most accurate method.
-     *
-     * Try using TIOCGWINSZ first, some systems that have it also define
-     * TIOCGSIZE but don't have a struct ttysize.
-     */
-# ifdef TIOCGWINSZ
-    {
-	struct winsize	ws;
-	int fd = 1;
-
-	/* When stdout is not a tty, use stdin for the ioctl(). */
-	if (!isatty(fd) && isatty(read_cmd_fd))
-	    fd = read_cmd_fd;
-	if (ioctl(fd, TIOCGWINSZ, &ws) == 0)
-	{
-	    columns = ws.ws_col;
-	    rows = ws.ws_row;
-	}
-    }
-# else /* TIOCGWINSZ */
-#  ifdef TIOCGSIZE
-    {
-	struct ttysize	ts;
-	int fd = 1;
-
-	/* When stdout is not a tty, use stdin for the ioctl(). */
-	if (!isatty(fd) && isatty(read_cmd_fd))
-	    fd = read_cmd_fd;
-	if (ioctl(fd, TIOCGSIZE, &ts) == 0)
-	{
-	    columns = ts.ts_cols;
-	    rows = ts.ts_lines;
-	}
-    }
-#  endif /* TIOCGSIZE */
-# endif /* TIOCGWINSZ */
-
-    /*
-     * 2. get size from environment
-     *    When being POSIX compliant ('|' flag in 'cpoptions') this overrules
-     *    the ioctl() values!
-     */
-    if (columns == 0 || rows == 0 || vim_strchr(p_cpo, CPO_TSIZE) != NULL)
-    {
-	if ((p = (char_u *)getenv("LINES")))
-	    rows = atoi((char *)p);
-	if ((p = (char_u *)getenv("COLUMNS")))
-	    columns = atoi((char *)p);
-    }
-
-#ifdef HAVE_TGETENT
-    /*
-     * 3. try reading "co" and "li" entries from termcap
-     */
-    if (columns == 0 || rows == 0)
-	getlinecol(&columns, &rows);
-#endif
-
-    /*
-     * 4. If everything fails, use the old values
-     */
-    if (columns <= 0 || rows <= 0)
-	return FAIL;
-
-    Rows = rows;
-    Columns = columns;
+    Rows = 1;
+    Columns = 1;
     limit_screen_size();
     return OK;
 }
@@ -2561,8 +1583,6 @@ mch_set_shellsize()
 {
     // TODO
 }
-
-#endif /* VMS */
 
 /*
  * Rows and/or Columns has changed.
@@ -3418,7 +2438,6 @@ mch_has_wildcard(p)
     return FALSE;
 }
 
-#ifndef __EMX__
     static int
 have_wildcard(num, file)
     int	    num;
@@ -3444,7 +2463,6 @@ have_dollars(num, file)
 	    return TRUE;
     return FALSE;
 }
-#endif	/* ifndef __EMX__ */
 
 #ifndef HAVE_RENAME
 /*
@@ -3638,112 +2656,3 @@ mch_libcall(libname, funcname, argstring, argint, string_result, number_result)
 }
 #endif
 
-#ifdef EBCDIC
-/* Translate character to its CTRL- value */
-char CtrlTable[] =
-{
-/* 00 - 5E */
-	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-/* ^ */ 0x1E,
-/* - */ 0x1F,
-/* 61 - 6C */
-	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-/* _ */ 0x1F,
-/* 6E - 80 */
-	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-/* a */ 0x01,
-/* b */ 0x02,
-/* c */ 0x03,
-/* d */ 0x37,
-/* e */ 0x2D,
-/* f */ 0x2E,
-/* g */ 0x2F,
-/* h */ 0x16,
-/* i */ 0x05,
-/* 8A - 90 */
-	0, 0, 0, 0, 0, 0, 0,
-/* j */ 0x15,
-/* k */ 0x0B,
-/* l */ 0x0C,
-/* m */ 0x0D,
-/* n */ 0x0E,
-/* o */ 0x0F,
-/* p */ 0x10,
-/* q */ 0x11,
-/* r */ 0x12,
-/* 9A - A1 */
-	0, 0, 0, 0, 0, 0, 0, 0,
-/* s */ 0x13,
-/* t */ 0x3C,
-/* u */ 0x3D,
-/* v */ 0x32,
-/* w */ 0x26,
-/* x */ 0x18,
-/* y */ 0x19,
-/* z */ 0x3F,
-/* AA - AC */
-	0, 0, 0,
-/* [ */ 0x27,
-/* AE - BC */
-	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-/* ] */ 0x1D,
-/* BE - C0 */ 0, 0, 0,
-/* A */ 0x01,
-/* B */ 0x02,
-/* C */ 0x03,
-/* D */ 0x37,
-/* E */ 0x2D,
-/* F */ 0x2E,
-/* G */ 0x2F,
-/* H */ 0x16,
-/* I */ 0x05,
-/* CA - D0 */ 0, 0, 0, 0, 0, 0, 0,
-/* J */ 0x15,
-/* K */ 0x0B,
-/* L */ 0x0C,
-/* M */ 0x0D,
-/* N */ 0x0E,
-/* O */ 0x0F,
-/* P */ 0x10,
-/* Q */ 0x11,
-/* R */ 0x12,
-/* DA - DF */ 0, 0, 0, 0, 0, 0,
-/* \ */ 0x1C,
-/* E1 */ 0,
-/* S */ 0x13,
-/* T */ 0x3C,
-/* U */ 0x3D,
-/* V */ 0x32,
-/* W */ 0x26,
-/* X */ 0x18,
-/* Y */ 0x19,
-/* Z */ 0x3F,
-/* EA - FF*/ 0, 0, 0, 0, 0, 0,
-	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-};
-
-char MetaCharTable[]=
-{/*   0   1   2   3   4   5   6   7   8   9   A   B   C   D   E   F */
-      0,  0,  0,  0,'\\', 0,'F',  0,'W','M','N',  0,  0,  0,  0,  0,
-      0,  0,  0,  0,']',  0,  0,'G',  0,  0,'R','O',  0,  0,  0,  0,
-    '@','A','B','C','D','E',  0,  0,'H','I','J','K','L',  0,  0,  0,
-    'P','Q',  0,'S','T','U','V',  0,'X','Y','Z','[',  0,  0,'^',  0
-};
-
-
-/* TODO: Use characters NOT numbers!!! */
-char CtrlCharTable[]=
-{/*   0   1   2   3   4   5   6   7   8   9   A   B   C   D   E   F */
-    124,193,194,195,  0,201,  0,  0,  0,  0,  0,210,211,212,213,214,
-    215,216,217,226,  0,209,200,  0,231,232,  0,  0,224,189, 95,109,
-      0,  0,  0,  0,  0,  0,230,173,  0,  0,  0,  0,  0,197,198,199,
-      0,  0,229,  0,  0,  0,  0,196,  0,  0,  0,  0,227,228,  0,233,
-};
-
-
-#endif

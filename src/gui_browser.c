@@ -745,6 +745,7 @@ gui_mch_show_popupmenu(vimmenu_T *menu)
     void
 gui_mch_settitle(char_u *title, char_u *icon)
 {
+    //TODO
 }
 #endif
 

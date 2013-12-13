@@ -20,6 +20,7 @@ void status_redraw_curbuf __ARGS((void));
 void redraw_statuslines __ARGS((void));
 void win_redraw_last_status __ARGS((frame_T *frp));
 void win_redr_status __ARGS((win_T *wp));
+int stl_connected __ARGS((win_T *wp));
 int get_keymap_str __ARGS((win_T *wp, char_u *buf, int len));
 void screen_putchar __ARGS((int c, int row, int col, int attr));
 void screen_getbytes __ARGS((int row, int col, char_u *bytes, int *attrp));

@@ -10,6 +10,28 @@ CPP="gcc -E" \
 $EM_DIR/emconfigure ./configure \
     --enable-gui=browser \
     --with-features=small \
+    --disable-xsmp \
+    --disable-xmp-interact \
+    --disable-luainterp \
+    --disable-mzschemeinterp \
+    --disable-perlinterp \
+    --disable-pythoninterp \
+    --disable-python3interp \
+    --disable-tclinterp \
+    --disable-rubyinterp \
+    --disable-cscope \
+    --disable-workshop \
+    --disable-netbeans \
+    --disable-sniff \
+    --disable-multibye \
+    --disable-hangulinput \
+    --disable-xim \
+    --disable-fontset \
+    --disable-gtktest \
+    --disable-largefile \
+    --disable-acl \
+    --disable-gpm \
+    --disable-sysmouse \
     --disable-nls \
     --with-modified-by="Lu Wang" \
     --with-compiledby="Lu Wang" \

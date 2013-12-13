@@ -1,14 +1,11 @@
 /* os_browser.c */
+void reset_signals __ARGS((void));
 int mch_chdir __ARGS((char *path));
 long_u mch_total_mem __ARGS((int special));
 void mch_delay __ARGS((long msec, int ignoreinput));
 int mch_stackcheck __ARGS((char *p));
-void mch_startjmp __ARGS((void));
-void mch_endjmp __ARGS((void));
-void mch_didjmp __ARGS((void));
 void mch_suspend __ARGS((void));
 void mch_init __ARGS((void));
-void reset_signals __ARGS((void));
 int mch_check_win __ARGS((int argc, char **argv));
 int mch_input_isatty __ARGS((void));
 int mch_can_restore_title __ARGS((void));

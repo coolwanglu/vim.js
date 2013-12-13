@@ -191,7 +191,15 @@
 #endif
 
 #ifdef FEAT_GUI_BROWSER
+/*
+ * Basically it's a similar envrionment as UNIX
+ * but there are things we don't have or we don't need
+ * take care of them before including "feature.h"
+ */
+
 #define NO_CONSOLE
+#define FEAT_GUI_DIALOG
+
 /*
  * Disable some functions not supported by emscripten
  * need to do this before including feature.h
@@ -207,6 +215,7 @@
 #undef HAVE_SIGALTSTACK
 #undef HAVE_SIGSET
 #undef HAVE_SYSINFO
+#undef HAVE_SETJMP_H
 
 // emscripten's select does not work with a parameter
 #undef HAVE_SELECT
@@ -214,17 +223,50 @@
 // always use async sleep
 #undef HAVE_NANOSEELP
 #undef HAVE_USLEEP
-#undef FEAT_NEATBEANS_INTG
 #undef HAVE_PTHREAD_NP_H
 
 #endif // FEAT_GUI_BROWSER
 
 #include "feature.h"	/* #defines for optionals and features */
 
-/*
- * WIP: some features are not supported by FEAT_GUI_BROWSER yet
- */
 #ifdef FEAT_GUI_BROWSER
+/*
+ * some features are not needed or supported by FEAT_GUI_BROWSER 
+ */
+
+#undef FEAT_NEATBEANS_INTG
+
+// no special mouse support
+#undef FEAT_MOUSE_XTERM
+#undef FEAT_MOUSE_NET
+#undef FEAT_MOUSE_DEC
+#undef FEAT_MOUSE_URXVT
+#undef FEAT_MOUSE_SGR
+#undef FEAT_MOUSE_PTERM
+#undef FEAT_MOUSE_GPM
+#undef FEAT_SYSMOUSE
+#undef FEAT_MOUSE_TTY
+
+/*
+ * vim.js is built with --with-feature=small
+ * but here are some features I really missed in NORMAL
+ */
+#define FEAT_VERTSPLIT
+#define FEAT_CURSORBIND // required by FEAT_VERTSPLIT
+#define FEAT_SCROLLBIND // required by FEAT_VERTSPLIT
+//#define FEAT_FOLDING
+#define FEAT_CLIPBOARD	
+#define FEAT_SEARCH_EXTRA
+#define FEAT_TITLE
+#define FEAT_CMDL_INFO	
+#define FEAT_STL_OPT
+#define FEAT_COMMENTS
+
+//#define FEAT_SYN_HL
+//#define FEAT_CINDENT
+//#define FEAT_SMARTINDENT
+
+
 #endif
 
 /* +x11 is only enabled when it's both available and wanted. */

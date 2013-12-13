@@ -10,10 +10,15 @@ by Lu Wang
 
 - Works but unstable, only tested on Firefox/Chrome + Ubuntu
 - Faster on Chrome than Firefox
+- Some features work better on Firefox
 
 ### Features
 
-vim is built with `--with-features=tiny`. More features will be enabled gradually.
+vim.js is built with the small feature set (`--with-features=small`), with also a few from the normal set.
+Run `:version` to check.
+
+`--with-features=normal` is too large and too slow for online usage.
+
 
 ### Instructions for hackers
 

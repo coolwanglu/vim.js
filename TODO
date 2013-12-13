@@ -20,3 +20,4 @@ mouse
 ## Web integration
 Load vim components from the web (colors, syntax etc)
 Load .vimrc -- from github gist
+hooks for file read/write

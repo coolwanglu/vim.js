@@ -24,12 +24,14 @@
  */
 mergeInto(LibraryManager.library, {
   $vimjs: {
+    is_chrome: false,
+
     container: null,
     beep: null,
 
     rows: 0,
     cols: 0,
-    char_width: 0,
+    char_width: 1,
     char_height: 1,
 
     fg_color: null,
@@ -102,6 +104,8 @@ mergeInto(LibraryManager.library, {
 
   vimjs_init__deps: ['$vimjs', 'vimjs_init_font'],
   vimjs_init: function () {
+    vimjs.is_chrome = !!window.chrome;
+    
     vimjs.gui_browser_handle_key = Module['cwrap']('gui_browser_handle_key', null, ['number', 'number', 'number', 'number']);
     vimjs.input_available = Module['cwrap']('input_available', 'number', []);
 
@@ -491,9 +495,15 @@ mergeInto(LibraryManager.library, {
 
   vimjs_beep__deps: ['$vimjs'],
   vimjs_beep: function() {
+    var beep = vimjs.beep;
     /* sometimes this is called before vimjs.beep is initialized */
-    if(vimjs.beep)
-      vimjs.beep.play();
+    if(beep) {
+      if(vimjs.is_chrome) {
+        // without this Chrome would only play it once
+        beep.load(); 
+      }
+      beep.play();
+    }
   },
 
   vimjs_flash: function() {
@@ -624,8 +634,8 @@ mergeInto(LibraryManager.library, {
     }
     var first_ele = container.firstChild.firstChild;
     /* clientWidth/Height won't work */
-    vimjs.char_height = first_ele.offsetHeight;
-    vimjs.char_width = first_ele.offsetWidth;
+    vimjs.char_height = Math.max(1, first_ele.offsetHeight);
+    vimjs.char_width = Math.max(1, first_ele.offsetWidth);
 
     vimjs.resize();
   },
