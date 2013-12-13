@@ -1,20 +1,35 @@
 " Default .vimrc for vim.js
-" By Lu Wang
+" Copyright (c) 2013 Lu Wang <coolwanglu@gmail.com>
 
+" Use CSS font format
+" Use monospace fonts only!
+set guifont=12px\ monospace
+
+" Only Darkside is available right now
+" Help me implement file system hooks (for loading external files)!
+colorscheme Darkside
+
+" To save you from some warning messages 
+" (I don't why swap files are not working)
+set noswapfile
+
+" Obviously
+set nocompatible
+
+
+
+" Others
+" Some are actually not yet supported
 set go=
 set ruler
 set number
-set mouse=
 set wildmenu
 set tabstop=4
 set expandtab
-set noswapfile
-set smartindent
-set nocompatible
-set cindent shiftwidth=4
 set fileencodings=utf8
 set backspace=indent,eol,start
 set wildmode=longest,list,full
-
 syntax on
-colorscheme Darkside
+set mouse=
+set smartindent
+set cindent shiftwidth=4

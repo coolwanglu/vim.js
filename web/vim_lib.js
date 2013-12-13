@@ -28,6 +28,7 @@ mergeInto(LibraryManager.library, {
 
     container: null,
     beep: null,
+    style_ele: null, // to adjust line-height dynamically
 
     rows: 0,
     cols: 0,
@@ -114,6 +115,9 @@ mergeInto(LibraryManager.library, {
     vimjs.sp_color = '#f00';
 
     vimjs.beep = document.getElementById('vimjs-beep');
+
+    vimjs.style_ele = document.createElement('style');
+    document.body.appendChild(vimjs.style_ele);
 
     var container = vimjs.container = document.getElementById('vimjs-container');
     // there might be text nodes of other stuffs before loading vim
@@ -636,6 +640,9 @@ mergeInto(LibraryManager.library, {
     /* clientWidth/Height won't work */
     vimjs.char_height = Math.max(1, first_ele.offsetHeight);
     vimjs.char_width = Math.max(1, first_ele.offsetWidth);
+
+    /* adjust the line height to fit the font */
+    vimjs.style_ele.innerHTML = '.vimjs-line{line-height:' + vimjs.char_height + 'px;}';
 
     vimjs.resize();
   },

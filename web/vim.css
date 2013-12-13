@@ -27,6 +27,7 @@
   border:0;
   margin:0;
   padding:0;
+  line-height:1;
 }
 .vimjs-line span { 
   white-space: pre; 
