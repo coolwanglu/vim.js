@@ -10,7 +10,7 @@ set guifont=12px\ monospace
 colorscheme Darkside
 
 " To save you from some warning messages 
-" (I don't why swap files are not working)
+" (I don't know why swap files are not working)
 set noswapfile
 
 " Obviously

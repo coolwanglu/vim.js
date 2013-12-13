@@ -4,4 +4,4 @@
  * Copyright (c) 2013 Lu Wang <coolwanglu@gmail.com>
  */
 
-var KeyEvent = {};
+function KeyEvent() {}

@@ -97,14 +97,24 @@ gui_mch_new_colors(void)
 }
 
 /*
+ * Recalculate Rows and Columns
+ * Keep the text area fully occupied
+ */
+    void
+gui_browser_resize(void)
+{
+    int w, h;
+    gui_mch_get_screen_dimensions(&w, &h);
+    gui_resize_shell(w, h);
+}
+
+/*
  * Open the GUI window which was created by a call to gui_mch_init().
  */
     int
 gui_mch_open(void)
 {
-    int w, h;
-    gui_mch_get_screen_dimensions(&w, &h);
-    gui_resize_shell(w, h);
+    gui_browser_resize();
     return OK;
 }
 
@@ -169,6 +179,8 @@ gui_mch_init_font(char_u *font_name, int fontset)
 
     gui.char_width = vimjs_get_char_width();
     gui.char_height = vimjs_get_char_height();
+
+    gui_browser_resize();
 
     return OK;
 }
