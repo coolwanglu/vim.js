@@ -763,7 +763,19 @@ DOM_VK_F18:129,DOM_VK_F19:130,DOM_VK_F20:131,DOM_VK_F21:132,DOM_VK_F22:133,DOM_V
 153],lightsteelblue:[176,196,222],lightyellow:[255,255,224],lime:[0,255,0],limegreen:[50,205,50],linen:[250,240,230],magenta:[255,0,255],maroon:[128,0,0],mediumaquamarine:[102,205,170],mediumblue:[0,0,205],mediumorchid:[186,85,211],mediumpurple:[147,112,219],mediumseagreen:[60,179,113],mediumslateblue:[123,104,238],mediumspringgreen:[0,250,154],mediumturquoise:[72,209,204],mediumvioletred:[199,21,133],midnightblue:[25,25,112],mintcream:[245,255,250],mistyrose:[255,228,225],moccasin:[255,228,181],
 navajowhite:[255,222,173],navy:[0,0,128],oldlace:[253,245,230],olive:[128,128,0],olivedrab:[107,142,35],orange:[255,165,0],orangered:[255,69,0],orchid:[218,112,214],palegoldenrod:[238,232,170],palegreen:[152,251,152],paleturquoise:[175,238,238],palevioletred:[219,112,147],papayawhip:[255,239,213],peachpuff:[255,218,185],peru:[205,133,63],pink:[255,192,203],plum:[221,160,221],powderblue:[176,224,230],purple:[128,0,128],red:[255,0,0],rosybrown:[188,143,143],royalblue:[65,105,225],saddlebrown:[139,69,
 19],salmon:[250,128,114],sandybrown:[244,164,96],seagreen:[46,139,87],seashell:[255,245,238],sienna:[160,82,45],silver:[192,192,192],skyblue:[135,206,235],slateblue:[106,90,205],slategray:[112,128,144],slategrey:[112,128,144],snow:[255,250,250],springgreen:[0,255,127],steelblue:[70,130,180],tan:[210,180,140],teal:[0,128,128],thistle:[216,191,216],tomato:[255,99,71],turquoise:[64,224,208],violet:[238,130,238],wheat:[245,222,179],white:[255,255,255],whitesmoke:[245,245,245],yellow:[255,255,0],yellowgreen:[154,
-205,50]};document.addEventListener("keypress",function(a){a.preventDefault();vimjs.handle_key(a.charCode,a.keyCode,a)});var c={};[b.DOM_VK_ESCAPE,b.DOM_VK_TAB,b.DOM_VK_BACK_SPACE].forEach(function(a){c[a]=1});document.addEventListener("keydown",function(a){a.keyCode in c&&(a.preventDefault(),vimjs.handle_key(0,a.keyCode,a))})}function _vimjs_get_screen_width(){return vimjs.container.clientWidth}function _vimjs_get_screen_height(){return vimjs.container.clientHeight}
+205,50]};document.addEventListener("keypress",function(a){a.preventDefault();vimjs.handle_key(a.charCode,a.keyCode,a)});
+
+var c={};
+    [ b.DOM_VK_ESCAPE, // CF
+      b.DOM_VK_TAB, // C
+      b.DOM_VK_BACK_SPACE, // C 
+      b.DOM_VK_UP, // C
+      b.DOM_VK_DOWN, // C
+      b.DOM_VK_LEFT, // C
+      b.DOM_VK_RIGHT, // C
+      b.DOM_VK_DELETE, // C
+    ]
+    .forEach(function(a){c[a]=1});document.addEventListener("keydown",function(a){a.keyCode in c&&(a.preventDefault(),vimjs.handle_key(0,a.keyCode,a))})}function _vimjs_get_screen_width(){return vimjs.container.clientWidth}function _vimjs_get_screen_height(){return vimjs.container.clientHeight}
 function _vimjs_get_char_width(){return vimjs.char_width}function _vimjs_get_char_height(){return vimjs.char_height}function _vimjs_is_valid_color(b){b=Pointer_stringify(b);return/(^#[0-9A-F]{6}$)|(^#[0-9A-F]{3}$)/i.test(b)||b.toLowerCase()in vimjs.color_map}
 function _vimjs_get_rgb(b){b=Pointer_stringify(b);b=b.toLowerCase();var c=/^#([a-fA-F0-9]{6})$/,a=[0,0,0],d=b.match(/^#([a-fA-F0-9]{3})$/);if(d)for(d=d[1],b=0;b<a.length;b++)a[b]=parseInt(d[b]+d[b],16);else if(d=b.match(c))for(d=d[1],b=0;b<a.length;b++)a[b]=parseInt(d.slice(2*b,2*b+2),16);else(d=vimjs.color_map[b])?a=d:console.log(b,"vimjs_get_rgb(): invalid color: *"+b+"* which should not happen!");for(b=d=0;b<a.length;b++)d=(d<<8)+a[b];return d}
 function _vimjs_set_fg_color(b){vimjs.fg_color=vimjs.get_color_string(b)}function _vimjs_set_bg_color(b){vimjs.bg_color=vimjs.get_color_string(b)}function _vimjs_set_sp_color(b){vimjs.sp_color=vimjs.get_color_string(b)}

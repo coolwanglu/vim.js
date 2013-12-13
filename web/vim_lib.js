@@ -460,12 +460,18 @@ mergeInto(LibraryManager.library, {
      * Most keys can be handled during the keypress event
      * But some special keys must be handled during the keydown event in order to prevent default actions
      *
-     * C means "no necessary for Firefox, but needed for Chrome"
+     * F means "needed for Firfox"
+     * C means "needed for Chrome"
      */
     var keys_to_intercept_upon_keydown = {};
-    [ KeyEvent.DOM_VK_ESCAPE, 
+    [ KeyEvent.DOM_VK_ESCAPE, // CF
       KeyEvent.DOM_VK_TAB, // C
       KeyEvent.DOM_VK_BACK_SPACE, // C 
+      KeyEvent.DOM_VK_UP, // C
+      KeyEvent.DOM_VK_DOWN, // C
+      KeyEvent.DOM_VK_LEFT, // C
+      KeyEvent.DOM_VK_RIGHT, // C
+      KeyEvent.DOM_VK_DELETE, // C
     ].forEach(function(k) {
       keys_to_intercept_upon_keydown[k] = 1;
     });
