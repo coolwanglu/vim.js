@@ -2,23 +2,23 @@
 some parts may be implemented natively in javascript (e.g. regexp)
 rewrite some async functions, to make them sync (e.g MSG, EMSG)
 use cDefine when possible
+streamline.js does not catch ExitStatus -- will try git version
 
 ## core
 gettext
 resize
-Chrome support
-
 
 ## UI stuffs
 tabline
 scrollbar
-do_dialog
+dialog
 keypad keys
 special keys (ctrl etc)
 mouse
 clipboard
 
 ## Web integration
-Load vim components from the web (colors, syntax etc)
+Load vim components 
 Load .vimrc -- from github gist
+Load files from Dropbox
 hooks for file read/write

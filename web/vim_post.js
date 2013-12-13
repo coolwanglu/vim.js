@@ -14,6 +14,13 @@
   assert(((__ATPRERUN__.length == 0)), "cannot call main when preRun functions remain to be called");
   args = ((args || []));
   ensureInitRuntime();
+
+  // setup environment
+  ENV['USER'] = 'root';
+  ENV['HOME'] = '/root'; 
+  ENV['PWD'] = '/root';
+  Module["FS_createPath"]("/", "root", true, true);
+
   var argc = ((args.length + 1));
   function pad() {
     for (var i = 0; i < 3; ++i) {
@@ -37,10 +44,8 @@
     } 
   } catch (e) {
     if (e instanceof ExitStatus) {
-      return; 
     } else if (e == "SimulateInfiniteLoop") {
       Module["noExitRuntime"] = true;
-      return; 
     } else {
       crashed = true;
 
@@ -51,6 +56,6 @@
     }
   } finally {
     calledMain = true; 
-    Module["vimjs-exit"](crashed);
+//    Module["vimjs-exit"](crashed);
   }
-})(, [/* command line args for vim */]);
+})(function(){ console.log('Vim.js exited.'); }, [/* command line args for vim */]);

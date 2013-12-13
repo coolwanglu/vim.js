@@ -254,14 +254,16 @@
 #define FEAT_VERTSPLIT
 #define FEAT_CURSORBIND // required by FEAT_VERTSPLIT
 #define FEAT_SCROLLBIND // required by FEAT_VERTSPLIT
-//#define FEAT_FOLDING
 #define FEAT_CLIPBOARD	
 #define FEAT_SEARCH_EXTRA
 #define FEAT_TITLE
 #define FEAT_CMDL_INFO	
 #define FEAT_STL_OPT
 #define FEAT_COMMENTS
+#define FEAT_LINEBREAK
 
+// too heavy:
+//#define FEAT_FOLDING
 //#define FEAT_SYN_HL
 //#define FEAT_CINDENT
 //#define FEAT_SMARTINDENT
