@@ -314,7 +314,7 @@ Tokenizer.prototype = {
             } while (ch >= '0' && ch <= '7');
             this.cursor--;
 
-            token.value = parseInt(input.substring(token.start, this.cursor));
+            token.value = parseInt(input.substring(token.start, this.cursor), 8);
         } else {
             this.cursor--;
             this.lexExponent();     // 0E1, &c.
