@@ -128,6 +128,8 @@ mergeInto(LibraryManager.library, {
 
     /* initialize special_keys VIMJS_FOLD_START*/
     vimjs.special_keys = [];
+    /* for closure compiler */
+    var KeyEvent = window.KeyEvent;
     /* for Chrome */
     /* http://stackoverflow.com/questions/1465374/javascript-event-keycode-constants/1465409#1465409 */
     if (typeof KeyEvent == "undefined") {
