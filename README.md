@@ -6,11 +6,15 @@ by Lu Wang
 
 ### [Try it online](http://coolwanglu.github.io/vim.js/web/vim.html)
 
+
+
 ### Status
 
 - Works but unstable, only tested on Firefox/Chrome + Ubuntu
 - Faster on Chrome than Firefox
 - Some features work better on Firefox (e.g. `<Ctrl>`)
+
+
 
 ### Features
 
@@ -43,9 +47,12 @@ create a pull request.
 - Get yourself familiar with everything above and also:
   - source code of vim
   - JavaScript, and also HTML/CSS
-- Setup paths in `build.sh`
-- Uncomment the last few lines in `build.sh`
+- Prepare `build.sh`
+  - Setup the path of emscripten inside
+  - Uncomment the last few lines in `build.sh`
 - Run `build.sh`
+
+
 
 ### Development
 
@@ -60,11 +67,16 @@ If you want to work on other features to be merged, please file an issue and dis
 
 Do not override `vim.js` or `build.sh`!
 
+
+
 ### Contact
 
 Lu Wang coolwanglu(a)gmail.com &mdash; please do not expect a prompt response.
 
+
+
 ### License
+
 Read `LICENSE`
 
 
