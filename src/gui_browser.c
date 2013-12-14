@@ -478,7 +478,7 @@ gui_mch_delete_lines(int row, int num_lines)
     void
 gui_mch_set_text_area_pos(int x, int y, int w, int h)
 {
-    // TODO
+    // Nothing to do
 }
 
 

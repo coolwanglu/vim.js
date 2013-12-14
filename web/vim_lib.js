@@ -475,6 +475,8 @@ mergeInto(LibraryManager.library, {
       KeyEvent.DOM_VK_LEFT, // C
       KeyEvent.DOM_VK_RIGHT, // C
       KeyEvent.DOM_VK_DELETE, // C
+      KeyEvent.DOM_VK_PAGE_UP, // C
+      KeyEvent.DOM_VK_PAGE_DOWN, // C
     ].forEach(function(k) {
       keys_to_intercept_upon_keydown[k] = 1;
     });
@@ -605,9 +607,12 @@ mergeInto(LibraryManager.library, {
   vimjs_delete_lines__deps: ['$vimjs'],
   vimjs_delete_lines: function(row, num_lines) {
     var container = vimjs.container;
-    var cur_children = container.childNodes;
-    for(var i = row, l = row + num_lines; i < l; ++i)
-      container.removeChild(cur_children[i]);
+    var child_to_remove = container.childNodes[row];
+    for(var i = 0; i < num_lines; ++i) {
+      var next_child = child_to_remove.nextSibling;
+      container.removeChild(child_to_remove);
+      child_to_remove = next_child;
+    }
     // append some new lines in the end
     var cols = vimjs.cols;
     for(var r = 0; r < num_lines; ++r) {
