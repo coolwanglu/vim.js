@@ -9,10 +9,6 @@ set guifont=12px\ monospace
 " Help me implement file system hooks (for loading external files)!
 colorscheme Darkside
 
-" To save you from some warning messages 
-" (I don't know why swap files are not working)
-set noswapfile
-
 " Obviously
 set nocompatible
 

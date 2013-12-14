@@ -22,10 +22,7 @@
   ENV['_'] = '/bin/vim';
 
   // setup dirs
-  FS.ignorePermissions = true;
   Module["FS_createPath"]("/", "root", true, true);
-  // uncomment it when the FS permission issue has been fixed
-//  FS.ignorePermissions = false;
   FS.currentPath = '/root';
 
   var argc = ((args.length + 1));
