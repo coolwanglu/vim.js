@@ -14,19 +14,30 @@ by Lu Wang
 
 ### Features
 
-vim.js is built with the small feature set (`--with-features=small`), with also a few from the normal set.
+vim.js is built with the small feature set (`--with-features=small`), 
+with also a few from the normal set.
 Run `:version` to check.
 
 `--with-features=normal` is too large and too slow for online usage.
+
+As we all know that there are huge number of features in Vim, but
+most people use only a small subset of it. So I have to try to balance
+the feature set and the file size, by including most common features,
+and also a few that I pick.
+
+If you really want some feature(s) enabled by default,
+please try to compile it yourself first, estimate the increase in size and
+create a pull request.
+
 
 
 ### Instructions for hackers
 
 - Prepare the dependencies:
   - emscripten
+    - Use the `wl` branch of [my fork](https://github.com/coolwanglu/emscripten/tree/wl) if anything goes wrong
   - node.js
   - streamline.js
-  - closure compiler
   - GCC & cproto (maybe)
     - Sometimes you need to run `make proto` when you see errors about 'undeclared variables/functions/structs'
 - Get yourself familiar with everything above and also:

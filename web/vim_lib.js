@@ -488,8 +488,8 @@ mergeInto(LibraryManager.library, {
     });
   },
 
-  vimjs_sleep: function (cb, ms) {
-    setTimeout(cb, ms);
+  vimjs_sleep: function (_, ms) {
+    setTimeout(_, ms);
   },
   
   vimjs_wait_for_chars__deps: ['$vimjs'],
@@ -711,8 +711,6 @@ mergeInto(LibraryManager.library, {
       var builtin_rgb = vimjs.color_map[string];
       if(builtin_rgb)
         rgb = builtin_rgb;
-      else
-        console.log(string, 'vimjs_get_rgb(): invalid color: *' + string + '* which should not happen!');
     }
     var ret = 0;
     for (var i = 0; i < rgb.length; i++) {

@@ -3,13 +3,13 @@ some parts may be implemented natively in javascript (e.g. regexp)
 rewrite some async functions, to make them sync (e.g MSG, EMSG)
 use cDefine when possible
 streamline.js does not catch ExitStatus -- will try git version
-FS permission denied ?!
 
 ## core
 gettext
 resize
 
 ## UI stuffs
+use canvas -- might be faster ?
 tabline
 scrollbar
 dialog

@@ -50,7 +50,8 @@ $EM_DIR/emcc vim.bc \
     --js-library vim_lib.js \
     --post-js vim_post.js \
     -s EXPORTED_FUNCTIONS="['_main', '_input_available', '_gui_browser_handle_key', '_gui_resize_shell']" \
-    --embed-file root \
+    --embed-file root/.vimrc \
+    --embed-file root/.vim \
 
 popd
 }

@@ -387,16 +387,27 @@ gui_browser_handle_key(int code, int modifiers, char_u special1, char_u special2
 #define BUF_SIZE  64
     char_u buf[BUF_SIZE];
     int buf_len = 0;
+    int is_special = (special1 != 0);
 
-    if(special1) 
+    if(is_special) 
     {
         code = TO_SPECIAL(special1, special2);
         code = simplify_key(code, &modifiers);
-        if(code == CSI)
-            code = K_CSI;
     }
-    if(code == 'c' && (modifiers & MOD_MASK_CTRL))
-        got_int = TRUE;
+    else 
+    {
+        if(code == 'c' && (modifiers & MOD_MASK_CTRL))
+            got_int = TRUE;
+        if(!IS_SPECIAL(code))
+        {
+            code = simplify_key(code, &modifiers);
+            code = extract_modifiers(code, &modifiers);
+            if(code == CSI)
+                code = K_CSI;
+            if(IS_SPECIAL(code))
+                is_special = TRUE;
+        }
+    }
 
     if(modifiers) 
     {
@@ -405,7 +416,7 @@ gui_browser_handle_key(int code, int modifiers, char_u special1, char_u special2
         buf[buf_len++] = modifiers;
     }
 
-    if(special1 && IS_SPECIAL(code))
+    if(is_special && IS_SPECIAL(code))
     {
         buf[buf_len++] = CSI;
         buf[buf_len++] = K_SECOND(code);
