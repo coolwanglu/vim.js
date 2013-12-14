@@ -65,11 +65,15 @@
       <br>
       <br>
       <div class="footer">
-        <p class="text-muted">Last updated: Sat Dec 14 15:40:42 UTC 2013</p>
         <p>© <a target="_blank" href="http://coolwanglu.github.io/">Lu Wang</a> 2013</p>
+        <p class="text-muted">Last updated: <span id="last-updated-time">Sat Dec 14 16:09:06 UTC 2013</span></p>
       </div>
     </div>
     <audio id="vimjs-beep" src="drip.ogg"></audio>
+    <script>
+      var ele = document.getElementById('last-updated-time');
+      ele.innerHTML = (new Date(ele.innerHTML)).toLocaleString();
+    </script>
     <script src="vim.js"></script>
   </body>
 </html>
