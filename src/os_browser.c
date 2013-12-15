@@ -26,14 +26,6 @@
 
 /* Are the following #ifdefs still required? And why? Is that for X11? */
 
-static void may_core_dump __ARGS((void));
-
-#ifdef HAVE_UNION_WAIT
-typedef union wait waitstatus;
-#else
-typedef int waitstatus;
-#endif
-
 static int  RealWaitForChar __ARGS((int, long, int *));
 
 static int  have_wildcard __ARGS((int, char_u **));
@@ -1330,13 +1322,7 @@ mch_exit(r)
 {
     exiting = TRUE;
 
-#if defined(FEAT_X11) && defined(FEAT_CLIPBOARD)
-    x11_export_final_selection();
-#endif
-
-#ifdef FEAT_GUI
     if (!gui.in_use)
-#endif
     {
 	settmode(TMODE_COOK);
 #ifdef FEAT_TITLE
@@ -1369,19 +1355,8 @@ mch_exit(r)
     }
     out_flush();
     ml_close_all(TRUE);		/* remove all memfiles */
-    may_core_dump();
-#ifdef FEAT_GUI
     if (gui.in_use)
-	gui_exit(r);
-#endif
-
-#ifdef MACOS_CONVERT
-    mac_conv_cleanup();
-#endif
-
-#ifdef FEAT_NETBEANS_INTG
-    netbeans_send_disconnect();
-#endif
+        gui_exit(r);
 
 #ifdef EXITFREE
     free_all_mem();
@@ -1389,13 +1364,6 @@ mch_exit(r)
 
     exit(r);
 }
-
-    static void
-may_core_dump()
-{
-}
-
-#ifndef VMS
 
     void
 mch_settmode(tmode)
@@ -1548,7 +1516,6 @@ get_stty()
 #endif
 }
 
-#endif /* VMS  */
 
 
 /*
@@ -1598,7 +1565,7 @@ mch_call_shell(cmd, options)
     char_u	*cmd;
     int		options;	/* SHELL_*, see vim.h */
 {
-    return FAIL;
+    return vimjs_call_shell((char*)cmd, options);
 }
 
 
@@ -1697,8 +1664,6 @@ RealWaitForChar(fd, msec, check_for_gpm)
     return (ret > 0);
 }
 
-#ifndef VMS
-
 #ifndef NO_EXPANDPATH
 /*
  * Expand a path into all matching files and/or directories.  Handles "*",
@@ -1750,120 +1715,7 @@ mch_expand_wildcards(num_pat, pat, num_file, file, flags)
     size_t	len;
     char_u	*p;
     int		dir;
-#ifdef __EMX__
-    /*
-     * This is the OS/2 implementation.
-     */
-# define EXPL_ALLOC_INC	16
-    char_u	**expl_files;
-    size_t	files_alloced, files_free;
-    char_u	*buf;
-    int		has_wildcard;
 
-    *num_file = 0;	/* default: no files found */
-    files_alloced = EXPL_ALLOC_INC; /* how much space is allocated */
-    files_free = EXPL_ALLOC_INC;    /* how much space is not used  */
-    *file = (char_u **)alloc(sizeof(char_u **) * files_alloced);
-    if (*file == NULL)
-	return FAIL;
-
-    for (; num_pat > 0; num_pat--, pat++)
-    {
-	expl_files = NULL;
-	if (vim_strchr(*pat, '$') || vim_strchr(*pat, '~'))
-	    /* expand environment var or home dir */
-	    buf = expand_env_save(*pat);
-	else
-	    buf = vim_strsave(*pat);
-	expl_files = NULL;
-	has_wildcard = mch_has_exp_wildcard(buf);  /* (still) wildcards? */
-	if (has_wildcard)   /* yes, so expand them */
-	    expl_files = (char_u **)_fnexplode(buf);
-
-	/*
-	 * return value of buf if no wildcards left,
-	 * OR if no match AND EW_NOTFOUND is set.
-	 */
-	if ((!has_wildcard && ((flags & EW_NOTFOUND) || mch_getperm(buf) >= 0))
-		|| (expl_files == NULL && (flags & EW_NOTFOUND)))
-	{   /* simply save the current contents of *buf */
-	    expl_files = (char_u **)alloc(sizeof(char_u **) * 2);
-	    if (expl_files != NULL)
-	    {
-		expl_files[0] = vim_strsave(buf);
-		expl_files[1] = NULL;
-	    }
-	}
-	vim_free(buf);
-
-	/*
-	 * Count number of names resulting from expansion,
-	 * At the same time add a backslash to the end of names that happen to
-	 * be directories, and replace slashes with backslashes.
-	 */
-	if (expl_files)
-	{
-	    for (i = 0; (p = expl_files[i]) != NULL; i++)
-	    {
-		dir = mch_isdir(p);
-		/* If we don't want dirs and this is one, skip it */
-		if ((dir && !(flags & EW_DIR)) || (!dir && !(flags & EW_FILE)))
-		    continue;
-
-		/* Skip files that are not executable if we check for that. */
-		if (!dir && (flags & EW_EXEC) && !mch_can_exe(p))
-		    continue;
-
-		if (--files_free == 0)
-		{
-		    /* need more room in table of pointers */
-		    files_alloced += EXPL_ALLOC_INC;
-		    *file = (char_u **)vim_realloc(*file,
-					   sizeof(char_u **) * files_alloced);
-		    if (*file == NULL)
-		    {
-			EMSG(_(e_outofmem));
-			*num_file = 0;
-			return FAIL;
-		    }
-		    files_free = EXPL_ALLOC_INC;
-		}
-		slash_adjust(p);
-		if (dir)
-		{
-		    /* For a directory we add a '/', unless it's already
-		     * there. */
-		    len = STRLEN(p);
-		    if (((*file)[*num_file] = alloc(len + 2)) != NULL)
-		    {
-			STRCPY((*file)[*num_file], p);
-			if (!after_pathsep((*file)[*num_file],
-						    (*file)[*num_file] + len))
-			{
-			    (*file)[*num_file][len] = psepc;
-			    (*file)[*num_file][len + 1] = NUL;
-			}
-		    }
-		}
-		else
-		{
-		    (*file)[*num_file] = vim_strsave(p);
-		}
-
-		/*
-		 * Error message already given by either alloc or vim_strsave.
-		 * Should return FAIL, but returning OK works also.
-		 */
-		if ((*file)[*num_file] == NULL)
-		    break;
-		(*num_file)++;
-	    }
-	    _fnexplodefree((char **)expl_files);
-	}
-    }
-    return OK;
-
-#else /* __EMX__ */
     /*
      * This is the non-OS/2 implementation (really Unix).
      */
@@ -2337,13 +2189,9 @@ notfound:
     if (flags & EW_NOTFOUND)
 	return save_patterns(num_pat, pat, num_file, file);
     return FAIL;
-
-#endif /* __EMX__ */
 }
 
-#endif /* VMS */
 
-#ifndef __EMX__
     static int
 save_patterns(num_pat, pat, num_file, file)
     int		num_pat;
@@ -2369,7 +2217,6 @@ save_patterns(num_pat, pat, num_file, file)
     *num_file = num_pat;
     return OK;
 }
-#endif
 
 /*
  * Return TRUE if the string "p" contains a wildcard that mch_expandpath() can
@@ -2381,22 +2228,10 @@ mch_has_exp_wildcard(p)
 {
     for ( ; *p; mb_ptr_adv(p))
     {
-#ifndef OS2
 	if (*p == '\\' && p[1] != NUL)
 	    ++p;
 	else
-#endif
-	    if (vim_strchr((char_u *)
-#ifdef VMS
-				    "*?%"
-#else
-# ifdef OS2
-				    "*?"
-# else
-				    "*?[{'"
-# endif
-#endif
-						, *p) != NULL)
+	    if (vim_strchr((char_u *) "*?[{'" , *p) != NULL)
 	    return TRUE;
     }
     return FALSE;
@@ -2412,26 +2247,10 @@ mch_has_wildcard(p)
 {
     for ( ; *p; mb_ptr_adv(p))
     {
-#ifndef OS2
 	if (*p == '\\' && p[1] != NUL)
 	    ++p;
 	else
-#endif
-	    if (vim_strchr((char_u *)
-#ifdef VMS
-				    "*?%$"
-#else
-# ifdef OS2
-#  ifdef VIM_BACKTICK
-				    "*?$`"
-#  else
-				    "*?$"
-#  endif
-# else
-				    "*?[{`'$"
-# endif
-#endif
-						, *p) != NULL
+	    if (vim_strchr((char_u *) "*?[{`'$" , *p) != NULL
 		|| (*p == '~' && p[1] != NUL))
 	    return TRUE;
     }

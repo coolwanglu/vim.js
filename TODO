@@ -3,25 +3,25 @@ some parts may be implemented natively in javascript (e.g. regexp)
 rewrite some async functions, to make them sync (e.g MSG, EMSG)
 use cDefine when possible
 streamline.js does not catch ExitStatus -- will try git version
+asm.js
 
 ## core
-gettext
 resize
 extension -- #11
 
 ## UI stuffs
 use canvas -- might be faster ?
+clipboard
+special keys (ctrl etc)
+mouse
 tabline
 scrollbar
 dialog
 keypad keys
-special keys (ctrl etc)
-mouse
-clipboard
 
 ## Web integration
+save ~ in IDBFS
 Load vim components 
-Load .vimrc -- from github gist
 Load files from Dropbox
 hooks for file read/write
 execute JS -- :!

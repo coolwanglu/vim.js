@@ -261,6 +261,8 @@
 #define FEAT_STL_OPT
 #define FEAT_COMMENTS
 #define FEAT_LINEBREAK
+//#define FEAT_EVAL
+//#define FEAT_TEXTOBJ
 
 // too heavy:
 //#define FEAT_FOLDING
