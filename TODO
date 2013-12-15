@@ -7,6 +7,7 @@ streamline.js does not catch ExitStatus -- will try git version
 ## core
 gettext
 resize
+extension -- #11
 
 ## UI stuffs
 use canvas -- might be faster ?
