@@ -13,7 +13,7 @@ set guifont=12px\ monospace
 " [Experimental] Call JavaScript
 " Note the escape of !
 !console.log('Hello from vimrc\!');
-" Also try :! % if you are editing a JavaScript file
+" Also try :!% if you are editing a JavaScript file
 
 " Only Darkside is available right now
 " Help me implement file system hooks (for loading external files)!
