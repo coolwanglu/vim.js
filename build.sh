@@ -76,7 +76,6 @@ java -jar $EM_DIR/third_party/closure-compiler/compiler.jar \
     --language_in ECMASCRIPT5 \
     --js vim-2.js\
     --js_output_file vim.js \
-    --externs externs.js \
 
 popd
 }
