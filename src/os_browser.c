@@ -1565,7 +1565,8 @@ mch_call_shell(cmd, options)
     char_u	*cmd;
     int		options;	/* SHELL_*, see vim.h */
 {
-    return vimjs_call_shell((char*)cmd, options);
+    vimjs_call_shell((char*)cmd, options);
+    return 0;
 }
 
 
