@@ -822,7 +822,7 @@ mergeInto(LibraryManager.library, {
         if(e instanceof SyntaxError) {
           // try to execute a file
           try {
-            var content = FS.readFile(cmd, { encoding: 'utf8'} );
+            var content = FS.readFile(cmd.replace(/(^\s+|\s+$)/g, ''), { encoding: 'utf8'} );
           } catch(e1) {
             // cannot find file, throw the old Error
             throw e;
