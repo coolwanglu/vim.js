@@ -42,6 +42,7 @@ void vimjs_set_sp_color(char *);
 
 // others
 void vimjs_print_stacktrace();
+int vimjs_call_shell(char *, int);
 
 /*
  * some function pointers may point to async functions, which cannot be automatically detected

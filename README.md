@@ -49,7 +49,7 @@ create a pull request.
   - JavaScript, and also HTML/CSS
 - Prepare `build.sh`
   - Setup the path of emscripten inside
-  - Uncomment the last few lines in `build.sh`
+  - Uncomment the last few lines 
 - Run `build.sh`
 
 
