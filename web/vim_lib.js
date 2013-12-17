@@ -107,6 +107,78 @@ mergeInto(LibraryManager.library, {
       }
     },
 
+    // called before the program starts
+    preRun: function () {
+      // setup dir
+      Module["FS_createPath"]("/", "root", true, true);
+
+      // load .vimrc, use localStorage when possible
+      var vimrc_storage_id = 'vimjs/root/.vimrc';
+      if(typeof localStorage !== 'undefined') {
+        var stored_vimrc = localStorage[vimrc_storage_id];
+        if(stored_vimrc) {
+          Module['FS_createDataFile']('/root', '.vimrc', stored_vimrc, true, true);
+        }
+        window.addEventListener('beforeunload', function() {
+          try {
+            localStorage[vimrc_storage_id] = FS.readFile('/root/.vimrc', { encoding: 'utf8' });
+          } catch(e) {
+          }
+        });
+      } 
+      
+      // Hijack callMain to call _main with callback
+      // call _main with callback
+      Module['callMain'] = Module.callMain = function(args) {
+        // embed a function to be transformed by streamline.js
+        (function (_) {
+          assert(((runDependencies == 0)), "cannot call main when async dependencies remain! (listen on __ATMAIN__)");
+          assert(((__ATPRERUN__.length == 0)), "cannot call main when preRun functions remain to be called");
+          args = ((args || []));
+          ensureInitRuntime();
+
+          // setup environment
+          ENV['USER'] = 'root';
+          ENV['HOME'] = '/root'; 
+          ENV['PWD'] = '/root';
+          ENV['_'] = '/bin/vim';
+
+          FS.currentPath = '/root';
+
+          var argc = ((args.length + 1));
+          var argv = [allocate(intArrayFromString("/bin/vim"), "i8", ALLOC_NORMAL), 0, 0, 0];
+          for (var i = 0; i < argc - 1; ++i) {
+            argv.concat([allocate(intArrayFromString(args[i]), "i8", ALLOC_NORMAL), 0, 0, 0]);
+          }
+          argv.push(0);
+          argv = allocate(argv, "i32", ALLOC_NORMAL);
+          initialStackTop = STACKTOP;
+          try {
+            var crashed = false;
+            var ret = Module["_main"](_, argc, argv, 0);
+            if (!Module["noExitRuntime"]) {
+              exit(ret); 
+            } 
+          } catch (e) {
+            if (e instanceof ExitStatus) {
+            } else if (e == "SimulateInfiniteLoop") {
+              Module["noExitRuntime"] = true;
+            } else {
+              crashed = true;
+
+              if (e && (typeof e === "object") && e.stack) {
+                Module.printErr("exception thrown: " + [e,e.stack,]); 
+              }
+              throw e; 
+            }
+          } finally {
+            calledMain = true; 
+        //    Module["vimjs-exit"](crashed);
+          }
+        })(function(){ console.log('Vim.js exited.'); });
+      };
+    },
+
     __dummy__: null
   },
 
@@ -744,6 +816,36 @@ mergeInto(LibraryManager.library, {
   vimjs_print_stacktrace: function() {
     console.log((new Error).stack);
   },
+
+  vimjs_call_shell: function(cmd, options) {
+    cmd = Pointer_stringify(cmd);
+    try {
+      try {
+        // the cmd may be a JavaScript snippet
+        eval(cmd);
+      } catch (e) {
+        if(e instanceof SyntaxError) {
+          // try to execute a file
+          try {
+            var content = FS.readFile(cmd.replace(/(^\s+|\s+$)/g, ''), { encoding: 'utf8'} );
+          } catch(e1) {
+            // cannot find file, throw the old Error
+            throw e;
+          }
+          eval(content);
+        } else {
+          // not a SyntaxError, process it outside
+          throw e;
+        }
+      }
+    } catch (e) {
+      if (e instanceof Error) {
+        console.log(e.name + ': ' + e.message);
+      } else {
+        console.log('Exception thrown: ', e);
+      }
+    }
+  }, 
 
   /* func is a function pointer */
   vimjs_async_cmd_call1: function(_, func, arg1) {

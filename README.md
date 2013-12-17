@@ -16,7 +16,7 @@ by Lu Wang
 
 
 
-### Features
+### Vim Features
 
 vim.js is built with the small feature set (`--with-features=small`), 
 with also a few from the normal set.
@@ -32,6 +32,13 @@ and also a few that I pick.
 If you really want some feature(s) enabled by default,
 please try to compile it yourself first, estimate the increase in size and
 create a pull request.
+
+
+
+### Vim.js Features
+
+- Persistent `~/.vimrc`
+- Execute JavaScript from Vim.js (`:!`)
 
 
 

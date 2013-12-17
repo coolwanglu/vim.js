@@ -19,6 +19,7 @@
  */
 
 // Lu Wang: disable os_unix.c for the browser GUI
+// since it is linked with by default
 #ifndef FEAT_GUI_BROWSER
 /*
  * Some systems have a prototype for select() that has (int *) instead of

@@ -44,16 +44,17 @@ $EM_DIR/emmake make
 do_link() {
 pushd web
 cp ../src/vim vim.bc
+# Use vim.js as filename to generate vim.js.mem
 $EM_DIR/emcc vim.bc \
-    -o vim-1.js\
+    -o vim.js\
     -O0 \
     --closure 0 \
     --memory-init-file 1 \
     --js-library vim_lib.js \
-    --post-js vim_post.js \
     -s EXPORTED_FUNCTIONS="['_main', '_input_available', '_gui_browser_handle_key', '_gui_resize_shell']" \
-    --embed-file root/.vimrc \
-    --embed-file root/.vim \
+    --embed-file usr \
+
+mv vim.js vim-1.js
 
 popd
 }
@@ -78,7 +79,6 @@ java -jar $EM_DIR/third_party/closure-compiler/compiler.jar \
     --language_in ECMASCRIPT5 \
     --js vim-2.js\
     --js_output_file vim.js \
-    --externs externs.js \
 
 popd
 }

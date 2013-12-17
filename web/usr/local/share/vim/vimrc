@@ -1,16 +1,23 @@
-" Default .vimrc for vim.js
+" Default vimrc for vim.js
 " Copyright (c) 2013 Lu Wang <coolwanglu@gmail.com>
+
+" You can edit your own ~/.vimrc
+" which will be saved into localStorage and loaded next time
+
+
 
 " Use CSS font format
 " Use monospace fonts only!
 set guifont=12px\ monospace
 
+" [Experimental] Call JavaScript
+" Note the escape of !
+!console.log('Hello from vimrc\!');
+" Also try :!% if you are editing a JavaScript file
+
 " Only Darkside is available right now
 " Help me implement file system hooks (for loading external files)!
 colorscheme Darkside
-
-" Obviously
-set nocompatible
 
 
 
@@ -22,6 +29,7 @@ set number
 set wildmenu
 set tabstop=4
 set expandtab
+set nocompatible
 set fileencodings=utf8
 set backspace=indent,eol,start
 set wildmode=longest,list,full
