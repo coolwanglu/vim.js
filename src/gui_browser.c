@@ -705,7 +705,7 @@ gui_mch_browse(
     char_u *initdir,
     char_u *filter)
 {
-   return nullptr;
+   return (char_u*)vimjs_browse(saving, (char*)dflt, (char*)initdir);
 }
 #endif /* FEAT_BROWSE */
 

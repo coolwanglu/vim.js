@@ -59,6 +59,7 @@ void gui_mch_set_blinking __ARGS((long wait, long on, long off));
 void gui_mch_stop_blink __ARGS((void));
 void gui_mch_start_blink __ARGS((void));
 long_u gui_mch_get_rgb __ARGS((guicolor_T pixel));
+char_u *gui_mch_browse __ARGS((int saving, char_u *title, char_u *dflt, char_u *ext, char_u *initdir, char_u *filter));
 int gui_mch_dialog __ARGS((int type, char_u *title, char_u *message, char_u *buttons, int dfltbutton, char_u *textfield, int ex_cmd));
 void gui_mch_getmouse __ARGS((int *x, int *y));
 void gui_mch_setmouse __ARGS((int x, int y));

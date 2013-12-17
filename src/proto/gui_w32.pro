@@ -53,6 +53,8 @@ int gui_mch_init_font __ARGS((char_u *font_name, int fontset));
 int gui_mch_maximized __ARGS((void));
 void gui_mch_newfont __ARGS((void));
 void gui_mch_settitle __ARGS((char_u *title, char_u *icon));
+char_u *gui_mch_browsedir __ARGS((char_u *title, char_u *initdir));
+char_u *gui_mch_browse __ARGS((int saving, char_u *title, char_u *dflt, char_u *ext, char_u *initdir, char_u *filter));
 int get_cmd_args __ARGS((char *prog, char *cmdline, char ***argvp, char **tofree));
 int gui_is_win32s __ARGS((void));
 void gui_mch_set_parent __ARGS((char *title));

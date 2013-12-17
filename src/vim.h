@@ -261,12 +261,14 @@
 #define FEAT_STL_OPT
 #define FEAT_COMMENTS
 #define FEAT_LINEBREAK
-//#define FEAT_EVAL
-//#define FEAT_TEXTOBJ
+#define FEAT_BROWSE_CMD
+#define FEAT_BROWSE
 
 // too heavy:
+//#define FEAT_EVAL
+//#define FEAT_TEXTOBJ // requires FEAT_EVAL
+//#define FEAT_SYN_HL // requires FEAT_EVAL
 //#define FEAT_FOLDING
-//#define FEAT_SYN_HL
 //#define FEAT_CINDENT
 //#define FEAT_SMARTINDENT
 

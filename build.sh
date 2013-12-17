@@ -46,7 +46,7 @@ pushd web
 cp ../src/vim vim.bc
 # Use vim.js as filename to generate vim.js.mem
 $EM_DIR/emcc vim.bc \
-    -o vim.js\
+    -o vim.js \
     -O0 \
     --closure 0 \
     --memory-init-file 1 \

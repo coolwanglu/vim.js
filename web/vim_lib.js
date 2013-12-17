@@ -847,6 +847,11 @@ mergeInto(LibraryManager.library, {
     }
   }, 
 
+  vimjs_browse: function(cb, saving, default_name, init_dir) {
+    console.log('browse', saving, default_name, init_dir);
+    cb();
+  },
+
   /* func is a function pointer */
   vimjs_async_cmd_call1: function(_, func, arg1) {
     func = FUNCTION_TABLE[func];
