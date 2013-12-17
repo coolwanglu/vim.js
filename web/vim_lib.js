@@ -24,7 +24,7 @@
  */
 
 /*
- * $vimjs holds the common states and function
+ * $vimjs holds the common states and functions
  * vimjs_* functions are exposed to C
  */
 mergeInto(LibraryManager.library, {

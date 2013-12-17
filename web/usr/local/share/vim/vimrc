@@ -21,7 +21,7 @@ colorscheme Darkside
 
 
 
-" Others
+" Others from my own ~/.vimrc
 " Some are actually not yet supported
 set go=
 set ruler
