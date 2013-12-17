@@ -8,6 +8,7 @@ hooks for file read/write
 
 ## core
 extension -- #11
+cursor
 //+eval
 
 ## UI stuffs
