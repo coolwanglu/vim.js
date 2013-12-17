@@ -22,6 +22,11 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+
+/*
+ * $vimjs holds the common states and function
+ * vimjs_* functions are exposed to C
+ */
 mergeInto(LibraryManager.library, {
   $vimjs: {
     is_chrome: false,
