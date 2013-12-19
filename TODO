@@ -14,7 +14,7 @@ cursor
 ## UI stuffs
 use canvas -- might be faster/more stable ?
 special keys (ctrl etc)
-resize
+resize/set font
 //clipboard
 //mouse
 //tabline
@@ -24,4 +24,3 @@ resize
 
 ## Web integration
 Load vim components 
-Load files from Dropbox
