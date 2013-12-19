@@ -21,6 +21,7 @@
   /* from bootstrap */
   border-color: rgb(102, 175, 233);
   box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.075) inset, 0px 0px 8px rgba(102, 175, 233, 0.6);
+  position:relative;
 }
 .vimjs-line {
   white-space: pre; 
@@ -55,4 +56,27 @@
 }
 .jumbotron h1 {
   margin-top: 0px;
+}
+.modal-dialog {
+  display:block;
+}
+#vimjs-trigger-dialog {
+  position:absolute;
+  display:none;
+  opacity:1;
+  background-color:rgba(0, 0, 0, 0.5);
+}
+#vimjs-trigger_dialog .modal-header {
+  text-align:center;
+}
+#vimjs-trigger-dialog .modal-dialog {
+  position:relative;
+  margin:auto;
+  width:300px;
+  top:200px;
+}
+#vimjs-trigger-button {
+  display:block;
+  margin-left:auto;
+  margin-right:auto;
 }

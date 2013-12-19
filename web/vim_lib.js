@@ -28,6 +28,7 @@
  * vimjs_* functions are exposed to C
  */
 mergeInto(LibraryManager.library, {
+  $vimjs__deps: ['mktemp'],
   $vimjs: {
     is_chrome: false,
 
@@ -36,6 +37,7 @@ mergeInto(LibraryManager.library, {
     beep_node: null, // for beeping
     style_node: null, // to adjust line-height dynamically
     file_node: null, // file selector
+    trigger_dialog_node: null, // to trigger file selector
 
     rows: 0,
     cols: 0,
@@ -52,9 +54,13 @@ mergeInto(LibraryManager.library, {
     special_keys: [],
     color_map: {},
     file_callback: null,
+    dropbox_callback: null,
+    trigger_callback: null,
+
+    dropbox: null,
 
     // functions that are not exposed to C
-    handle_key: function(charCode, keyCode, e) {
+    handle_key: function(charCode, keyCode, e) {//VIMJS_FOLD_START
       // macros defined in keymap.h
       var modifiers = 0;
       // shift already affects charCode
@@ -72,18 +78,18 @@ mergeInto(LibraryManager.library, {
       }
 
       vimjs.gui_browser_handle_key(charCode || keyCode, modifiers, 0, 0);
-    },
+    },//VIMJS_FOLD_END
 
-    get_color_string: function(color) {
+    get_color_string: function(color) {//VIMJS_FOLD_START
       var bgr = [];
       for(var i = 0; i < 3; ++i) {
         bgr.push(color & 0xff);
         color >>= 8;
       }
       return 'rgb('+bgr[2]+','+bgr[1]+','+bgr[0]+')';
-    },
+    },//VIMJS_FOLD_END
 
-    resize: function(rows, cols) {
+    resize: function(rows, cols) {//VIMJS_FOLD_START
       var screen_w = _vimjs_get_screen_width();
       var screen_h = _vimjs_get_screen_height();
       rows = rows || (Math.floor(screen_h / vimjs.char_height) + 1);
@@ -108,10 +114,10 @@ mergeInto(LibraryManager.library, {
         }
         container_node.appendChild(row_ele);
       }
-    },
+    },//VIMJS_FOLD_END
 
     // called before the program starts
-    preRun: function () {
+    preRun: function () {//VIMJS_FOLD_START
       // setup dir
       Module["FS_createPath"]("/", "root", true, true);
 
@@ -180,6 +186,111 @@ mergeInto(LibraryManager.library, {
           }
         })(function(){ console.log('Vim.js exited.'); });
       };
+    },//VIMJS_FOLD_END
+
+    // load external resources
+
+    // On some browsers file selector cannot
+    // be trigger unless inside a user event
+    user_trigger: function (cb) {
+      if(vimjs.is_chrome) {
+        vimjs.trigger_callback = function() {
+          vimjs.trigger_dialog_node.parentNode.removeChild(vimjs.trigger_dialog_node);
+          setTimeout(cb, 1);
+        };
+
+        vimjs.container_node.appendChild(vimjs.trigger_dialog_node);
+
+      } else {
+        cb();
+      }
+    },
+    
+    load_nothing: function (cb, buf) {
+      {{{ makeSetValue('buf', 0, 0, 'i8') }}};
+      setTimeout(cb, 1);
+    },
+
+    // save data to a temp file and return it to Vim
+    load_data: function (cb, buf, data_array) {
+      writeArrayToMemory(intArrayFromString('/tmp/vimjs-XXXXXX'), buf);
+      _mktemp(buf);
+      FS.writeFile(Pointer_stringify(buf), data_array, { encoding: 'binary' });
+      setTimeout(cb, 1);
+    },
+
+    // load local file
+    load_local_file: function (cb, buf) {
+      // read from local
+      vimjs.file_callback = function (files) {
+        vimjs.file_callback = null;
+        if(files.length == 0) {
+          vimjs.load_nothing(cb, buf);
+          return;
+        }
+        var reader = new FileReader();
+        reader.onload = function(e) {
+          vimjs.load_data(cb, buf, new Uint8Array(e.target.result));
+        }
+        reader.readAsArrayBuffer(files[0]);
+      };
+      vimjs.user_trigger(function() {
+        vimjs.file_node.click();
+      });
+    },
+
+    // load dropbox-js if necessary
+    ensure_dropbox: function (cb) {
+      if (typeof Dropbox === 'undefined') {
+        // load js
+        var ele = document.createElement('script');
+        ele.id = 'dropboxjs';
+        ele.setAttribute('data-app-key', 'ayzai5sqtyjydma');
+        ele.onload = function() {
+          cb();
+        };
+        ele.onerror = function() {
+          ele.parentNode.removeChild(ele);
+          cb();
+        }
+        ele.src = 'https://www.dropbox.com/static/api/1/dropins.js';
+        document.body.appendChild(ele);
+      } else {
+        cb();
+      }
+    },
+
+    load_dropbox_file: function (cb, buf) {
+      if(typeof Dropbox === 'undefined') {
+        vimjs.load_nothing(cb, buf);
+        return;
+      }
+      vimjs.user_trigger(function() {
+        Dropbox.choose({
+          success: function(files) {
+            var url = files[0].link;
+            var xhr = new XMLHttpRequest();
+            xhr.open('GET', url, true);
+            xhr.responseType = 'arraybuffer';
+            xhr.onload = function () {
+              if (xhr.status == 200 || (xhr.status == 0 && xhr.response)) { // file URLs can return 0
+                vimjs.load_data(cb, buf, new Uint8Array(xhr.response));
+              } else {
+                xhr.onerror();
+              }
+            };
+            xhr.onerror = function() {
+              vimjs.load_nothing(cb, buf);
+            };
+            xhr.send(null);
+          },
+          cancel: function() {
+            vimjs.load_nothing(cb, buf);
+          },
+          linkType: 'direct',
+          multiselect: false
+        });
+      });
     },
 
     __dummy__: null
@@ -203,6 +314,14 @@ mergeInto(LibraryManager.library, {
       if(vimjs.file_callback)
         vimjs.file_callback(e.target.files);
     });
+
+    document.getElementById('vimjs-trigger-button').addEventListener('click', function() {
+      if(vimjs.trigger_callback)
+        vimjs.trigger_callback();
+    });
+    var trigger_dialog_node =  vimjs.trigger_dialog_node = document.getElementById('vimjs-trigger-dialog');
+    trigger_dialog_node.parentNode.removeChild(trigger_dialog_node);
+    trigger_dialog_node.style.display = 'block';
 
     vimjs.style_node = document.createElement('style');
     document.body.appendChild(vimjs.style_node);
@@ -856,7 +975,7 @@ mergeInto(LibraryManager.library, {
     }
   }, 
 
-  vimjs_browse__dep: ['mktemp'],
+  vimjs_browse__dep: ['$vimjs'],
   vimjs_browse: function(cb, buf, buf_size, saving, default_name, init_dir) {
     default_name = Pointer_stringify(default_name);
     if(default_name === 'local' && window.FileReader) { 
@@ -864,34 +983,20 @@ mergeInto(LibraryManager.library, {
         // save to local 
         // TODO
       } else {
-        // read from local
-        vimjs.file_callback = function (files) {
-          vimjs.file_callback = null;
-          if(files.length == 0) {
-            {{{ makeSetValue('buf', 0, 0, 'i8') }}};
-            setTimeout(cb, 1);
-          }
-          var reader = new FileReader();
-          reader.onload = function(e) {
-            var buffer = new Uint8Array(e.target.result);
-            writeArrayToMemory(intArrayFromString('/tmp/local-XXXXXX'), buf);
-            _mktemp(buf);
-            FS.writeFile(Pointer_stringify(buf), buffer, { 'encoding': 'binary' });
-            setTimeout(cb, 1);
-          }
-          reader.readAsArrayBuffer(files[0]);
-        };
-        if(vimjs.is_chrome) {
-          // TODO
-          {{{ makeSetValue('buf', 0, 0, 'i8') }}};
-          cb();
-        } else {
-          vimjs.file_node.click();
-        }
+        vimjs.load_local_file(cb, buf);
+      }
+    } else if (default_name === 'dropbox') {
+      if(saving) {
+        vimjs.ensure_dropbox(function() {
+          vimjs.save_dropbox_file(cb, buf);
+        });
+      } else {
+        vimjs.ensure_dropbox(function() {
+          vimjs.load_dropbox_file(cb, buf);
+        });
       }
     } else {
-      {{{ makeSetValue('buf', 0, 0, 'i8') }}};
-      cb();
+      vimjs.load_nothing(cb, buf);
     }
   },
 

@@ -6,12 +6,16 @@
 
 
 
-" Use CSS font format
-" Use monospace fonts only!
-set guifont=12px\ monospace
+" [Experimental]
+" Read local files
+" :bro e local
+" Read files from Dropbox
+" :bro e dropbox
 
-" [Experimental] Call JavaScript
-" Note the escape of !
+
+
+" [Experimental] 
+" Call JavaScript (Note the escape of !)
 !console.log('Hello from vimrc\!');
 
 " If you are editing a JavaScript file:
@@ -22,8 +26,9 @@ set guifont=12px\ monospace
 
 
 
-" [Experimental] Read local files (Firefox Only)
-" :bro e local
+" Use CSS font format
+" Use monospace fonts only!
+set guifont=12px\ monospace
 
 
 

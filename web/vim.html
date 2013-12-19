@@ -69,9 +69,19 @@
         <p class="text-muted">Last updated: <span id="last-updated-time">Mon Dec 16 14:54:38 UTC 2013</span></p>
       </div>
     </div>
-    <div class="vimjs-hidden">
-      <input id="vimjs-file" type="file">
-      <audio id="vimjs-beep" src="drip.ogg"></audio>
+    <audio id="vimjs-beep" src="drip.ogg"></audio>
+    <input id="vimjs-file" class="vimjs-hidden" type="file">
+    <div id="vimjs-trigger-dialog" class="modal">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h4 class="modal-title">Ugly workaround for Chrome</h4>
+          </div>
+          <div class="modal-body">
+            <button id="vimjs-trigger-button" type="button" class="btn btn-primary">Click Me</button>
+          </div>
+        </div>
+      </div>
     </div>
     <script>
       var ele = document.getElementById('last-updated-time');

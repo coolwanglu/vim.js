@@ -16,6 +16,17 @@ by Lu Wang
 
 
 
+### Vim.js Features
+
+- Persistent `~/.vimrc`
+- Execute JavaScript from Vim.js 
+- Read local files 
+- Read files from Dropbox
+
+Run `:e $VIM/vimrc` for more detail.
+
+
+
 ### Vim Features
 
 vim.js is built with the small feature set (`--with-features=small`), 
@@ -35,22 +46,13 @@ create a pull request.
 
 
 
-### Vim.js Features
-
-- Persistent `~/.vimrc`
-- Execute JavaScript from Vim.js (`:!`)
-
-
-
 ### Instructions for hackers
 
 - Prepare the dependencies:
-  - emscripten
-    - Use the `wl` branch of [my fork](https://github.com/coolwanglu/emscripten/tree/wl) if anything goes wrong
+  - emscripten &mdash; Use the `wl` branch of [my fork](https://github.com/coolwanglu/emscripten/tree/wl) if anything goes wrong
   - node.js
   - streamline.js
-  - GCC & cproto (maybe)
-    - Sometimes you need to run `make proto` when you see errors about 'undeclared variables/functions/structs'
+  - GCC & cproto (maybe) &mdash; Sometimes you need to run `make proto` when you see errors about 'undeclared variables/functions/structs'
 - Get yourself familiar with everything above and also:
   - source code of vim
   - JavaScript, and also HTML/CSS
