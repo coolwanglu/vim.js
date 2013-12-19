@@ -30,14 +30,20 @@
   line-height:1;
 }
 .vimjs-line span { 
-  white-space: pre; 
+  white-space:pre; 
   border:0;
   margin:0;
 }
 .trans { color:transparent; }
-.bold { font-weight: bold; }
-.underl { text-decoration: underline; }
-.underc { text-decoration: underline; } /* todo */
+.bold { font-weight:bold; }
+.underl { text-decoration:underline; }
+.underc { text-decoration:underline; } /* todo */
+
+.vimjs-hidden {
+  position:absolute;
+  right:100%;
+  bottom:100%;
+}
 
 /* overrides some bootstrap styles */
 .jumbotron { 

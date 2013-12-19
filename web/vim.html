@@ -69,8 +69,10 @@
         <p class="text-muted">Last updated: <span id="last-updated-time">Mon Dec 16 14:54:38 UTC 2013</span></p>
       </div>
     </div>
-    <input id="vimjs-file" type="file">
-    <audio id="vimjs-beep" src="drip.ogg"></audio>
+    <div class="vimjs-hidden">
+      <input id="vimjs-file" type="file">
+      <audio id="vimjs-beep" src="drip.ogg"></audio>
+    </div>
     <script>
       var ele = document.getElementById('last-updated-time');
       ele.innerHTML = (new Date(ele.innerHTML)).toLocaleString();

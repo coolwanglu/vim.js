@@ -384,8 +384,7 @@ gui_mch_wait_for_chars(int wtime)
     void
 gui_browser_handle_key(int code, int modifiers, char_u special1, char_u special2)
 {
-#define BUF_SIZE  64
-    char_u buf[BUF_SIZE];
+    char_u buf[64];
     int buf_len = 0;
     int is_special = (special1 != 0);
 
@@ -705,7 +704,12 @@ gui_mch_browse(
     char_u *initdir,
     char_u *filter)
 {
-   return (char_u*)vimjs_browse(saving, (char*)dflt, (char*)initdir);
+    char buf[4096];
+    vimjs_browse(buf, 4096, saving, (char*)dflt, (char*)initdir);
+    if(*buf == 0) {
+        return NULL;
+    }
+    return vim_strsave(buf);
 }
 #endif /* FEAT_BROWSE */
 

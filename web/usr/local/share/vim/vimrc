@@ -20,6 +20,11 @@ set guifont=12px\ monospace
 
 
 
+" [Experimental] Read local files (Firefox Only)
+" :bro e local
+
+
+
 " Only Darkside is available right now
 " Help me implement file system hooks (for loading external files)!
 colorscheme Darkside

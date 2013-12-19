@@ -22,7 +22,7 @@
  * There may be other functions (without the '_' prefix), which never call async functions
  * _ is never used as a parameter -- for streamline.js
  * No function pointers of async functions -- will be wrapped with vimjs_async_cmd_call in the source code
- * No complicated structures that may confuse streamline.js -- fall throughs in swtich, and break to labels
+ * No complicated structures that may confuse streamline.js -- fall through in switch, and break to labels
  */
 
 
@@ -840,7 +840,7 @@ var call_graph = {};
 
 var fs = require('fs');
 var async_func_names = {};
-// initiall functions insided async_func_names_to_check are not transformed
+// initial functions inside async_func_names_to_check are not transformed
 // but you can write in the streamline fashion directly
 var async_func_names_to_check = [
     '_vimjs_sleep', 

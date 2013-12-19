@@ -1,4 +1,4 @@
-/*  vim: set sw=3 ts=2 et foldmethod=marker foldmarker=VIMJS_FOLD_START,VIMJS_FOLD_END : */
+/*  vim: set sw=2 ts=2 et foldmethod=marker foldmarker=VIMJS_FOLD_START,VIMJS_FOLD_END : */
 /*
  * vim_lib.js: connect DOM and user inputs to VIM
  *
@@ -856,41 +856,42 @@ mergeInto(LibraryManager.library, {
     }
   }, 
 
-  vimjs_browse: function(cb, saving, default_name, init_dir) {
-    console.log('browse', saving, default_name, init_dir);
-    function set_file_callback (cb_func) {
-      vimjs.file_callback = function (files) {
-        vimjs.file_callback = null;
-        setTimeout(function() {
-          cb_func(files);
-        }, 1);
-      };
-    }
-    function cb_return (filename, err_msg) {
-      cb(null, ptr);
-    }
+  vimjs_browse__dep: ['mktemp'],
+  vimjs_browse: function(cb, buf, buf_size, saving, default_name, init_dir) {
+    default_name = Pointer_stringify(default_name);
     if(default_name === 'local' && window.FileReader) { 
       if(saving) {
         // save to local 
         // TODO
       } else {
         // read from local
-        set_file_callback(function (files) {
+        vimjs.file_callback = function (files) {
+          vimjs.file_callback = null;
           if(files.length == 0) {
-            cb_return('', '');
-            return;
+            {{{ makeSetValue('buf', 0, 0, 'i8') }}};
+            setTimeout(cb, 1);
           }
           var reader = new FileReader();
           reader.onload = function(e) {
             var buffer = new Uint8Array(e.target.result);
-            // TODO
+            writeArrayToMemory(intArrayFromString('/tmp/local-XXXXXX'), buf);
+            _mktemp(buf);
+            FS.writeFile(Pointer_stringify(buf), buffer, { 'encoding': 'binary' });
+            setTimeout(cb, 1);
           }
           reader.readAsArrayBuffer(files[0]);
-        });
-        vimjs.file_node.click();
+        };
+        if(vimjs.is_chrome) {
+          // TODO
+          {{{ makeSetValue('buf', 0, 0, 'i8') }}};
+          cb();
+        } else {
+          vimjs.file_node.click();
+        }
       }
     } else {
-      cb_return('', '');
+      {{{ makeSetValue('buf', 0, 0, 'i8') }}};
+      cb();
     }
   },
 
