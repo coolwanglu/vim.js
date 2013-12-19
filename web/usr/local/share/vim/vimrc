@@ -13,8 +13,10 @@ set guifont=12px\ monospace
 " [Experimental] Call JavaScript
 " Note the escape of !
 !console.log('Hello from vimrc\!');
+
 " If you are editing a JavaScript file:
 " :!%
+
 " emscripten API works:
 " :!FS.mkdir('/foo')
 
@@ -26,7 +28,6 @@ set guifont=12px\ monospace
 
 
 " Only Darkside is available right now
-" Help me implement file system hooks (for loading external files)!
 colorscheme Darkside
 
 
