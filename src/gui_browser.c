@@ -293,6 +293,7 @@ gui_mch_draw_string(int row, int col, char_u *s, int len, int flags)
     int
 gui_mch_haskey(char_u *name)
 {
+    // TODO
     return FAIL;
 }
 
