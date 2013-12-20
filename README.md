@@ -12,7 +12,7 @@ by Lu Wang
 
 - Works but unstable, only tested on Firefox/Chrome + Ubuntu
 - Faster on Chrome than Firefox
-- Some features work better on Firefox (e.g. `<Ctrl>`)
+- Some features work better on Firefox (e.g. `<Ctrl>` and file selector)
 
 
 
