@@ -1,26 +1,26 @@
 // = failed/postponed/low priority
 
 ## emscripten / async transformation
-use cDefine when possible
 streamline.js does not catch ExitStatus 
 asm.js
-hooks for file read/write
 
 ## core
-extension -- #11
-cursor
-//+eval
+draw cursor
 
 ## UI stuffs
 use canvas -- might be faster/more stable ?
 special keys (ctrl etc)
 resize/set font
-//clipboard
+
+## Web integration
+Load vim components (runtime)
+
+
+
+## Won't Do
+//system clipboard
 //mouse
 //tabline
 //scrollbar
 //dialog
 //keypad keys
-
-## Web integration
-Load vim components 
