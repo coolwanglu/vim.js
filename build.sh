@@ -1,14 +1,48 @@
 #!/bin/bash
 set -e
-EM_DIR=${EM_DIR:?"~/src/emscripten"}
+: ${EM_DIR:?"EM_DIR is not set!"}
+
+JOB_COUNT=4
+
+function check_queue {
+    OLDQUEUE=$RUNNING_QUEUE
+    for PID in $OLDQUEUE
+    do
+        if [ ! -d /proc/$PID ]; then
+            regenerate_queue
+            break
+        fi
+    done
+}
+
+function regenerate_queue {
+    OLDQUEUE=$RUNNING_QUEUE
+    RUNNING_QUEUE=""
+    RUNNING_COUNT=0
+    for PID in $OLDQUEUE
+    do
+        if [ -d /proc/$PID ]; then
+            RUNNING_QUEUE="$RUNNING_QUEUE $PID"
+            RUNNING_COUNT=$(($RUNNING_COUNT+1))
+        fi
+    done
+}
+
+function new_job {
+    PROCESS=$*
+    eval "$PROCESS &"
+    RUNNING_QUEUE="$RUNNING_QUEUE $!"
+}
 
 do_config() {
+    echo config
 # something wrong with emcc + cproto, use gcc as CPP instead
 CPPFLAGS="-DFEAT_GUI_BROWSER" \
 CPP="gcc -E" \
 $EM_DIR/emconfigure ./configure \
     --enable-gui=browser \
     --with-features=small \
+    --disable-selinux \
     --disable-xsmp \
     --disable-xmp-interact \
     --disable-luainterp \
@@ -26,6 +60,12 @@ $EM_DIR/emconfigure ./configure \
     --disable-hangulinput \
     --disable-xim \
     --disable-fontset \
+    --disable-gtk2-check \
+    --disable-gnome-check \
+    --disable-motif-check \
+    --disable-athena-check \
+    --disable-nextaw-check \
+    --disable-carbon-check \
     --disable-gtktest \
     --disable-largefile \
     --disable-acl \
@@ -63,10 +103,21 @@ do_transform() {
 pushd web
 
 echo "Transfoming..."
-js transform.js vim-1.js vim-2._js
+node transform.js vim-1.js vim-2 $JOB_COUNT
 
 echo "Compiling with streamline.js...(very slow)"
-_node -c vim-2._js
+
+for ((i=0; i < JOB_COUNT; i++))
+do
+    _node -c vim-2.$i._js &
+done
+
+wait
+
+for ((i=0; i < JOB_COUNT; i++))
+do
+    cat vim-2.$i.js >> vim-2.js
+done
 
 popd
 }
@@ -87,4 +138,4 @@ popd
 do_make
 do_link
 do_transform
-#do_compress
+do_compress

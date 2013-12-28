@@ -123,6 +123,7 @@ function nodeStr(n) {
 /*
  * Lu Wang: let pp() handles async function definitions and calls
  */
+var pp_dump_async_funcs = true;
 function pp(n, d, inLetHead) {
     var topScript = false;
 
@@ -155,15 +156,16 @@ function pp(n, d, inLetHead) {
             break;
 
         case FUNCTION:
-            p += "function";
-            p += (n.name ? " " + n.name : "") + "(";
-            if ((n.name in async_func_names) && (!(n.name in async_func_names_no_change))) {
-                p += "_";
-                for (var i = 0, j = n.params.length; i < j; i++)
-                    p += ", " + pp(n.params[i], d);
+            if (n.name && (n.name in async_func_names) && (!(n.name in async_func_names_no_change))) {
+              if(!pp_dump_async_funcs)
+                break;
+              p += "function " + n.name +"(_";
+              for (var i = 0, j = n.params.length; i < j; i++)
+                p += ", " + pp(n.params[i], d);
             } else {
-                for (var i = 0, j = n.params.length; i < j; i++)
-                    p += (i > 0 ? ", " : "") + pp(n.params[i], d);
+              p += "function" + (n.name ? " " + n.name : "") + "(";
+              for (var i = 0, j = n.params.length; i < j; i++)
+                p += (i > 0 ? ", " : "") + pp(n.params[i], d);
             }
             p += ") " + pp(n.body, d);
             break;
@@ -818,17 +820,26 @@ function work() {
     console.log(cnt + ' aync functions found, written to async_function_list.')
 
     console.log('Saving...');
+    pp_dump_async_funcs = false;
     var out_src = pp(root);
-    /*
-    var out_src = ''; 
+    
+    pp_dump_async_funcs = true;
+    var out_async_src_list = [];
+    for(var i = 0; i < job_count; ++i) 
+      out_async_src_list.push('');
+    var cur_idx = 0;
     root.funDecls.forEach(function(n) {
       if ((n.name in async_func_names) && (!(n.name in async_func_names_no_change))) {
-        out_src += pp(n);
+        out_async_src_list[cur_idx] += pp(n);
+        ++cur_idx;
+        if(cur_idx == job_count)
+          cur_idx = 0;
       }
     });
-    */
 
-    fs.writeFileSync(out_filename, out_src);
+    fs.writeFileSync(out_filename+'.js', out_src);
+    for(var i = 0; i < job_count; ++i)
+      fs.writeFileSync(out_filename+'.'+i+'._js', out_async_src_list[i]);
 }
 
 console.log('Preparation...');
@@ -863,10 +874,10 @@ var async_func_names_to_check = [
     ];
 var async_func_names_no_change = {};
 
-
-
 in_filename = process.argv[2]
 out_filename = process.argv[3]
+job_count = parseInt(process.argv[4])
+
 if(in_filename && out_filename)
   work();
 else
