@@ -226,6 +226,7 @@
 #undef HAVE_PTHREAD_NP_H
 
 #undef HAVE_SELINUX
+#undef HAVE_ICONV
 
 #endif // FEAT_GUI_BROWSER
 
