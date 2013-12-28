@@ -225,6 +225,8 @@
 #undef HAVE_USLEEP
 #undef HAVE_PTHREAD_NP_H
 
+#undef HAVE_SELINUX
+
 #endif // FEAT_GUI_BROWSER
 
 #include "feature.h"	/* #defines for optionals and features */

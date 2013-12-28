@@ -56,9 +56,8 @@ create a pull request.
 - Get yourself familiar with everything above and also:
   - source code of vim
   - JavaScript, and also HTML/CSS
-- Prepare `build.sh`
-  - Setup the path of emscripten inside
-  - Uncomment the last few lines 
+- Set up EM\_DIR
+- Uncomment the last few lines in `build.sh`
 - Run `build.sh`
 
 

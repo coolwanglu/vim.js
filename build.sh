@@ -1,6 +1,6 @@
 #!/bin/bash
 set -e
-EM_DIR=~/src/emscripten
+EM_DIR=${EM_DIR:?"~/src/emscripten"}
 
 do_config() {
 # something wrong with emcc + cproto, use gcc as CPP instead
