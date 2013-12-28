@@ -266,12 +266,11 @@
 #define FEAT_BROWSE_CMD
 #define FEAT_BROWSE
 
-// too heavy:
 #define FEAT_EVAL
 #define FEAT_TEXTOBJ // requires FEAT_EVAL
-//#define FEAT_SYN_HL // requires FEAT_EVAL
+#define FEAT_CINDENT
+#define FEAT_SYN_HL // requires FEAT_EVAL FEAT_CINDENT
 //#define FEAT_FOLDING
-//#define FEAT_CINDENT
 //#define FEAT_SMARTINDENT
 
 #endif
