@@ -269,10 +269,10 @@
 #define FEAT_EVAL
 #define FEAT_TEXTOBJ // requires FEAT_EVAL
 #define FEAT_CINDENT
-#define FEAT_SYN_HL // requires FEAT_EVAL FEAT_CINDENT
+#define FEAT_AUTOCMD
+#define FEAT_SYN_HL // requires FEAT_EVAL FEAT_CINDENT FEAT_AUTOCMD
 //#define FEAT_FOLDING
 //#define FEAT_SMARTINDENT
-
 #endif
 
 /* +x11 is only enabled when it's both available and wanted. */
