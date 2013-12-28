@@ -837,7 +837,7 @@ function work() {
       }
     });
 
-    fs.writeFileSync(out_filename+'.js', out_src);
+    fs.writeFileSync(out_filename+'._js', out_src);
     for(var i = 0; i < job_count; ++i)
       fs.writeFileSync(out_filename+'.'+i+'._js', out_async_src_list[i]);
 }
