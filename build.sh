@@ -3,12 +3,14 @@ set -e
 EM_DIR=~/src/emscripten
 
 do_config() {
+    echo config
 # something wrong with emcc + cproto, use gcc as CPP instead
 CPPFLAGS="-DFEAT_GUI_BROWSER" \
 CPP="gcc -E" \
 $EM_DIR/emconfigure ./configure \
     --enable-gui=browser \
     --with-features=small \
+    --disable-selinux \
     --disable-xsmp \
     --disable-xmp-interact \
     --disable-luainterp \
@@ -26,6 +28,12 @@ $EM_DIR/emconfigure ./configure \
     --disable-hangulinput \
     --disable-xim \
     --disable-fontset \
+    --disable-gtk2-check \
+    --disable-gnome-check \
+    --disable-motif-check \
+    --disable-athena-check \
+    --disable-nextaw-check \
+    --disable-carbon-check \
     --disable-gtktest \
     --disable-largefile \
     --disable-acl \
@@ -83,8 +91,8 @@ java -jar $EM_DIR/third_party/closure-compiler/compiler.jar \
 popd
 }
 
-#do_config
+do_config
 do_make
 do_link
 do_transform
-#do_compress
+do_compress
