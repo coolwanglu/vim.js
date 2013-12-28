@@ -50,6 +50,7 @@ void vimjs_browse(char *, int, int, char*, char*);
  * Instead, use these functions to mark the call
  * `safe` means that #args is checked, both sync and async functions can be called correctly
  */
+void * vimjs_async_call_safe0(void (*)());
 void * vimjs_async_call_safe1(void (*)(void*), void*);
 void * vimjs_async_call_safe2(void (*)(void*,void*), void*, void*);
 void * vimjs_async_call_safe3(void (*)(void*,void*,void*), void*,void*,void*);

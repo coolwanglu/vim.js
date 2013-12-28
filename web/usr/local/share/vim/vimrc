@@ -51,5 +51,6 @@ set backspace=indent,eol,start
 set wildmode=longest,list,full
 syntax on
 set mouse=
-set smartindent
-set cindent shiftwidth=4
+"set smartindent
+"set cindent 
+set shiftwidth=4

@@ -1001,6 +1001,18 @@ mergeInto(LibraryManager.library, {
   },
 
   /* func is a function pointer */
+  vimjs_async_call_safe0: function(_, func) {
+    func = FUNCTION_TABLE[func];
+    if(func.length == 0) {
+      return func();
+    } else if (func.length == 1) {
+      return func(_);
+    } else {
+      throw new Error('Cannot make async call');
+    }
+  },
+
+  /* func is a function pointer */
   vimjs_async_call_safe1: function(_, func, arg1) {
     func = FUNCTION_TABLE[func];
     if(func.length == 1) {
