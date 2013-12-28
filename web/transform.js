@@ -819,6 +819,15 @@ function work() {
 
     console.log('Saving...');
     var out_src = pp(root);
+    /*
+    var out_src = ''; 
+    root.funDecls.forEach(function(n) {
+      if ((n.name in async_func_names) && (!(n.name in async_func_names_no_change))) {
+        out_src += pp(n);
+      }
+    });
+    */
+
     fs.writeFileSync(out_filename, out_src);
 }
 

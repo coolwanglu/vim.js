@@ -265,8 +265,8 @@
 #define FEAT_BROWSE
 
 // too heavy:
-//#define FEAT_EVAL
-//#define FEAT_TEXTOBJ // requires FEAT_EVAL
+#define FEAT_EVAL
+#define FEAT_TEXTOBJ // requires FEAT_EVAL
 //#define FEAT_SYN_HL // requires FEAT_EVAL
 //#define FEAT_FOLDING
 //#define FEAT_CINDENT

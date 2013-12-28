@@ -87,4 +87,4 @@ popd
 do_make
 do_link
 do_transform
-do_compress
+#do_compress
