@@ -867,10 +867,10 @@ var async_func_names_to_check = [
     '_vimjs_wait_for_chars', 
     '_vimjs_update',
     '_vimjs_browse',
-    '_vimjs_async_cmd_call1', 
-    '_vimjs_async_cmd_call2', 
-    '_vimjs_async_cmd_call3', 
-    '_vimjs_async_cmd_call6', 
+    '_vimjs_async_call_safe1', 
+    '_vimjs_async_call_safe2', 
+    '_vimjs_async_call_safe3', 
+    '_vimjs_async_call_safe6', 
     ];
 var async_func_names_no_change = {};
 
