@@ -8533,7 +8533,11 @@ call_func(funcname, len, rettv, argcount, argvars, firstline, lastline,
 		else
 		{
 		    argvars[argcount].v_type = VAR_UNKNOWN;
+#ifdef FEAT_GUI_BROWSER
+                    vimjs_async_call_safe2(functions[i].f_func, argvars, rettv);
+#else
 		    functions[i].f_func(argvars, rettv);
+#endif
 		    error = ERROR_NONE;
 		}
 	    }

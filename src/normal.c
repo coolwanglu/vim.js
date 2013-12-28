@@ -13,7 +13,6 @@
  */
 
 #include "vim.h"
-#include "vimjs.h"
 
 #ifdef FEAT_VISUAL
 /*
@@ -1201,7 +1200,7 @@ getcount:
     
 #ifdef FEAT_GUI_BROWSER
     // Lu Wang: mark as async function
-    vimjs_async_cmd_call1((nv_cmds[idx].cmd_func), (&ca));
+    vimjs_async_call_safe1((nv_cmds[idx].cmd_func), (&ca));
 #else
     (nv_cmds[idx].cmd_func)(&ca);
 #endif

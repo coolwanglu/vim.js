@@ -1001,7 +1001,7 @@ mergeInto(LibraryManager.library, {
   },
 
   /* func is a function pointer */
-  vimjs_async_cmd_call1: function(_, func, arg1) {
+  vimjs_async_call_safe1: function(_, func, arg1) {
     func = FUNCTION_TABLE[func];
     if(func.length == 1) {
       return func(arg1);
@@ -1013,7 +1013,7 @@ mergeInto(LibraryManager.library, {
   },
 
   /* func is a function pointer */
-  vimjs_async_cmd_call2: function(_, func, arg1, arg2) {
+  vimjs_async_call_safe2: function(_, func, arg1, arg2) {
     func = FUNCTION_TABLE[func];
     if(func.length == 2) {
       return func(arg1, arg2);
@@ -1025,7 +1025,7 @@ mergeInto(LibraryManager.library, {
   },
 
   /* func is a function pointer */
-  vimjs_async_cmd_call3: function(_, func, arg1, arg2, arg3) {
+  vimjs_async_call_safe3: function(_, func, arg1, arg2, arg3) {
     func = FUNCTION_TABLE[func];
     if(func.length == 3) {
       return func(arg1, arg2, arg3);
@@ -1037,7 +1037,7 @@ mergeInto(LibraryManager.library, {
   },
 
   /* func is a function pointer */
-  vimjs_async_cmd_call6: function(_, func, arg1, arg2, arg3, arg4, arg5, arg6) {
+  vimjs_async_call_safe6: function(_, func, arg1, arg2, arg3, arg4, arg5, arg6) {
     func = FUNCTION_TABLE[func];
     if(func.length == 6) {
       return func(arg1, arg2, arg3, arg4, arg5, arg6);

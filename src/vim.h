@@ -274,7 +274,6 @@
 //#define FEAT_CINDENT
 //#define FEAT_SMARTINDENT
 
-
 #endif
 
 /* +x11 is only enabled when it's both available and wanted. */
@@ -2348,5 +2347,8 @@ typedef int VimClipboard;	/* This is required for the prototypes. */
 #else
 # define SET_NO_HLSEARCH(flag) no_hlsearch = (flag)
 #endif
+
+// have no effect if FEAT_GUI_BROWSER is not enabled
+#include "vimjs.h"
 
 #endif /* VIM__H */

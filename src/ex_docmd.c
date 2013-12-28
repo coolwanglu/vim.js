@@ -12,7 +12,6 @@
  */
 
 #include "vim.h"
-#include "vimjs.h"
 
 static int	quitmore = 0;
 static int	ex_pressedreturn = FALSE;
@@ -1023,7 +1022,7 @@ do_cmdline(cmdline, fgetline, cookie, flags)
 		msg_didout = TRUE;
 	    if (fgetline == NULL || (next_cmdline = 
 #ifdef FEAT_GUI_BROWSER
-                        vimjs_async_cmd_call3(fgetline,
+                        vimjs_async_call_safe3(fgetline,
 #else
                         fgetline(
 #endif
@@ -2701,7 +2700,7 @@ do_one_cmd(cmdlinep, sourcing,
 	ea.errmsg = NULL;
 #ifdef FEAT_GUI_BROWSER
         // Lu Wang: mark as async function
-        vimjs_async_cmd_call1((cmdnames[ea.cmdidx].cmd_func), (&ea));
+        vimjs_async_call_safe1((cmdnames[ea.cmdidx].cmd_func), (&ea));
 #else
 	(cmdnames[ea.cmdidx].cmd_func)(&ea);
 #endif

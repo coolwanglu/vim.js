@@ -7998,13 +7998,13 @@ vim_regcomp(expr_arg, re_flags)
      */
     if (regexp_engine != BACKTRACKING_ENGINE)
 #ifdef FEAT_GUI_BROWSER
-        prog = vimjs_async_cmd_call2(nfa_regengine.regcomp, expr, re_flags); 
+        prog = vimjs_async_call_safe2(nfa_regengine.regcomp, expr, re_flags); 
 #else
         prog = nfa_regengine.regcomp(expr, re_flags);
 #endif
     else
 #ifdef FEAT_GUI_BROWSER
-        prog = vimjs_async_cmd_call2(bt_regengine.regcomp, expr, re_flags); 
+        prog = vimjs_async_call_safe2(bt_regengine.regcomp, expr, re_flags); 
 #else
 	prog = bt_regengine.regcomp(expr, re_flags);
 #endif
@@ -8062,7 +8062,7 @@ vim_regexec(rmp, line, col)
     colnr_T     col;    /* column to start looking for match */
 {
 #ifdef FEAT_GUI_BROWSER
-    return vimjs_async_cmd_call3(rmp->regprog->engine->regexec, rmp, line, col);
+    return vimjs_async_call_safe3(rmp->regprog->engine->regexec, rmp, line, col);
 #else
     return rmp->regprog->engine->regexec(rmp, line, col);
 #endif
@@ -8101,7 +8101,7 @@ vim_regexec_multi(rmp, win, buf, lnum, col, tm)
     proftime_T	*tm;		/* timeout limit or NULL */
 {
 #ifdef FEAT_GUI_BROWSER
-    return vimjs_async_cmd_call6(rmp->regprog->engine->regexec_multi, rmp, win, buf, lnum, col, tm);
+    return vimjs_async_call_safe6(rmp->regprog->engine->regexec_multi, rmp, win, buf, lnum, col, tm);
 #else
     return rmp->regprog->engine->regexec_multi(rmp, win, buf, lnum, col, tm);
 #endif

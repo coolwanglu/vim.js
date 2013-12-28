@@ -15,7 +15,6 @@
  */
 
 #include "vim.h"
-#include "vimjs.h"
 
 #include "os_unixx.h"	    /* unix includes for os_unix.c only */
 

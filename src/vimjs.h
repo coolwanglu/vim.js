@@ -48,11 +48,12 @@ void vimjs_browse(char *, int, int, char*, char*);
 /*
  * some function pointers may point to async functions, which cannot be automatically detected
  * Instead, use these functions to mark the call
+ * `safe` means that #args is checked, both sync and async functions can be called correctly
  */
-void * vimjs_async_cmd_call1(void (*)(void*), void*);
-void * vimjs_async_cmd_call2(void (*)(void*,void*), void*, void*);
-void * vimjs_async_cmd_call3(void (*)(void*,void*,void*), void*,void*,void*);
-void * vimjs_async_cmd_call6(void (*)(void*,void*,void*,void*,void*,void*), void*,void*,void*,void*,void*,void*);
+void * vimjs_async_call_safe1(void (*)(void*), void*);
+void * vimjs_async_call_safe2(void (*)(void*,void*), void*, void*);
+void * vimjs_async_call_safe3(void (*)(void*,void*,void*), void*,void*,void*);
+void * vimjs_async_call_safe6(void (*)(void*,void*,void*,void*,void*,void*), void*,void*,void*,void*,void*,void*);
 
 #endif // FEAT_GUI_BROWSER
 #endif //VIMJS_H__

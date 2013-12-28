@@ -17,7 +17,6 @@
 
 #ifdef FEAT_GUI_BROWSER
 #include "vim.h"
-#include "vimjs.h"
 
      void
 gui_mch_mousehide(int hide)
