@@ -505,7 +505,9 @@ mergeInto(LibraryManager.library, {
     /* VIMJS_FOLD_END */
 
     /* initialize color names VIMJS_FOLD_START
-     * https://github.com/harthur/color-convert
+     *
+     * a few colors added by Lu Wang
+     * original version from https://github.com/harthur/color-convert
      * MIT License
      */
     vimjs.color_map = {
@@ -549,6 +551,7 @@ mergeInto(LibraryManager.library, {
       darkslategrey: [47,79,79],
       darkturquoise: [0,206,209],
       darkviolet: [148,0,211],
+      darkyellow: [0xbb, 0xbb, 0], // WL
       deeppink: [255,20,147],
       deepskyblue: [0,191,255],
       dimgray: [105,105,105],
@@ -565,7 +568,26 @@ mergeInto(LibraryManager.library, {
       gray: [128,128,128],
       green: [0,128,0],
       greenyellow: [173,255,47],
+      gray: [128,128,128], // WL
+      gray10: [0x1a, 0x1a, 0x1a], // WL
+      gray20: [0x33, 0x33, 0x33], // WL
+      gray30: [0x4d, 0x4d, 0x4d], // WL
+      gray40: [0x66, 0x66, 0x66], // WL
+      gray50: [0x7f, 0x7f, 0x7f], // WL
+      gray60: [0x99, 0x99, 0x99], // WL
+      gray70: [0xb3, 0xb3, 0xb3], // WL
+      gray80: [0xcc, 0xcc, 0xcc], // WL
+      gray90: [0xe5, 0xe5, 0xe5], // WL
       grey: [128,128,128],
+      grey10: [0x1a, 0x1a, 0x1a], // WL
+      grey20: [0x33, 0x33, 0x33], // WL
+      grey30: [0x4d, 0x4d, 0x4d], // WL
+      grey40: [0x66, 0x66, 0x66], // WL
+      grey50: [0x7f, 0x7f, 0x7f], // WL
+      grey60: [0x99, 0x99, 0x99], // WL
+      grey70: [0xb3, 0xb3, 0xb3], // WL
+      grey80: [0xcc, 0xcc, 0xcc], // WL
+      grey90: [0xe5, 0xe5, 0xe5], // WL
       honeydew: [240,255,240],
       hotpink: [255,105,180],
       indianred: [205,92,92],
@@ -576,6 +598,7 @@ mergeInto(LibraryManager.library, {
       lavenderblush: [255,240,245],
       lawngreen: [124,252,0],
       lemonchiffon: [255,250,205],
+      lightred: [0xff, 0xbb, 0xbb], // WL
       lightblue: [173,216,230],
       lightcoral: [240,128,128],
       lightcyan: [224,255,255],
@@ -583,6 +606,7 @@ mergeInto(LibraryManager.library, {
       lightgray: [211,211,211],
       lightgreen: [144,238,144],
       lightgrey: [211,211,211],
+      lightmagenta: [0xff, 0xbb, 0xff], // WL
       lightpink: [255,182,193],
       lightsalmon: [255,160,122],
       lightseagreen: [32,178,170],
