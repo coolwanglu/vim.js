@@ -8079,7 +8079,11 @@ vim_regexec_nl(rmp, line, col)
     char_u *line;
     colnr_T col;
 {
+#ifdef FEAT_GUI_BROWSER
+    return vimjs_async_call_safe3(rmp->regprog->engine->regexec_nl, rmp, line, col);
+#else
     return rmp->regprog->engine->regexec_nl(rmp, line, col);
+#endif
 }
 #endif
 
