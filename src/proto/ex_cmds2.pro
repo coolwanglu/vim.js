@@ -56,6 +56,7 @@ void ex_compiler __ARGS((exarg_T *eap));
 void ex_runtime __ARGS((exarg_T *eap));
 int source_runtime __ARGS((char_u *name, int all));
 int do_in_runtimepath __ARGS((char_u *name, int all, void (*callback)(char_u *fname, void *ck), void *cookie));
+void ex_options __ARGS((exarg_T *eap));
 void ex_source __ARGS((exarg_T *eap));
 linenr_T *source_breakpoint __ARGS((void *cookie));
 int *source_dbg_tick __ARGS((void *cookie));

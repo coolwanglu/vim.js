@@ -21535,7 +21535,11 @@ ex_function(eap)
 	else if (eap->getline == NULL)
 	    theline = getcmdline(':', 0L, indent);
 	else
+#ifdef FEAT_GUI_BROWSER
+	    theline = vimjs_async_call_safe3(eap->getline, ':', eap->cookie, indent);
+#else
 	    theline = eap->getline(':', eap->cookie, indent);
+#endif
 	if (KeyTyped)
 	    lines_left = Rows - 1;
 	if (theline == NULL)
