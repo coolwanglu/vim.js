@@ -29,21 +29,15 @@ Run `:e $VIM/vimrc` for more detail.
 
 ### Vim Features
 
-vim.js is built with the small feature set (`--with-features=small`), 
+The online demo is built with the small feature set (`--with-features=small`), 
 with also a few from the normal set.
-Run `:version` to check.
+(`--with-features=normal` is too large and too slow for online usage.)
+Run `:version` to check details.
 
-`--with-features=normal` is too large and too slow for online usage.
+The git version includes [more features](https://github.com/coolwanglu/vim.js/blob/master/src/vim.h#L255),
+for example, text objects, syntax highlighting, vimscript etc.
 
-As we all know that there are huge number of features in Vim, but
-most people use only a small subset of it. So I have to try to balance
-the feature set and the file size, by including most common features,
-and also a few that I pick.
-
-If you really want some feature(s) enabled by default,
-please try to compile it yourself first, estimate the increase in size and
-create a pull request.
-
+Some features can be requests by pull requests, some are not intended to be included. Please discuss with me first.
 
 
 ### Instructions for hackers
