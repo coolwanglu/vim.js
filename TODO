@@ -7,8 +7,6 @@ asm.js
 ## core
 
 ## UI stuffs
-bold/italic/underline/undercurl
-
 draw cursor
 set font
 special keys (ctrl etc)

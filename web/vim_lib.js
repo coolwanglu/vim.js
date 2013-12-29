@@ -773,12 +773,10 @@ mergeInto(LibraryManager.library, {
       // transparent, do nothing
       return;
     }
-    /* TODO */
-    /*
-    if(flags & 0x02) class_name += ' bold';
-    if(flags & 0x04) class_name += ' underl';
-    if(flags & 0x08) class_name += ' underc';
-    */
+
+    var font = vimjs.font;
+
+    if(flags & 0x02) font = 'bold ' + font;
 
     s = Pointer_stringify(s, len);
 
@@ -789,11 +787,28 @@ mergeInto(LibraryManager.library, {
     ctx.textBaseline = 'bottom';
 
     ctx.fillStyle = vimjs.fg_color;
-    // TODO: calculate ascent
-    ctx.fillText(s, 
-             col * vimjs.char_width, 
-             (row + 1) * vimjs.char_height,
-             len * vimjs.char_width);
+
+    var x = col * vimjs.char_width;
+    var y = (row + 1) * vimjs.char_height - 1;
+    var w = len * vimjs.char_width;
+    ctx.fillText(s, x, y, w);
+
+    if(flags & 0x04) { // underline
+      ctx.strokeStyle = vimjs.sp_color;
+      ctx.moveTo(x, y);
+      ctx.lineTo(x + w, y);
+      ctx.stroke();
+    }
+    if(flags & 0x08) { // undercurl
+      var offs = [0, -1, -1, -1, 0, 1, 1, 1];
+      ctx.strokeStyle = vimjs.sp_color;
+      ctx.moveTo(x, y - offs[x%8]);
+
+      for(var xx = x + 1, xx2 = x + w; xx < xx2; ++xx)
+        ctx.lineTo(xx, y - offs[xx%8]);
+
+      ctx.stroke();
+    }
   },
 
   vimjs_clear_block__deps: ['$vimjs'],
