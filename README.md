@@ -37,9 +37,6 @@ with also a few from the normal set.
 Run `:version` to check details. 
 (`--with-features=normal` is too large and too slow for online usage.)
 
-The git version includes [more features](https://github.com/coolwanglu/vim.js/blob/master/src/vim.h#L255),
-for example, text objects, syntax highlighting, vimscript etc.
-
 Some features can be requested via pull requests, some are not intended to be included. 
 Please discuss with me first before you work on a PR.
 
