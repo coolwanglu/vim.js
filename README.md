@@ -45,16 +45,19 @@ Please discuss with me first before you work on a PR.
 ### Instructions for hackers
 
 - Prepare the dependencies:
-  - emscripten &mdash; Use the `wl` branch of [my fork](https://github.com/coolwanglu/emscripten/tree/wl) if anything goes wrong
+  - emscripten 
   - node.js
   - streamline.js
   - GCC & cproto (maybe) &mdash; Sometimes you need to run `make proto` when you see errors about 'undeclared variables/functions/structs'
 - Get yourself familiar with everything above and also:
   - source code of vim
   - JavaScript, and also HTML/CSS
-- Set up EM\_DIR
+- Set up the EM\_DIR environment variable
+- Set up JOB\_COUNT in `build.sh`
 - Uncomment the last few lines in `build.sh`
 - Run `build.sh`
+
+The building process might take 3-4GB memory.
 
 
 
