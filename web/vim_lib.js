@@ -823,10 +823,11 @@ mergeInto(LibraryManager.library, {
     var ch = vimjs.char_height;
     var x = col1 * cw;
     var y = (row1 + num_lines) * ch;
-    ctx.drawImage(ctx, 
-                  x, y,
-                  (col2 - col1 + 1) * cw, (row2 + 1) * ch - y,
-                  x, row1 * ch);
+    var w = (col2 - col1 + 1) * cw;
+    var h = (row2 + 1) * ch - y;
+    ctx.drawImage(vimjs.canvas_node, 
+                  x, y, w, h,
+                  x, row1 * ch, w, h);
 
     _vimjs_clear_block(row2 - num_lines + 1, col1, row2, col2);
   },
@@ -837,10 +838,11 @@ mergeInto(LibraryManager.library, {
     var cw = vimjs.char_width;
     var ch = vimjs.char_height;
     var x = col1 * cw;
-    ctx.drawImage(ctx, 
-                  x, row1 * ch,
-                  (col2 - col1 + 1) * cw, (row2 - row1 - num_lines + 1) * ch,
-                  x, (row1 + num_lines) * ch);
+    var w = (col2 - col1 + 1) * cw;
+    var h = (row2 - row1 - num_lines + 1) * ch;
+    ctx.drawImage(vimjs.canvas_node, 
+                  x, row1 * ch, w, h,
+                  x, (row1 + num_lines) * ch, w, h);
 
     _vimjs_clear_block(row1, col1, row1 + num_lines - 1, col2);
   },
