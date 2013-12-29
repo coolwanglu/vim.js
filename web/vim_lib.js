@@ -47,6 +47,7 @@ mergeInto(LibraryManager.library, {
     window_width: 0,
     window_height: 0,
 
+    font: '12px monospace',
     fg_color: null,
     bg_color: null,
     sp_color: null,
@@ -307,7 +308,9 @@ mergeInto(LibraryManager.library, {
 
     var container_node = vimjs.container_node = document.getElementById('vimjs-container');
     // there might be text nodes of other stuffs before loading vim
+    container_node.removeChild(canvas_node);
     container_node.innerHTML = '';
+    container_node.appendChild(canvas_node);
     container_node.style.backgroundColor = 'black';
 
     vimjs.window_width = container_node.clientWidth;
@@ -754,8 +757,11 @@ mergeInto(LibraryManager.library, {
   vimjs_resize__deps: ['$vimjs', 'vimjs_get_window_width', 'vimjs_get_window_height'],
   vimjs_resize: function(width, height) {
     var container_node = vimjs.container_node;
-    container_node.style.height = height + container_node.offsetHeight - container_node.clientHeight + 'px';
     container_node.style.width = width + container_node.offsetWidth - container_node.clientWidth + 'px';
+    container_node.style.height = height + container_node.offsetHeight - container_node.clientHeight + 'px';
+    var canvas_node = vimjs.canvas_node;
+    canvas_node.width = width;
+    canvas_node.height = height;
   },
 
   vimjs_draw_string__deps: ['$vimjs', 'vimjs_clear_block'],
@@ -777,10 +783,16 @@ mergeInto(LibraryManager.library, {
     s = Pointer_stringify(s, len);
 
     var ctx = vimjs.canvas_ctx;
+
+    // TODO: reapply these upon setting new value/ resizing
+    ctx.font = vimjs.font;
+    ctx.textBaseLine = 'bottom';
+
     ctx.fillStyle = vimjs.fg_color;
-    fillText(s, 
+    // TODO: calculate ascent
+    ctx.fillText(s, 
              col * vimjs.char_width, 
-             row * vimjs.char_height,
+             (row + 1) * vimjs.char_height,
              len * vimjs.char_width);
   },
 
@@ -840,7 +852,8 @@ mergeInto(LibraryManager.library, {
     if(!font)
       font = '12px monospace';
 
-    vimjs.canvas_ctx.font = font; 
+    // TODO: implement set_font
+    vimjs.font = font; 
     var font_test_node = vimjs.font_test_node;
     font_test_node.style.font = font;
     font_test_node.innerHTML = 'm';
