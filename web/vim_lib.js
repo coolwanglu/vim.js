@@ -89,33 +89,6 @@ mergeInto(LibraryManager.library, {
       return 'rgb('+bgr[2]+','+bgr[1]+','+bgr[0]+')';
     },//VIMJS_FOLD_END
 
-    resize: function(rows, cols) {//VIMJS_FOLD_START
-      var screen_w = _vimjs_get_screen_width();
-      var screen_h = _vimjs_get_screen_height();
-      rows = rows || (Math.floor(screen_h / vimjs.char_height) + 1);
-      cols = cols || (Math.floor(screen_w / vimjs.char_width) + 1);
-      vimjs.rows = rows;
-      vimjs.cols = cols;
-      var container_node = vimjs.container_node;
-      container_node.style.height = rows * vimjs.char_height + 'px';
-      container_node.style.width = cols * vimjs.char_width + 'px';
-      // TODO: optimize: reuse old elements
-      // clear old elements
-      container_node.innerHTML = '';
-      for(var r = 0; r < rows; ++r) {
-        var row_ele = document.createElement('div');
-        row_ele.classList.add('vimjs-line');
-        for(var c = 0; c < cols; ++c) {
-          var cur_ele = document.createElement('span');
-          cur_ele.className = 'trans';
-          cur_ele.style.backgroundColor = vimjs.bg_color;
-          cur_ele.textContent = ' ';
-          row_ele.appendChild(cur_ele);
-        }
-        container_node.appendChild(row_ele);
-      }
-    },//VIMJS_FOLD_END
-
     // called before the program starts
     preRun: function () {//VIMJS_FOLD_START
       // setup dir
@@ -296,7 +269,7 @@ mergeInto(LibraryManager.library, {
     __dummy__: null
   },
 
-  vimjs_init__deps: ['$vimjs', 'vimjs_init_font'],
+  vimjs_init__deps: ['$vimjs', 'vimjs_init_font', 'vimjs_resize'],
   vimjs_init: function () {
     vimjs.is_chrome = !!window.chrome;
     
@@ -331,8 +304,8 @@ mergeInto(LibraryManager.library, {
     container_node.innerHTML = '';
     container_node.style.backgroundColor = 'black';
 
-    // will call the resize function
     _vimjs_init_font('');
+    _vimjs_resize();
 
     /* initialize special_keys VIMJS_FOLD_START*/
     vimjs.special_keys = [];
@@ -759,24 +732,51 @@ mergeInto(LibraryManager.library, {
     console.log('TODO: vimjs_flash');
   },
 
-  vimjs_get_screen_width__deps: ['$vimjs'],
-  vimjs_get_screen_width: function() {
+  vimjs_get_window_width__deps: ['$vimjs'],
+  vimjs_get_window_width: function() {
     return vimjs.container_node.clientWidth;
   },
 
-  vimjs_get_screen_height__deps: ['$vimjs'],
-  vimjs_get_screen_height: function() {
+  vimjs_get_window_height__deps: ['$vimjs'],
+  vimjs_get_window_height: function() {
     return vimjs.container_node.clientHeight;
   },
 
-  // ensure that we have enough blocks
-  vimjs_check_dimension__deps: ['$vimjs'],
-  vimjs_check_dimension: function(rows, cols) {
-    try {
-      if (vimjs.container_node.childNodes[rows-1].childNodes[cols-1] === undefined)
-        resize(rows, cols);
-    } catch (e) {
-        resize(rows, cols);
+  vimjs_get_rows__deps: ['$vimjs'],
+  vimjs_get_rows: function() {
+    return vimjs.rows;
+  },
+
+  vimjs_get_cols__deps: ['$vimjs'],
+  vimjs_get_cols: function() {
+    return vimjs.cols;
+  },
+
+  vimjs_resize__deps: ['$vimjs', 'vimjs_get_window_width', 'vimjs_get_window_height'],
+  vimjs_resize: function(rows, cols) {
+    var window_w = _vimjs_get_window_width();
+    var window_h = _vimjs_get_window_height();
+    rows = rows || (Math.floor(window_h / vimjs.char_height) + 1);
+    cols = cols || (Math.floor(window_w / vimjs.char_width) + 1);
+    vimjs.rows = rows;
+    vimjs.cols = cols;
+    var container_node = vimjs.container_node;
+    container_node.style.height = rows * vimjs.char_height + 'px';
+    container_node.style.width = cols * vimjs.char_width + 'px';
+    // TODO: optimize: reuse old elements
+    // clear old elements
+    container_node.innerHTML = '';
+    for(var r = 0; r < rows; ++r) {
+      var row_ele = document.createElement('div');
+      row_ele.classList.add('vimjs-line');
+      for(var c = 0; c < cols; ++c) {
+        var cur_ele = document.createElement('span');
+        cur_ele.className = 'trans';
+        cur_ele.style.backgroundColor = vimjs.bg_color;
+        cur_ele.textContent = ' ';
+        row_ele.appendChild(cur_ele);
+      }
+      container_node.appendChild(row_ele);
     }
   },
 
@@ -902,8 +902,6 @@ mergeInto(LibraryManager.library, {
 
     /* adjust the line height to fit the font */
     vimjs.style_node.innerHTML = '.vimjs-line{line-height:' + vimjs.char_height + 'px;}';
-
-    vimjs.resize();
   },
   vimjs_get_char_width__deps: ['$vimjs'], 
   vimjs_get_char_width: function() {

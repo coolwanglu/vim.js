@@ -2,7 +2,8 @@
 set -e
 : ${EM_DIR:?"EM_DIR is not set!"}
 
-JOB_COUNT=4
+# must be > 1
+JOB_COUNT=6
 
 function check_queue {
     OLDQUEUE=$RUNNING_QUEUE
@@ -102,12 +103,15 @@ popd
 do_transform() {
 pushd web
 
+# vim-2._js is counted as a job
+JOB_COUNT=$((JOB_COUNT-1))
+
 echo "Transfoming..."
 node transform.js vim-1.js vim-2 $JOB_COUNT
 
 echo "Compiling with streamline.js..."
 
-_node -c vim-2._js
+_node -c vim-2._js &
 
 for ((i=0; i < JOB_COUNT; i++))
 do

@@ -102,9 +102,11 @@ gui_mch_new_colors(void)
     static void
 gui_browser_resize(void)
 {
-    int w, h;
-    gui_mch_get_screen_dimensions(&w, &h);
+    int w,h;
+    w = vimjs_get_window_width();
+    h = vimjs_get_window_height();
     gui_resize_shell(w, h);
+    vimjs_resize(Rows, Columns);
 }
 
 /*
@@ -113,7 +115,8 @@ gui_browser_resize(void)
     int
 gui_mch_open(void)
 {
-    gui_browser_resize();
+    Rows = vimjs_get_rows();
+    Columns = vimjs_get_cols();
     return OK;
 }
 
@@ -154,20 +157,18 @@ gui_mch_set_shellsize(
     int		base_height,
     int		direction)
 {
-    // TODO: this is not working properly,  gui.num_*** are too small
-    vimjs_check_dimension(gui.num_rows, gui.num_cols);
 }
 
 /*
  * Get the screen dimensions.
- * Allow 10 pixels for horizontal borders, 40 for vertical borders.
- * Is there no way to find out how wide the borders really are?
+ *
+ * Lu Wang: fake large enough values
  */
     void
 gui_mch_get_screen_dimensions(int *screen_w, int *screen_h)
 {
-    *screen_w = vimjs_get_screen_width();
-    *screen_h = vimjs_get_screen_height();
+    *screen_w = vimjs_get_window_width() * 2;
+    *screen_h = vimjs_get_window_height() * 2;
 }
 
 /*
@@ -332,6 +333,7 @@ gui_mch_iconify(void)
     void
 gui_mch_set_foreground(void)
 {
+    // Nothing to do
 }
 #endif
 
@@ -341,6 +343,7 @@ gui_mch_set_foreground(void)
     void
 gui_mch_draw_hollow_cursor(guicolor_T color)
 {
+    // TODO
 }
 
 /*
@@ -349,6 +352,7 @@ gui_mch_draw_hollow_cursor(guicolor_T color)
     void
 gui_mch_draw_part_cursor(int w, int h, guicolor_T color)
 {
+    // TODO
 }
 
 
@@ -735,9 +739,6 @@ gui_mch_browse(
  * If stubbing out this fn, return 1.
  */
 
-/* TODO: There have been some crashes with dialogs, check your inbox
- * (Jussi)
- */
     int
 gui_mch_dialog(
     int		type,

@@ -1,5 +1,5 @@
 /*
- * Functions to be implemented by JavaScript
+j* Functions to be implemented by JavaScript
  * Copyright (c) 2013 Lu Wang <coolwanglu@gmail.com>
  */
 
@@ -16,9 +16,11 @@ void vimjs_beep();
 void vimjs_flash();
 
 // merics
-int vimjs_get_screen_width();
-int vimjs_get_screen_height();
-void vimjs_check_dimension(int, int);
+int vimjs_get_window_width();
+int vimjs_get_window_height();
+int vimjs_get_rows();
+int vimjs_get_cols();
+void vimjs_resize(int, int);
 
 // text
 void vimjs_draw_string(int row, int col, char_u *s, int len, int flags);
