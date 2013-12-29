@@ -34,6 +34,10 @@ set guifont=12px\ monospace
 " Only Darkside is available right now
 colorscheme Darkside
 
+" ver/hor do not work well right now
+" blink is not supported right now
+set guicursor=a:block-blinkon0
+
 " Supported, buy may be very slow on Firefox
 " syntax on
 " you need to set filetype yourself, e.g. :set ft=vim
