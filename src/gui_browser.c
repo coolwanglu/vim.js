@@ -69,8 +69,8 @@ gui_mch_init(void)
     gui.scrollbar_width = 0;
     gui.scrollbar_height = 0;
 
-    gui.back_pixel = gui_get_color("black");
-    gui.norm_pixel = gui_get_color("white");
+    gui.back_pixel = gui_get_color((char_u*)"black");
+    gui.norm_pixel = gui_get_color((char_u*)"white");
 
     set_normal_colors();
     gui_check_colors();
@@ -729,7 +729,7 @@ gui_mch_browse(
     if(*buf == 0) {
         return NULL;
     }
-    return vim_strsave(buf);
+    return vim_strsave((char_u*)buf);
 }
 #endif /* FEAT_BROWSE */
 
