@@ -5,11 +5,11 @@ streamline.js does not catch ExitStatus
 asm.js
 
 ## core
-draw cursor
 
 ## UI stuffs
-use canvas
-scroll
+bold/italic/underline/undercurl
+
+draw cursor
 set font
 special keys (ctrl etc)
 prevent closing window by mistaken ^w
