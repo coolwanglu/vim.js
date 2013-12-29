@@ -768,22 +768,20 @@ mergeInto(LibraryManager.library, {
   vimjs_draw_string: function(row, col, s, len, flags) {
     _vimjs_clear_block(row, col, row, col + len - 1);
 
-    // TODO: use macros
+    // TODO: use macros for flag constants
     if(flags & 0x01) {
       // transparent, do nothing
       return;
     }
 
     var font = vimjs.font;
-
     if(flags & 0x02) font = 'bold ' + font;
 
     s = Pointer_stringify(s, len);
 
     var ctx = vimjs.canvas_ctx;
 
-    // TODO: reapply these upon setting new value/ resizing
-    ctx.font = vimjs.font;
+    ctx.font = font;
     ctx.textBaseline = 'bottom';
 
     ctx.fillStyle = vimjs.fg_color;
@@ -795,13 +793,15 @@ mergeInto(LibraryManager.library, {
 
     if(flags & 0x04) { // underline
       ctx.strokeStyle = vimjs.sp_color;
-      ctx.moveTo(x, y);
-      ctx.lineTo(x + w, y);
+      ctx.lineWidth = 1;
+      ctx.moveTo(x, y - 0.5);
+      ctx.lineTo(x + w, y - 0.5);
       ctx.stroke();
     }
     if(flags & 0x08) { // undercurl
-      var offs = [0, -1, -1, -1, 0, 1, 1, 1];
+      var offs = [1.5, 0.5, 0.5, 0.5, 1.5, 2.5, 2.5, 2.5];
       ctx.strokeStyle = vimjs.sp_color;
+      ctx.lineWidth = 1;
       ctx.moveTo(x, y - offs[x%8]);
 
       for(var xx = x + 1, xx2 = x + w; xx < xx2; ++xx)
