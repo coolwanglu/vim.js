@@ -80,9 +80,6 @@ gui_mch_init(void)
 
     gui.in_focus = TRUE; 
 
-/* TODO
-    gui.char_ascent = 6;
-*/
     return OK;
 }
 
@@ -183,6 +180,7 @@ gui_mch_init_font(char_u *font_name, int fontset)
 
     gui.char_width = vimjs_get_char_width();
     gui.char_height = vimjs_get_char_height();
+    gui.char_ascent = gui.char_height;
 
     gui_browser_resize();
 

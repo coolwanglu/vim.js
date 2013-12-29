@@ -762,7 +762,7 @@ mergeInto(LibraryManager.library, {
     var window_w = _vimjs_get_window_width();
     var window_h = _vimjs_get_window_height();
     vimjs.rows = rows = rows || (Math.floor(window_h / vimjs.char_height) + 1);
-    vimjs.cols = cols || (Math.floor(window_w / vimjs.char_width) + 1);
+    vimjs.cols = cols = cols || (Math.floor(window_w / vimjs.char_width) + 1);
     var container_node = vimjs.container_node;
     container_node.style.height = rows * vimjs.char_height + 'px';
     container_node.style.width = cols * vimjs.char_width + 'px';
