@@ -34,13 +34,14 @@ mergeInto(LibraryManager.library, {
 
     // HTML elements
     container_node: null,
+    canvas_node: null,
     beep_node: null, // for beeping
-    style_node: null, // to adjust line-height dynamically
     file_node: null, // file selector
+    font_test_node: null,
     trigger_dialog_node: null, // to trigger file selector
 
-    rows: 0,
-    cols: 0,
+    canvas_ctx: null,
+
     char_width: 1,
     char_height: 1,
     window_width: 0,
@@ -271,7 +272,7 @@ mergeInto(LibraryManager.library, {
     __dummy__: null
   },
 
-  vimjs_init__deps: ['$vimjs', 'vimjs_init_font', 'vimjs_resize'],
+  vimjs_init__deps: ['$vimjs', 'vimjs_init_font'],
   vimjs_init: function () {
     vimjs.is_chrome = !!window.chrome;
     
@@ -290,6 +291,8 @@ mergeInto(LibraryManager.library, {
         vimjs.file_callback(e.target.files);
     });
 
+    vimjs.font_test_node = document.getElementById('vimjs-font-test');
+
     document.getElementById('vimjs-trigger-button').addEventListener('click', function() {
       if(vimjs.trigger_callback)
         vimjs.trigger_callback();
@@ -298,8 +301,9 @@ mergeInto(LibraryManager.library, {
     trigger_dialog_node.parentNode.removeChild(trigger_dialog_node);
     trigger_dialog_node.style.display = 'block';
 
-    vimjs.style_node = document.createElement('style');
-    document.body.appendChild(vimjs.style_node);
+    var canvas_node = vimjs.canvas_node = document.getElementById('vimjs-canvas');
+    canvas_node.style.display = 'block';
+    vimjs.canvas_ctx = canvas_node.getContext('2d');
 
     var container_node = vimjs.container_node = document.getElementById('vimjs-container');
     // there might be text nodes of other stuffs before loading vim
@@ -310,7 +314,7 @@ mergeInto(LibraryManager.library, {
     vimjs.window_height = container_node.clientHeight;
 
     _vimjs_init_font('');
-    _vimjs_resize();
+    // TODO: determine rows?
 
     /* initialize special_keys VIMJS_FOLD_START*/
     vimjs.special_keys = [];
@@ -747,142 +751,86 @@ mergeInto(LibraryManager.library, {
     return vimjs.window_height;
   },
 
-  vimjs_get_rows__deps: ['$vimjs'],
-  vimjs_get_rows: function() {
-    return vimjs.rows;
-  },
-
-  vimjs_get_cols__deps: ['$vimjs'],
-  vimjs_get_cols: function() {
-    return vimjs.cols;
-  },
-
   vimjs_resize__deps: ['$vimjs', 'vimjs_get_window_width', 'vimjs_get_window_height'],
-  vimjs_resize: function(rows, cols) {
-    var window_w = _vimjs_get_window_width();
-    var window_h = _vimjs_get_window_height();
-    vimjs.rows = rows = rows || (Math.floor(window_h / vimjs.char_height) + 1);
-    vimjs.cols = cols = cols || (Math.floor(window_w / vimjs.char_width) + 1);
+  vimjs_resize: function(width, height) {
     var container_node = vimjs.container_node;
-    container_node.style.height = rows * vimjs.char_height + 'px';
-    container_node.style.width = cols * vimjs.char_width + 'px';
-    // TODO: optimize: reuse old elements
-    // clear old elements
-    container_node.innerHTML = '';
-    for(var r = 0; r < rows; ++r) {
-      var row_ele = document.createElement('div');
-      row_ele.classList.add('vimjs-line');
-      for(var c = 0; c < cols; ++c) {
-        var cur_ele = document.createElement('span');
-        cur_ele.className = 'trans';
-        cur_ele.style.backgroundColor = vimjs.bg_color;
-        cur_ele.textContent = ' ';
-        row_ele.appendChild(cur_ele);
-      }
-      container_node.appendChild(row_ele);
-    }
+    container_node.style.height = height container_node.offsetHeight - container_node.clientHeight + 'px';
+    container_node.style.width = width + container_node.offsetWidth - container_node.clientWidth + 'px';
   },
 
-  vimjs_draw_string__deps: ['$vimjs'],
+  vimjs_draw_string__deps: ['$vimjs', 'vimjs_clear_block'],
   vimjs_draw_string: function(row, col, s, len, flags) {
-    var class_name = '';
-    var set_fg_color = true;
+    _vimjs_clear_block(row, col, row, col + len - 1);
+
     // TODO: use macros
     if(flags & 0x01) {
-      class_name += ' trans';
-      set_fg_color = false;
+      // transparent, do nothing
+      return;
     }
+    /* TODO */
+    /*
     if(flags & 0x02) class_name += ' bold';
     if(flags & 0x04) class_name += ' underl';
     if(flags & 0x08) class_name += ' underc';
+    */
 
-    s = Pointer_stringify(s);
-    var row_list = vimjs.container_node.childNodes[row].childNodes;
-    for(var i = 0; i < len; ++i) {
-      var cur_ele = row_list[col+i];
-      cur_ele.className = class_name;
-      if(set_fg_color) 
-        cur_ele.style.color = vimjs.fg_color;
-      cur_ele.style.backgroundColor = vimjs.bg_color;
-      cur_ele.textContent = s[i];
-    }
+    s = Pointer_stringify(s, len);
+
+    var ctx = vimjs.canvas_ctx;
+    ctx.fillStyle = vimjs.fg_color;
+    fillText(s, 
+             col * vimjs.char_width, 
+             row * vimjs.char_height,
+             len * vimjs.char_width);
   },
 
   vimjs_clear_block__deps: ['$vimjs'],
   vimjs_clear_block: function(row1, col1, row2, col2) {
-    var row_list = vimjs.container_node.childNodes;
-    for(var r = row1; r <= row2; ++r) {
-      var cur_row  = row_list[r].childNodes;
-      for(var c = col1; c <= col2; ++c) {
-        var cur_ele = cur_row[c];
-        cur_ele.className = 'trans';
-        cur_ele.style.backgroundColor = vimjs.bg_color;
-        cur_ele.textContent = ' ';
-      }
-    }
+    var ctx = vimjs.canvas_ctx;
+    ctx.fillStyle = vimjs.bg_color;
+    var cw = vimjs.char_width;
+    var ch = vimjs.char_height;
+    ctx.fillRect(col1 * cw,
+                 row1 * ch,
+                 (col2-col1+1) * cw,
+                 (row2-row1+1) * ch);
   },   
 
   vimjs_clear_all__deps: ['$vimjs'],
   vimjs_clear_all: function() {
-    var row_list = vimjs.container_node.childNodes;
-    for(var r = 0, rl = row_list.length; r < rl; ++r) {
-      var cur_row  = row_list[r].childNodes;
-      for(var c = 0, cl = cur_row.length; c < cl; ++c) {
-        var cur_ele = cur_row[c];
-        cur_ele.className = 'trans';
-        cur_ele.style.backgroundColor = vimjs.bg_color;
-        cur_ele.textContent = ' ';
-      }
-    }
+    var canvas_node = vimjs.canvas_node;
+    var ctx = vimjs.canvas_ctx;
+    ctx.fillStyle = vimjs.bg_color;
+    ctx.fillRect(0, 0, canvas_node.width, canvas_node.height);
   },
 
-  vimjs_delete_lines__deps: ['$vimjs'],
-  vimjs_delete_lines: function(row, num_lines) {
-    var container_node = vimjs.container_node;
-    var child_to_remove = container_node.childNodes[row];
-    for(var i = 0; i < num_lines; ++i) {
-      var next_child = child_to_remove.nextSibling;
-      container_node.removeChild(child_to_remove);
-      child_to_remove = next_child;
-    }
-    // append some new lines in the end
-    var cols = vimjs.cols;
-    for(var r = 0; r < num_lines; ++r) {
-      var row_ele = document.createElement('div');
-      row_ele.classList.add('vimjs-line');
-      for(var c = 0; c < cols; ++c) {
-        var cur_ele = document.createElement('span');
-        cur_ele.className='trans';
-        cur_ele.style.backgroundColor = vimjs.bg_color;
-        cur_ele.textContent = ' ';
-        row_ele.appendChild(cur_ele);
-      }
-      container_node.appendChild(row_ele);
-    }
+  vimjs_delete_lines__deps: ['$vimjs', 'vimjs_clear_block'],
+  vimjs_delete_lines: function(num_lines, row1, row2, col1, col2) {
+    var ctx = vimjs.canvas_ctx;
+    var cw = vimjs.char_width;
+    var ch = vimjs.char_height;
+    var x = col1 * cw;
+    var y = (row1 + num_lines) * ch;
+    ctx.drawImage(ctx, 
+                  x, y,
+                  (col2 - col1 + 1) * cw, (row2 + 1) * ch - y,
+                  x, row1 * ch);
+
+    _vimjs_clear_block(row2 - num_lines + 1, col1, row2, col2);
   },
 
-  vimjs_insert_lines__deps: ['$vimjs'],
-  vimjs_insert_lines: function(row, num_lines) {
-    var container_node = vimjs.container_node;
-    var cur_children = container_node.childNodes;
-    var ref_child = (cur_children.length > row ? cur_children[row] : null);
-    for(var r = 0; r < num_lines; ++r) {
-      var row_ele = document.createElement('div');
-      row_ele.classList.add('vimjs-line');
-      var row_ele_list = [];
-      for(var c = 0; c < vimjs.cols; ++c) {
-        var cur_ele = document.createElement('span');
-        cur_ele.className='trans';
-        cur_ele.style.backgroundColor = vimjs.bg_color;
-        cur_ele.textContent = ' ';
-        row_ele.appendChild(cur_ele);
-        row_ele_list.push(cur_ele);
-      }
-      container_node.insertBefore(row_ele, ref_child); 
-    }
-    // remove extra lines
-    for(var i = 0; i < num_lines; ++i)
-      container_node.removeChild(container_node.lastChild);
+  vimjs_insert_lines__deps: ['$vimjs', 'vimjs_clear_block'],
+  vimjs_insert_lines: function(num_lines, row1, row2, col1, col2) {
+    var ctx = vimjs.canvas_ctx;
+    var cw = vimjs.char_width;
+    var ch = vimjs.char_height;
+    var x = col1 * cw;
+    ctx.drawImage(ctx, 
+                  x, row1 * ch,
+                  (col2 - col1 + 1) * cw, (row2 - row1 - num_lines + 1) * ch,
+                  x, (row1 + num_lines) * ch);
+
+    _vimjs_clear_block(row1, col1, row1 + num_lines - 1, col2);
   },
 
   vimjs_init_font__deps: ['$vimjs'],
@@ -892,20 +840,16 @@ mergeInto(LibraryManager.library, {
     if(!font)
       font = '12px monospace';
 
-    var container_node = vimjs.container_node;
-    container_node.style.font = font;
-    if(!container_node.hasChildNodes()) {
-      /* the content will be cleared in resize() anyway */
-      container_node.innerHTML = '<div class="vimjs-line"><span class="trans"> </span></div>';
-    }
-    var first_ele = container_node.firstChild.firstChild;
-    /* clientWidth/Height won't work */
-    vimjs.char_height = Math.max(1, first_ele.offsetHeight);
-    vimjs.char_width = Math.max(1, first_ele.offsetWidth);
+    vimjs.canvas_ctx.font = font; 
+    var font_test_node = vimjs.font_test_node;
+    font_test_node.style.font = font;
+    font_test_node.innerHTML = 'm';
 
-    /* adjust the line height to fit the font */
-    vimjs.style_node.innerHTML = '.vimjs-line{line-height:' + vimjs.char_height + 'px;}';
+    /* clientWidth/Height won't work */
+    vimjs.char_height = Math.max(1, font_test_node.clientHeight);
+    vimjs.char_width = Math.max(1, font_test_node.clientWidth);
   },
+
   vimjs_get_char_width__deps: ['$vimjs'], 
   vimjs_get_char_width: function() {
     return vimjs.char_width;

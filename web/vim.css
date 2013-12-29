@@ -23,24 +23,12 @@
   box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.075) inset, 0px 0px 8px rgba(102, 175, 233, 0.6);
   position:relative;
 }
-.vimjs-line {
-  white-space: pre; 
-  border:0;
-  margin:0;
-  padding:0;
-  line-height:1;
+#vimjs-canvas {
+  width:100%;
+  height:100%;
+  display:none;
 }
-.vimjs-line span { 
-  white-space:pre; 
-  border:0;
-  margin:0;
-}
-.trans { color:transparent; }
-.bold { font-weight:bold; }
-.underl { text-decoration:underline; }
-.underc { text-decoration:underline; } /* todo */
-
-.vimjs-hidden {
+.vimjs-invisible {
   position:absolute;
   right:100%;
   bottom:100%;
@@ -59,6 +47,9 @@
 }
 .modal-dialog {
   display:block;
+}
+#vimjs-font-test {
+  padding:0;
 }
 #vimjs-trigger-dialog {
   position:absolute;

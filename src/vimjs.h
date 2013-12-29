@@ -9,7 +9,7 @@ j* Functions to be implemented by JavaScript
 #ifdef FEAT_GUI_BROWSER
 // event
 void vimjs_init();
-void vimjs_sleep(int msec);
+void vimjs_sleep(int);
 int vimjs_wait_for_chars(int);
 void vimjs_update();
 void vimjs_beep();
@@ -18,16 +18,14 @@ void vimjs_flash();
 // merics
 int vimjs_get_window_width();
 int vimjs_get_window_height();
-int vimjs_get_rows();
-int vimjs_get_cols();
 void vimjs_resize(int, int);
 
 // text
-void vimjs_draw_string(int row, int col, char_u *s, int len, int flags);
-void vimjs_clear_block(int row1, int col1, int row2, int col2);
+void vimjs_draw_string(int, int, char_u *, int, int);
+void vimjs_clear_block(int, int, int, int);
 void vimjs_clear_all();
-void vimjs_delete_lines(int, int);
-void vimjs_insert_lines(int, int);
+void vimjs_delete_lines(int, int, int, int, int);
+void vimjs_insert_lines(int, int, int, int, int);
 
 // font
 void vimjs_init_font(char *);
@@ -35,7 +33,7 @@ int vimjs_get_char_width();
 int vimjs_get_char_height();
 
 // color
-int vimjs_is_valid_color(guicolor_T color);
+int vimjs_is_valid_color(guicolor_T);
 long_u vimjs_get_rgb(char *);
 void vimjs_set_fg_color(char *);
 void vimjs_set_bg_color(char *);

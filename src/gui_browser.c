@@ -80,8 +80,8 @@ gui_mch_init(void)
 
     gui.in_focus = TRUE; 
 
-    Rows = vimjs_get_rows();
-    Columns = vimjs_get_cols();
+    Rows = vimjs_get_window_height() / vimjs_get_char_height();
+    Columns = vimjs_get_window_width() / vimjs_get_char_width();
 
     return OK;
 }
@@ -142,7 +142,7 @@ gui_mch_set_shellsize(
     int		base_height,
     int		direction)
 {
-    vimjs_resize(gui.num_rows, gui.num_cols);
+    vimjs_resize(width, height);
 }
 
 /*
@@ -465,15 +465,8 @@ gui_mch_clear_all(void)
 gui_mch_delete_lines(int row, int num_lines)
 {
     gui_mch_set_bg_color(gui.back_pixel);
-    vimjs_delete_lines(row, num_lines);
+    vimjs_delete_lines(num_lines, row, gui.scroll_region_bot, gui.scroll_region_left, gui.scroll_region_right);
 }
-
-    void
-gui_mch_set_text_area_pos(int x, int y, int w, int h)
-{
-    // Nothing to do
-}
-
 
 /*
  * Insert the given number of lines before the given row, scrolling down any
@@ -483,8 +476,16 @@ gui_mch_set_text_area_pos(int x, int y, int w, int h)
 gui_mch_insert_lines(int row, int num_lines)
 {
     gui_mch_set_bg_color(gui.back_pixel);
-    vimjs_insert_lines(row, num_lines);
+    vimjs_insert_lines(num_lines, row, gui.scroll_region_bot, gui.scroll_region_left, gui.scroll_region_right);
 }
+
+
+    void
+gui_mch_set_text_area_pos(int x, int y, int w, int h)
+{
+    // Nothing to do
+}
+
 
     void
 clip_mch_request_selection(VimClipboard *cbd)
