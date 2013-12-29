@@ -59,6 +59,7 @@ mergeInto(LibraryManager.library, {
     input_available: null,
 
     special_keys: [],
+    special_keys_namemap: {},
     color_map: {},
     file_callback: null,
     dropbox_callback: null,
@@ -320,6 +321,7 @@ mergeInto(LibraryManager.library, {
 
     /* initialize special_keys VIMJS_FOLD_START*/
     vimjs.special_keys = [];
+    vimjs.special_keys_namemap = {};
     /* for closure compiler */
     var KeyEvent = window.KeyEvent;
     /* for Chrome */
@@ -485,6 +487,7 @@ mergeInto(LibraryManager.library, {
       [KeyEvent.DOM_VK_PRINT,  '%9'],
     ].forEach(function(p) {
       vimjs.special_keys[p[0]] = p[1];
+      vimjs.special_keys_namemap[p[1]] = p[0];
     });
     /* VIMJS_FOLD_END */
 
@@ -792,7 +795,6 @@ mergeInto(LibraryManager.library, {
 
     if(flags & 0x04) { // underline
       ctx.strokeStyle = vimjs.fg_color;
-      ctx.lineWidth = 1;
       ctx.beginPath();
       ctx.moveTo(x, y - 0.5);
       ctx.lineTo(x + w, y - 0.5);
@@ -801,7 +803,6 @@ mergeInto(LibraryManager.library, {
     if(flags & 0x08) { // undercurl
       var offs = [1.5, 0.5, 0.5, 0.5, 1.5, 2.5, 2.5, 2.5];
       ctx.strokeStyle = vimjs.sp_color;
-      ctx.lineWidth = 1;
       ctx.beginPath();
       ctx.moveTo(x, y - offs[x%8]);
 
@@ -861,6 +862,46 @@ mergeInto(LibraryManager.library, {
                   x, (row1 + num_lines) * ch, w, h);
 
     _vimjs_clear_block(row1, col1, row1 + num_lines - 1, col2);
+  },
+
+  vimjs_draw_hollow_cursor__deps: ['$vimjs'],
+  vimjs_draw_hollow_cursor: function(row, col) {
+    var ctx = vimjs.canvas_ctx;
+    ctx.strokeStyle = vimjs.fg_color;
+    var cw = vimjs.char_width;
+    var ch = vimjs.char_height;
+    ctx.strokeRect(col * cw - 0.5, row * ch - 0.5, cw - 1, ch - 1);
+  },
+
+  vimjs_draw_part_cursor__deps: ['$vimjs'],
+  vimjs_draw_part_cursor: function(row, col, width, height) {
+    var ctx = vimjs.canvas_ctx;
+    ctx.fillStyle = vimjs.fg_color;
+    var cw = vimjs.char_width;
+    var ch = vimjs.char_height;
+    ctx.fillRect(col * cw, (row + 1) * ch - width, width, height);
+  },
+
+  vimjs_invert_rectangle__deps: ['$vimjs'],
+  vimjs_invert_rectangle: function(row, col, row_count, col_count) {
+    var ctx = vimjs.canvas_ctx;
+    var cw = vimjs.char_width;
+    var ch = vimjs.char_height;
+    var x = col * cw;
+    var y = row * ch;
+    var img = ctx.getImageData(x, y,
+                               col_count * cw, row_count * ch);
+    var data = img.data;
+    for(var i = 0, l = data.length; i < l;) {
+      data[i] = 255 - data[i];
+      ++i;
+      data[i] = 255 - data[i];
+      ++i;
+      data[i] = 255 - data[i];
+      i += 2;
+    }
+    
+    ctx.putImageData(img, x, y);
   },
 
   vimjs_init_font__deps: ['$vimjs'],
@@ -998,6 +1039,12 @@ mergeInto(LibraryManager.library, {
     } else {
       vimjs.load_nothing(cb, buf);
     }
+  },
+
+  vimjs_haskey__deps: ['$vimjs'],
+  vimjs_haskey: function(name) {
+    name = Pointer_stringify(name, 2);
+    return (name in vimjs.special_keys_namemap);
   },
 
   /* func is a function pointer */

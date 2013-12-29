@@ -185,7 +185,7 @@ gui_mch_init_font(char_u *font_name, int fontset)
 gui_mch_adjust_charheight(void)
 {
     //TODO
-    return OK;
+    return FAIL;
 }
 
 /*
@@ -194,6 +194,7 @@ gui_mch_adjust_charheight(void)
     GuiFont
 gui_mch_get_font(char_u *name, int giveErrorIfMissing)
 {
+    // TODO
     return NOFONT;
 }
 
@@ -283,8 +284,7 @@ gui_mch_draw_string(int row, int col, char_u *s, int len, int flags)
     int
 gui_mch_haskey(char_u *name)
 {
-    // TODO
-    return FAIL;
+    return vimjs_haskey((char*)name) ? OK : FAIL;
 }
 
     void
@@ -305,7 +305,7 @@ gui_mch_flash(int msec)
     void
 gui_mch_invert_rectangle(int r, int c, int nr, int nc)
 {
-    //TODO
+    vimjs_invert_rectangle(r, c, nr, nc);
 }
 
 /*
@@ -333,7 +333,8 @@ gui_mch_set_foreground(void)
     void
 gui_mch_draw_hollow_cursor(guicolor_T color)
 {
-    // TODO
+    gui_mch_set_fg_color(color);
+    vimjs_draw_hollow_cursor(gui.row, gui.col);
 }
 
 /*
@@ -342,7 +343,8 @@ gui_mch_draw_hollow_cursor(guicolor_T color)
     void
 gui_mch_draw_part_cursor(int w, int h, guicolor_T color)
 {
-    // TODO
+    gui_mch_set_fg_color(color);
+    vimjs_draw_part_cursor(gui.row, gui.col, w, h);
 }
 
 
@@ -434,6 +436,7 @@ gui_browser_handle_key(int code, int modifiers, char_u special1, char_u special2
     void
 gui_mch_flush(void)
 {
+    // Nothing to do
 }
 
 /*
@@ -771,7 +774,6 @@ gui_mch_show_popupmenu(vimmenu_T *menu)
     void
 gui_mch_settitle(char_u *title, char_u *icon)
 {
-    //TODO
 }
 #endif
 

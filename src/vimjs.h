@@ -26,6 +26,9 @@ void vimjs_clear_block(int, int, int, int);
 void vimjs_clear_all();
 void vimjs_delete_lines(int, int, int, int, int);
 void vimjs_insert_lines(int, int, int, int, int);
+void vimjs_draw_hollow_cursor(int, int);
+void vimjs_draw_part_cursor(int, int, int, int);
+void vimjs_invert_rectangle(int, int, int, int);
 
 // font
 void vimjs_init_font(char *);
@@ -39,11 +42,11 @@ void vimjs_set_fg_color(char *);
 void vimjs_set_bg_color(char *);
 void vimjs_set_sp_color(char *);
 
-
 // others
 void vimjs_print_stacktrace();
 int vimjs_call_shell(char *, int);
 void vimjs_browse(char *, int, int, char*, char*);
+int vimjs_haskey(char*);
 
 /*
  * some function pointers may point to async functions, which cannot be automatically detected
