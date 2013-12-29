@@ -32,15 +32,16 @@ void vimjs_invert_rectangle(int, int, int, int);
 
 // font
 void vimjs_init_font(char *);
+void vimjs_set_font(char *);
 int vimjs_get_char_width();
 int vimjs_get_char_height();
 
 // color
 int vimjs_is_valid_color(char *);
 long_u vimjs_get_rgb(char *);
-void vimjs_set_fg_color(guicolor_T);
-void vimjs_set_bg_color(guicolor_T);
-void vimjs_set_sp_color(guicolor_T);
+void vimjs_set_fg_color(long);
+void vimjs_set_bg_color(long);
+void vimjs_set_sp_color(long);
 
 // others
 void vimjs_print_stacktrace();

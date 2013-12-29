@@ -914,8 +914,6 @@ mergeInto(LibraryManager.library, {
     if(!font)
       font = '12px monospace';
 
-    // TODO: implement set_font
-    vimjs.font = font; 
     var font_test_node = vimjs.font_test_node;
     font_test_node.style.font = font;
     font_test_node.innerHTML = 'm';
@@ -923,6 +921,11 @@ mergeInto(LibraryManager.library, {
     /* clientWidth/Height won't work */
     vimjs.char_height = Math.max(1, font_test_node.clientHeight);
     vimjs.char_width = Math.max(1, font_test_node.clientWidth);
+  },
+
+  vimjs_set_font__deps: ['$vimjs'],
+  vimjs_set_font: function(font) {
+    vimjs.font = Pointer_stringify(font);
   },
 
   vimjs_get_char_width__deps: ['$vimjs'], 
