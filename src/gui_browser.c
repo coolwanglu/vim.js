@@ -97,20 +97,6 @@ gui_mch_new_colors(void)
 }
 
 /*
- * Recalculate Rows and Columns
- * Keep the text area fully occupied
- */
-    static void
-gui_browser_resize(void)
-{
-    int w,h;
-    w = vimjs_get_window_width();
-    h = vimjs_get_window_height();
-    gui_resize_shell(w, h);
-    vimjs_resize(gui.num_rows, gui.num_cols);
-}
-
-/*
  * Open the GUI window which was created by a call to gui_mch_init().
  */
     int
@@ -156,6 +142,7 @@ gui_mch_set_shellsize(
     int		base_height,
     int		direction)
 {
+    vimjs_resize(gui.num_rows, gui.num_cols);
 }
 
 /*
@@ -183,7 +170,10 @@ gui_mch_init_font(char_u *font_name, int fontset)
     gui.char_height = vimjs_get_char_height();
     gui.char_ascent = gui.char_height;
 
-    gui_browser_resize();
+    int w,h;
+    w = vimjs_get_window_width();
+    h = vimjs_get_window_height();
+    gui_resize_shell(w, h);
 
     return OK;
 }
