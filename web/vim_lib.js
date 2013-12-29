@@ -793,6 +793,7 @@ mergeInto(LibraryManager.library, {
     if(flags & 0x04) { // underline
       ctx.strokeStyle = vimjs.fg_color;
       ctx.lineWidth = 1;
+      ctx.beginPath();
       ctx.moveTo(x, y - 0.5);
       ctx.lineTo(x + w, y - 0.5);
       ctx.stroke();
@@ -801,6 +802,7 @@ mergeInto(LibraryManager.library, {
       var offs = [1.5, 0.5, 0.5, 0.5, 1.5, 2.5, 2.5, 2.5];
       ctx.strokeStyle = vimjs.sp_color;
       ctx.lineWidth = 1;
+      ctx.beginPath();
       ctx.moveTo(x, y - offs[x%8]);
 
       for(var xx = x + 1, xx2 = x + w; xx < xx2; ++xx)
