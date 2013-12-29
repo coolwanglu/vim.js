@@ -296,7 +296,7 @@ gui_mch_beep(void)
     void
 gui_mch_flash(int msec)
 {
-    vimjs_flash();
+    vimjs_flash(msec);
 }
 
 /*
@@ -644,6 +644,7 @@ gui_mch_destroy_scrollbar(scrollbar_T *sb)
     void
 gui_mch_set_blinking(long wait, long on, long off)
 {
+    // TODO
 }
 
 /*

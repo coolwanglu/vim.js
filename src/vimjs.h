@@ -13,7 +13,7 @@ void vimjs_sleep(int);
 int vimjs_wait_for_chars(int);
 void vimjs_update();
 void vimjs_beep();
-void vimjs_flash();
+void vimjs_flash(int);
 
 // merics
 int vimjs_get_window_width();

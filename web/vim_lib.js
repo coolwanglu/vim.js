@@ -274,6 +274,20 @@ mergeInto(LibraryManager.library, {
       });
     },
 
+    invert_canvas: function(x, y, w, h) {
+      var ctx = vimjs.canvas_ctx;
+      var data = ctx.getImageData(x, y, w, h).data;
+      for(var i = 0, l = data.length; i < l;) {
+        data[i] = 255 - data[i];
+        ++i;
+        data[i] = 255 - data[i];
+        ++i;
+        data[i] = 255 - data[i];
+        i += 2;
+      }
+      ctx.putImageData(img, x, y);
+    },
+
     __dummy__: null
   },
 
@@ -742,8 +756,14 @@ mergeInto(LibraryManager.library, {
     }
   },
 
-  vimjs_flash: function() {
-    console.log('TODO: vimjs_flash');
+  vimjs_flash__deps: ['$vimjs'],
+  vimjs_flash: function(_, msec) {
+    var canvas_node = vimjs.canvas_node;
+    var w = canvas_node.width;
+    var h = canvas_node.height;
+    vimjs.invert_canvas(0, 0, w, h);
+    setTimeout(_, msec);
+    vimjs.invert_canvas(0, 0, w, h);
   },
 
   vimjs_get_window_width__deps: ['$vimjs'],
@@ -768,12 +788,10 @@ mergeInto(LibraryManager.library, {
 
   vimjs_draw_string__deps: ['$vimjs', 'vimjs_clear_block'],
   vimjs_draw_string: function(row, col, s, len, flags) {
-    _vimjs_clear_block(row, col, row, col + len - 1);
 
     // TODO: use macros for flag constants
-    if(flags & 0x01) {
-      // transparent, do nothing
-      return;
+    if(!(flags & 0x01)) {
+      _vimjs_clear_block(row, col, row, col + len - 1);
     }
 
     var font = vimjs.font;
@@ -884,24 +902,9 @@ mergeInto(LibraryManager.library, {
 
   vimjs_invert_rectangle__deps: ['$vimjs'],
   vimjs_invert_rectangle: function(row, col, row_count, col_count) {
-    var ctx = vimjs.canvas_ctx;
     var cw = vimjs.char_width;
     var ch = vimjs.char_height;
-    var x = col * cw;
-    var y = row * ch;
-    var img = ctx.getImageData(x, y,
-                               col_count * cw, row_count * ch);
-    var data = img.data;
-    for(var i = 0, l = data.length; i < l;) {
-      data[i] = 255 - data[i];
-      ++i;
-      data[i] = 255 - data[i];
-      ++i;
-      data[i] = 255 - data[i];
-      i += 2;
-    }
-    
-    ctx.putImageData(img, x, y);
+    vimjs.invert_canvas(col * cw, row * ch, col_count *cw, row_count * ch);
   },
 
   vimjs_init_font__deps: ['$vimjs'],
