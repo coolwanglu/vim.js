@@ -928,6 +928,25 @@ mergeInto(LibraryManager.library, {
     vimjs.font = Pointer_stringify(font);
   },
 
+  vimjs_check_font__deps: ['$vimjs'],
+  vimjs_check_font: function(font) {
+    // check if font exists
+    font = Pointer_stringify(font);
+    var font_test_node = vimjs.font_test_node;
+    font_test_node.innerHTML = 'the quick brown fox jumps over the lazy dog';
+
+    return ['serif', 'sans-serif', 'monospace'].some(function(base_font) {
+      font_test_node.style.font = font + ',' + base_font;
+      // override existing definition of font size
+      font_test_node.style.fontSize = '64px';
+      var w = font_test_node.clientWidth;
+      var h = font_test_node.clientHeight;
+  
+      font_test_node.style.font = '64px ' + base_font;
+      return (font_test_node.clientWidth != w) || (font_test_node.clientHeight != h);
+    });
+  },
+
   vimjs_get_char_width__deps: ['$vimjs'], 
   vimjs_get_char_width: function() {
     return vimjs.char_width;

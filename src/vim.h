@@ -254,9 +254,9 @@
  * vim.js is built with --with-feature=small
  * but here are some features I really missed in NORMAL
  */
-#define FEAT_VERTSPLIT
-#define FEAT_CURSORBIND // required by FEAT_VERTSPLIT
-#define FEAT_SCROLLBIND // required by FEAT_VERTSPLIT
+#define FEAT_CURSORBIND
+#define FEAT_SCROLLBIND
+#define FEAT_VERTSPLIT // requires FEAT_CURSORBIND FEAT_SCROLLBIND
 #define FEAT_CLIPBOARD	
 #define FEAT_SEARCH_EXTRA
 #define FEAT_TITLE
@@ -273,6 +273,9 @@
 #define FEAT_AUTOCMD
 #define FEAT_SYN_HL // requires FEAT_EVAL FEAT_CINDENT FEAT_AUTOCMD
 #define FEAT_MODIFY_FNAME // used in syntax.vim
+#define FEAT_USR_CMDS // used in javascript.vim
+
+// later
 //#define FEAT_FOLDING
 //#define FEAT_SMARTINDENT
 #endif

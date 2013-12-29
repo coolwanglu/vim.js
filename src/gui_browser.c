@@ -210,7 +210,11 @@ gui_mch_adjust_charheight(void)
     GuiFont
 gui_mch_get_font(char_u *name, int giveErrorIfMissing)
 {
-    // TODO
+    if(vimjs_check_font((char*)name)) 
+        return (char*)vim_strsave(name);
+
+    if (giveErrorIfMissing)
+        EMSG2(_(e_font), name);
     return NOFONT;
 }
 
@@ -660,7 +664,6 @@ gui_mch_destroy_scrollbar(scrollbar_T *sb)
     void
 gui_mch_set_blinking(long wait, long on, long off)
 {
-    // TODO
 }
 
 /*
@@ -669,7 +672,6 @@ gui_mch_set_blinking(long wait, long on, long off)
     void
 gui_mch_stop_blink(void)
 {
-    // TODO
     gui_update_cursor(TRUE, FALSE);
 }
 
@@ -680,7 +682,6 @@ gui_mch_stop_blink(void)
     void
 gui_mch_start_blink(void)
 {
-    // TODO
     gui_update_cursor(TRUE, FALSE);
 }
 

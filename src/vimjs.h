@@ -33,6 +33,7 @@ void vimjs_invert_rectangle(int, int, int, int);
 // font
 void vimjs_init_font(char *);
 void vimjs_set_font(char *);
+int vimjs_check_font(char *);
 int vimjs_get_char_width();
 int vimjs_get_char_height();
 
