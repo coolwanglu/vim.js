@@ -786,7 +786,7 @@ mergeInto(LibraryManager.library, {
     ctx.fillStyle = vimjs.fg_color;
 
     var x = col * vimjs.char_width;
-    var y = (row + 1) * vimjs.char_height - 1;
+    var y = (row + 1) * vimjs.char_height;
     var w = len * vimjs.char_width;
     ctx.fillText(s, x, y, w);
 
