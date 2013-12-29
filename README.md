@@ -10,9 +10,12 @@ by Lu Wang
 
 ### Status
 
-- Works but unstable, only tested on Firefox/Chrome + Ubuntu
-- Faster on Chrome than Firefox
-- Some features work better on Firefox (e.g. `<Ctrl>` and file selector)
+Works but unstable
+
+        | Firefox | Chrome | IE
+--------|---------|--------|--------
+Speed   | Normal  | Good   | Good
+Feature | Good    | Normal | Normal 
 
 
 
