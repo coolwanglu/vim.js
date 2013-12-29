@@ -12,16 +12,17 @@ use canvas
 scroll
 set font
 special keys (ctrl etc)
+prevent closing window by mistaken ^w
 
 ## Web integration
 Load vim components (runtime)
 
 
 
-## Won't Do
-//system clipboard
-//mouse
-//tabline
-//scrollbar
-//dialog
-//keypad keys
+## Won't do but patches are accepted:
+system clipboard
+mouse
+tabline
+scrollbar
+dialog
+keypad keys

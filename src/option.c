@@ -3580,7 +3580,7 @@ set_option_default(opt_idx, opt_flags, compatible)
 	    /* the cast to long is required for Manx C, long_i is needed for
 	     * MSVC */
 	    *(int *)varp = (int)(long)(long_i)options[opt_idx].def_val[dvi];
-#ifdef UNIX
+#if defined(UNIX) && !defined(FEAT_GUI_BROWSER)
 	    /* 'modeline' defaults to off for root */
 	    if (options[opt_idx].indir == PV_ML && getuid() == ROOT_UID)
 		*(int *)varp = FALSE;

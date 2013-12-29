@@ -786,7 +786,7 @@ mergeInto(LibraryManager.library, {
 
     // TODO: reapply these upon setting new value/ resizing
     ctx.font = vimjs.font;
-    ctx.textBaseLine = 'bottom';
+    ctx.textBaseline = 'bottom';
 
     ctx.fillStyle = vimjs.fg_color;
     // TODO: calculate ascent
