@@ -870,7 +870,7 @@ mergeInto(LibraryManager.library, {
     ctx.strokeStyle = vimjs.fg_color;
     var cw = vimjs.char_width;
     var ch = vimjs.char_height;
-    ctx.strokeRect(col * cw - 0.5, row * ch - 0.5, cw - 1, ch - 1);
+    ctx.strokeRect(col * cw + 0.5, row * ch + 0.5, cw - 1, ch - 1);
   },
 
   vimjs_draw_part_cursor__deps: ['$vimjs'],
@@ -879,7 +879,7 @@ mergeInto(LibraryManager.library, {
     ctx.fillStyle = vimjs.fg_color;
     var cw = vimjs.char_width;
     var ch = vimjs.char_height;
-    ctx.fillRect(col * cw, (row + 1) * ch - width, width, height);
+    ctx.fillRect(col * cw, (row + 1) * ch - height, width, height);
   },
 
   vimjs_invert_rectangle__deps: ['$vimjs'],

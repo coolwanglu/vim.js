@@ -7,7 +7,6 @@ asm.js
 ## core
 
 ## UI stuffs
-draw cursor
 set font
 special keys (ctrl etc)
 prevent closing window by mistaken ^w
@@ -24,3 +23,4 @@ tabline
 scrollbar
 dialog
 keypad keys
+guicursor

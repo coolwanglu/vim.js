@@ -652,6 +652,8 @@ gui_mch_set_blinking(long wait, long on, long off)
     void
 gui_mch_stop_blink(void)
 {
+    // TODO
+    gui_update_cursor(TRUE, FALSE);
 }
 
 /*
@@ -661,6 +663,8 @@ gui_mch_stop_blink(void)
     void
 gui_mch_start_blink(void)
 {
+    // TODO
+    gui_update_cursor(TRUE, FALSE);
 }
 
 /*
