@@ -673,7 +673,7 @@ gui_mch_start_blink(void)
     long_u
 gui_mch_get_rgb(guicolor_T pixel)
 {
-    return vimjs_get_rgb(pixel);
+    return (long_u)pixel;
 }
 
 

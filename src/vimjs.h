@@ -36,11 +36,11 @@ int vimjs_get_char_width();
 int vimjs_get_char_height();
 
 // color
-int vimjs_is_valid_color(guicolor_T);
+int vimjs_is_valid_color(char *);
 long_u vimjs_get_rgb(char *);
-void vimjs_set_fg_color(char *);
-void vimjs_set_bg_color(char *);
-void vimjs_set_sp_color(char *);
+void vimjs_set_fg_color(guicolor_T);
+void vimjs_set_bg_color(guicolor_T);
+void vimjs_set_sp_color(guicolor_T);
 
 // others
 void vimjs_print_stacktrace();
