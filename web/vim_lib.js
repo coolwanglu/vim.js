@@ -43,6 +43,8 @@ mergeInto(LibraryManager.library, {
     cols: 0,
     char_width: 1,
     char_height: 1,
+    window_width: 0,
+    window_height: 0,
 
     fg_color: null,
     bg_color: null,
@@ -303,6 +305,9 @@ mergeInto(LibraryManager.library, {
     // there might be text nodes of other stuffs before loading vim
     container_node.innerHTML = '';
     container_node.style.backgroundColor = 'black';
+
+    vimjs.window_width = container_node.clientWidth;
+    vimjs.window_height = container_node.clientHeight;
 
     _vimjs_init_font('');
     _vimjs_resize();
@@ -734,12 +739,12 @@ mergeInto(LibraryManager.library, {
 
   vimjs_get_window_width__deps: ['$vimjs'],
   vimjs_get_window_width: function() {
-    return vimjs.container_node.clientWidth;
+    return vimjs.window_width;
   },
 
   vimjs_get_window_height__deps: ['$vimjs'],
   vimjs_get_window_height: function() {
-    return vimjs.container_node.clientHeight;
+    return vimjs.window_height;
   },
 
   vimjs_get_rows__deps: ['$vimjs'],

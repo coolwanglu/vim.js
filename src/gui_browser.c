@@ -64,6 +64,7 @@ gui_mch_init_check(void)
 gui_mch_init(void)
 {
     vimjs_init();
+    gui.border_offset = 0;
     gui.border_width = 0;
     gui.scrollbar_width = 0;
     gui.scrollbar_height = 0;
@@ -106,7 +107,7 @@ gui_browser_resize(void)
     w = vimjs_get_window_width();
     h = vimjs_get_window_height();
     gui_resize_shell(w, h);
-    vimjs_resize(Rows, Columns);
+    vimjs_resize(gui.num_rows, gui.num_cols);
 }
 
 /*
@@ -115,8 +116,8 @@ gui_browser_resize(void)
     int
 gui_mch_open(void)
 {
-    Rows = vimjs_get_rows();
-    Columns = vimjs_get_cols();
+    gui.num_rows = vimjs_get_rows();
+    gui.num_cols = vimjs_get_cols();
     return OK;
 }
 
