@@ -8,9 +8,10 @@ asm.js
 draw cursor
 
 ## UI stuffs
-use canvas -- might be faster/more stable ?
+use canvas
+scroll
+set font
 special keys (ctrl etc)
-resize/set font
 
 ## Web integration
 Load vim components (runtime)
