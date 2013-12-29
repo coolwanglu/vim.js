@@ -80,6 +80,9 @@ gui_mch_init(void)
 
     gui.in_focus = TRUE; 
 
+    Rows = vimjs_get_rows();
+    Columns = vimjs_get_cols();
+
     return OK;
 }
 
@@ -113,8 +116,6 @@ gui_browser_resize(void)
     int
 gui_mch_open(void)
 {
-    gui.num_rows = vimjs_get_rows();
-    gui.num_cols = vimjs_get_cols();
     return OK;
 }
 
