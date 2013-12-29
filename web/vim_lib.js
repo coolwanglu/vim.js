@@ -42,16 +42,19 @@ mergeInto(LibraryManager.library, {
 
     canvas_ctx: null,
 
+    // dimensions
     char_width: 1,
     char_height: 1,
     window_width: 0,
     window_height: 0,
 
+    // styles
     font: '12px monospace',
-    fg_color: null,
-    bg_color: null,
-    sp_color: null,
+    fg_color: '#fff',
+    bg_color: '#000',
+    sp_color: '#f00',
 
+    // functions 
     gui_browser_add_to_input_buf: null,
     input_available: null,
 
@@ -279,10 +282,6 @@ mergeInto(LibraryManager.library, {
     
     vimjs.gui_browser_handle_key = Module['cwrap']('gui_browser_handle_key', null, ['number', 'number', 'number', 'number']);
     vimjs.input_available = Module['cwrap']('input_available', 'number', []);
-
-    vimjs.fg_color = '#fff';
-    vimjs.bg_color = '#000';
-    vimjs.sp_color = '#f00';
 
     vimjs.beep_node = document.getElementById('vimjs-beep');
 
@@ -792,7 +791,7 @@ mergeInto(LibraryManager.library, {
     ctx.fillText(s, x, y, w);
 
     if(flags & 0x04) { // underline
-      ctx.strokeStyle = vimjs.sp_color;
+      ctx.strokeStyle = vimjs.fg_color;
       ctx.lineWidth = 1;
       ctx.moveTo(x, y - 0.5);
       ctx.lineTo(x + w, y - 0.5);
