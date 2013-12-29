@@ -754,7 +754,7 @@ mergeInto(LibraryManager.library, {
   vimjs_resize__deps: ['$vimjs', 'vimjs_get_window_width', 'vimjs_get_window_height'],
   vimjs_resize: function(width, height) {
     var container_node = vimjs.container_node;
-    container_node.style.height = height container_node.offsetHeight - container_node.clientHeight + 'px';
+    container_node.style.height = height + container_node.offsetHeight - container_node.clientHeight + 'px';
     container_node.style.width = width + container_node.offsetWidth - container_node.clientWidth + 'px';
   },
 
