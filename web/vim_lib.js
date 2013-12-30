@@ -290,7 +290,7 @@ mergeInto(LibraryManager.library, {
         data[i] = 255 - data[i];
         i += 2;
       }
-      ctx.putImageData(data, x, y);
+      ctx.putImageData(img, x, y);
     },
 
     __dummy__: null
