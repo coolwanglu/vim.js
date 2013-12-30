@@ -15,8 +15,8 @@ by Lu Wang
 Speed   | Normal  | Good   | Good
 Feature | Good    | Normal | Normal 
 
-Usually stable now, but be careful and save a lot!
-In case it crashes, files can still be accessible through emscripten FS API, e.g. `FS.readFile`
+Usable and almost stable, but be careful and do `:w` a lot!
+In case it crashes, files can still be accessible through the emscripten FS API, e.g. `FS.readFile`
 
 
 
@@ -58,7 +58,7 @@ Please discuss with me first before you work on a PR.
 - Uncomment the last few lines in `build.sh`
 - Run `build.sh`
 
-The building process might take 3-4GB memory.
+The building process might take more than 3GB memory.
 
 
 

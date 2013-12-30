@@ -78,18 +78,21 @@ mergeInto(LibraryManager.library, {
       if(e.altKey) modifiers |= 0x08;
       if(e.metaKey) modifiers |= 0x10;
 
+      var handled = false;
       if(charCode == 0) {
         var special = vimjs.special_keys[keyCode];
         if(special !== undefined) {
           vimjs.gui_browser_handle_key(charCode || keyCode, modifiers, special.charCodeAt(0), special.charCodeAt(1));
-          return;
+          handled = true;
         } 
       }
 
-      vimjs.gui_browser_handle_key(charCode || keyCode, modifiers, 0, 0);
+      if(!handled)
+        vimjs.gui_browser_handle_key(charCode || keyCode, modifiers, 0, 0);
 
       if(vimjs.keyevent_callback)
         vimjs.keyevent_callback();
+
     },//VIMJS_FOLD_END
 
     get_color_string: function(color) {//VIMJS_FOLD_START
