@@ -2,30 +2,17 @@
 " Default vimrc for vim.js
 " Copyright (c) 2013 Lu Wang <coolwanglu@gmail.com>
 
+
+
 " You can edit your own ~/.vimrc
 " which will be saved into localStorage and loaded next time
 
 
 
-" [Experimental]
-" Read local files
-" :bro e local
-" Read files from Dropbox
-" :bro e dropbox
+"========== APPEARANCE ==========
 
-
-
-" [Experimental] 
-" Call JavaScript (Note the escape of !)
-!console.log('Hello from vimrc\!');
-
-" If you are editing a JavaScript file:
-" :!%
-
-" emscripten API works:
-" :!FS.mkdir('/foo')
-
-
+" GUI elements (tabline, scrollbar, menu) are not implmented
+set guioptions=
 
 " Use CSS font format
 " Use monospace fonts only!
@@ -43,9 +30,26 @@ set guicursor=a:blinkon0
 
 
 
-" Others from my own ~/.vimrc
+"========== EXPERIMENTAL (not in Vim) ==========
+" Read local files
+" :bro e local
+
+" Read files from Dropbox
+" :bro e dropbox
+
+" Call JavaScript (Note the escape of !)
+!console.log('Hello from vimrc\!');
+
+" If you are editing a JavaScript file:
+" :!%
+
+" emscripten API works:
+" :!FS.mkdir('/foo')
+
+
+
+"========== OTHERS ==========
 " Some are actually not yet supported
-set go=
 set ruler
 set number
 set wildmenu

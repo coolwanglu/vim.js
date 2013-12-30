@@ -276,7 +276,8 @@ mergeInto(LibraryManager.library, {
 
     invert_canvas: function(x, y, w, h) {
       var ctx = vimjs.canvas_ctx;
-      var data = ctx.getImageData(x, y, w, h).data;
+      var img = ctx.getImageData(x, y, w, h);
+      var data = img.data;
       for(var i = 0, l = data.length; i < l;) {
         data[i] = 255 - data[i];
         ++i;
@@ -285,7 +286,7 @@ mergeInto(LibraryManager.library, {
         data[i] = 255 - data[i];
         i += 2;
       }
-      ctx.putImageData(img, x, y);
+      ctx.putImageData(data, x, y);
     },
 
     __dummy__: null
