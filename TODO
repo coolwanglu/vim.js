@@ -1,5 +1,3 @@
-// = failed/postponed/low priority
-
 ## emscripten / async transformation
 streamline.js does not catch ExitStatus 
 asm.js
@@ -7,8 +5,8 @@ asm.js
 ## core
 
 ## UI stuffs
-special keys (ctrl etc)
 prevent closing window by mistaken ^w
+special keys (ctrl etc)
 
 ## Web integration
 Load vim components (runtime)
