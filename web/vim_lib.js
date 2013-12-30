@@ -145,7 +145,10 @@ mergeInto(LibraryManager.library, {
           var argc = ((args.length + 1));
           var argv = [allocate(intArrayFromString("/bin/vim"), "i8", ALLOC_NORMAL), 0, 0, 0];
           for (var i = 0; i < argc - 1; ++i) {
-            argv.concat([allocate(intArrayFromString(args[i]), "i8", ALLOC_NORMAL), 0, 0, 0]);
+            argv.push(allocate(intArrayFromString(args[i]), "i8", ALLOC_NORMAL));
+            argv.push(0);
+            argv.push(0);
+            argv.push(0);
           }
           argv.push(0);
           argv = allocate(argv, "i32", ALLOC_NORMAL);
