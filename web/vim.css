@@ -45,6 +45,9 @@
 .jumbotron h1 {
   margin-top: 0px;
 }
+code, kbd, pre, samp {
+  font-family: "Source Code Pro", monospace;
+}
 .modal-dialog {
   display:block;
 }
