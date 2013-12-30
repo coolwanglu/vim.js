@@ -274,9 +274,9 @@
 #define FEAT_SYN_HL // requires FEAT_EVAL FEAT_CINDENT FEAT_AUTOCMD
 #define FEAT_MODIFY_FNAME // used in syntax.vim
 #define FEAT_USR_CMDS // used in javascript.vim
-#define FEAT_FOLDING
 
 // later
+//#define FEAT_FOLDING
 //#define FEAT_SMARTINDENT
 #endif
 
