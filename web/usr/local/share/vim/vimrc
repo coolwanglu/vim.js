@@ -11,7 +11,7 @@
 
 "========== APPEARANCE ==========
 
-" GUI elements (tabline, scrollbar, menu) are not implmented
+" GUI elements (tabline, scrollbar, menu etc) are not implemented
 set guioptions=
 
 " Use CSS font format
