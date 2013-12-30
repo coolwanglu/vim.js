@@ -64,6 +64,7 @@ mergeInto(LibraryManager.library, {
     file_callback: null,
     dropbox_callback: null,
     trigger_callback: null,
+    keyevent_callback: null,
 
     dropbox: null,
 
@@ -86,6 +87,9 @@ mergeInto(LibraryManager.library, {
       }
 
       vimjs.gui_browser_handle_key(charCode || keyCode, modifiers, 0, 0);
+
+      if(vimjs.keyevent_callback)
+        vimjs.keyevent_callback();
     },//VIMJS_FOLD_END
 
     get_color_string: function(color) {//VIMJS_FOLD_START
@@ -694,7 +698,7 @@ mergeInto(LibraryManager.library, {
      * Most keys can be handled during the keypress event
      * But some special keys must be handled during the keydown event in order to prevent default actions
      *
-     * F means "needed for Firfox"
+     * F means "needed for Firefox"
      * C means "needed for Chrome"
      */
     var keys_to_intercept_upon_keydown = {};
@@ -726,17 +730,31 @@ mergeInto(LibraryManager.library, {
   },
   
   vimjs_wait_for_chars__deps: ['$vimjs'],
-  vimjs_wait_for_chars: function(_, wtime) {
-    if(wtime > 0) {
-      var stop_time = Date.now() + wtime;
-    }    
+  vimjs_wait_for_chars: function(cb, wtime) {
     // TODO: use macros of OK/FAIL
-    do {
-      if(vimjs.input_available())
-        return 1; // OK
-      setTimeout(_, 10);
-    } while((wtime == -1) || (Date.now() < stop_time));
-    return 0; // FAIL
+    if(vimjs.input_available()) {
+      cb(null,1); // OK
+    } else if(wtime == -1) {
+      vimjs.keyevent_callback = function() {
+        if(!vimjs.input_available())
+          return;
+        vimjs.keyevent_callback = null;
+        cb(null, 1); // OK
+      };
+    } else {
+      var timer = setTimeout(function(){
+        vimjs.keyevent_callback = null;
+        cb(null, 0); // FAIL
+      }, wtime);
+
+      vimjs.keyevent_callback = function() {
+        if(!vimjs.input_available())
+          return;
+        clearTimeout(timer);
+        vimjs.keyevent_callback = null;
+        cb(null, 1); // OK
+      };
+    }
   },
 
   /* process pending events */
