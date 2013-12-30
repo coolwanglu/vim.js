@@ -10,12 +10,13 @@ by Lu Wang
 
 ### Status
 
-Works but unstable
-
         | Firefox | Chrome | IE
 --------|---------|--------|--------
 Speed   | Normal  | Good   | Good
 Feature | Good    | Normal | Normal 
+
+Usually stable now, but be careful and save a lot!
+In case it crashes, files can still be accessible through emscripten FS API, e.g. `FS.readFile`
 
 
 
