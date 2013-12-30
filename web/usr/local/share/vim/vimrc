@@ -16,7 +16,7 @@ set guioptions=
 
 " Use CSS font format
 " Use monospace fonts only!
-set guifont=12px\ monospace
+set guifont=12px\ "Source\ Code\ Pro",monospace
 
 " Only Darkside is available right now
 colorscheme Darkside
