@@ -1,6 +1,6 @@
-/*  vim: set sw=2 ts=2 et foldmethod=marker foldmarker=VIMJS_FOLD_START,VIMJS_FOLD_END : */
+/*  vim: set sw=2 ts=2 et ft=javascript foldmethod=marker foldmarker=VIMJS_FOLD_START,VIMJS_FOLD_END : */
 /*
- * vim_lib.js: connect DOM and user inputs to VIM
+ * vim_lib.js: connect DOM and user inputs to Vim.js
  *
  * Copyright (c) 2013 Lu Wang <coolwanglu@gmail.com>
  *

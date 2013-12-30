@@ -85,6 +85,8 @@ $EM_DIR/emmake make
 do_link() {
 pushd web
 cp ../src/vim vim.bc
+cp vim_lib.js usr/local/share/vim/example.js
+
 # Use vim.js as filename to generate vim.js.mem
 $EM_DIR/emcc vim.bc \
     -o vim.js \
