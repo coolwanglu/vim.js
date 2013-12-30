@@ -173,7 +173,6 @@ mergeInto(LibraryManager.library, {
             }
           } finally {
             calledMain = true; 
-        //    Module["vimjs-exit"](crashed);
           }
         })(function(){ console.log('Vim.js exited.'); });
       };
