@@ -56,7 +56,7 @@ mergeInto(LibraryManager.library, {
     sp_color: '#f00',
 
     // functions 
-    gui_browser_add_to_input_buf: null,
+    gui_web_handle_key: null,
     input_available: null,
 
     special_keys: [],
@@ -86,13 +86,13 @@ mergeInto(LibraryManager.library, {
       if(charCode == 0) {
         var special = vimjs.special_keys[keyCode];
         if(special !== undefined) {
-          vimjs.gui_browser_handle_key(charCode || keyCode, modifiers, special.charCodeAt(0), special.charCodeAt(1));
+          vimjs.gui_web_handle_key(charCode || keyCode, modifiers, special.charCodeAt(0), special.charCodeAt(1));
           handled = true;
         } 
       }
 
       if(!handled)
-        vimjs.gui_browser_handle_key(charCode || keyCode, modifiers, 0, 0);
+        vimjs.gui_web_handle_key(charCode || keyCode, modifiers, 0, 0);
 
       if(vimjs.keyevent_callback)
         vimjs.keyevent_callback();
@@ -314,7 +314,7 @@ mergeInto(LibraryManager.library, {
     vimjs.is_firefox = typeof InstallTrigger !== 'undefined';
     vimjs.is_chrome = !!window.chrome;
     
-    vimjs.gui_browser_handle_key = Module['cwrap']('gui_browser_handle_key', null, ['number', 'number', 'number', 'number']);
+    vimjs.gui_web_handle_key = Module['cwrap']('gui_web_handle_key', null, ['number', 'number', 'number', 'number']);
     vimjs.input_available = Module['cwrap']('input_available', 'number', []);
 
     vimjs.beep_node = document.getElementById('vimjs-beep');

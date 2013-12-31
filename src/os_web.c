@@ -1,5 +1,5 @@
 /*
- * os_browser.c : provide OS interface with emscripten API
+ * os_web.c : provide OS interface with emscripten API
  * Copyright (c) 2013 Lu Wang <coolwanglu@gmail.com>
  *
  * Mostly modified from os_unix.c

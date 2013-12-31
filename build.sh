@@ -5,43 +5,13 @@ set -e
 # must be > 1
 JOB_COUNT=6
 
-function check_queue {
-    OLDQUEUE=$RUNNING_QUEUE
-    for PID in $OLDQUEUE
-    do
-        if [ ! -d /proc/$PID ]; then
-            regenerate_queue
-            break
-        fi
-    done
-}
-
-function regenerate_queue {
-    OLDQUEUE=$RUNNING_QUEUE
-    RUNNING_QUEUE=""
-    RUNNING_COUNT=0
-    for PID in $OLDQUEUE
-    do
-        if [ -d /proc/$PID ]; then
-            RUNNING_QUEUE="$RUNNING_QUEUE $PID"
-            RUNNING_COUNT=$(($RUNNING_COUNT+1))
-        fi
-    done
-}
-
-function new_job {
-    PROCESS=$*
-    eval "$PROCESS &"
-    RUNNING_QUEUE="$RUNNING_QUEUE $!"
-}
-
 do_config() {
     echo config
 # something wrong with emcc + cproto, use gcc as CPP instead
 CPPFLAGS="-DFEAT_GUI_WEB" \
 CPP="gcc -E" \
 $EM_DIR/emconfigure ./configure \
-    --enable-gui=browser \
+    --enable-gui=web \
     --with-features=small \
     --disable-selinux \
     --disable-xsmp \
@@ -95,7 +65,7 @@ $EM_DIR/emcc vim.bc \
     --closure 0 \
     --memory-init-file 1 \
     --js-library vim_lib.js \
-    -s EXPORTED_FUNCTIONS="['_main', '_input_available', '_gui_browser_handle_key', '_gui_resize_shell']" \
+    -s EXPORTED_FUNCTIONS="['_main', '_input_available', '_gui_web_handle_key', '_gui_resize_shell']" \
     --embed-file usr \
 
 mv vim.js vim-1.js
@@ -118,7 +88,7 @@ _node -li -c vim-2._js &
 
 for ((i=0; i < JOB_COUNT; i++))
 do
-    _node -c vim-2.$i._js &
+    _node -li -c vim-2.$i._js &
 done
 
 wait

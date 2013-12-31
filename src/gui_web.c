@@ -1,7 +1,7 @@
 /* vi:set ts=8 sts=4 sw=4:
  *
  * VIM - Vi IMproved		by Bram Moolenaar
- *                              Browser port by Lu Wang
+ *                              Web port by Lu Wang
  *
  * Do ":help uganda"  in Vim to read copying and usage conditions.
  * Do ":help credits" in Vim to see a list of people who contributed.
@@ -9,7 +9,7 @@
  */
 
 /*
- * gui_browser.c 
+ * gui_web.c 
  * gui functions for vim.js
  *
  * Copyright (c) 2013 Lu Wang <coolwanglu@gmail.com>
@@ -397,7 +397,7 @@ gui_mch_wait_for_chars(int wtime)
 
 
     void
-gui_browser_handle_key(int code, int modifiers, char_u special1, char_u special2)
+gui_web_handle_key(int code, int modifiers, char_u special1, char_u special2)
 {
     char_u buf[64];
     int buf_len = 0;
