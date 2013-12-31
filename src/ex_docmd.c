@@ -1021,7 +1021,7 @@ do_cmdline(cmdline, fgetline, cookie, flags)
 	    if (count == 1 && getline_equal(fgetline, cookie, getexline))
 		msg_didout = TRUE;
 	    if (fgetline == NULL || (next_cmdline = 
-#ifdef FEAT_GUI_BROWSER
+#ifdef FEAT_GUI_WEB
                         vimjs_async_call_safe3(fgetline,
 #else
                         fgetline(
@@ -2698,7 +2698,7 @@ do_one_cmd(cmdlinep, sourcing,
 	 * Call the function to execute the command.
 	 */
 	ea.errmsg = NULL;
-#ifdef FEAT_GUI_BROWSER
+#ifdef FEAT_GUI_WEB
         // Lu Wang: mark as async function
         vimjs_async_call_safe1((cmdnames[ea.cmdidx].cmd_func), (&ea));
 #else

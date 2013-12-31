@@ -1997,12 +1997,12 @@ else
   fi
 fi
 
-# Lu Wang: don't disable enable_gui since we have gui_browser
+# Lu Wang: don't disable enable_gui since we have gui_web
 #test "x$with_x" = xno -a "x$MACOSX" != "xyes" -a "x$QNX" != "xyes" && enable_gui=no
 
 AC_MSG_CHECKING(--enable-gui argument)
 AC_ARG_ENABLE(gui,
- [  --enable-gui[=OPTS]     X11 GUI [default=auto] [OPTS=auto/no/gtk2/gnome2/motif/athena/neXtaw/photon/carbon/browser]], , enable_gui="auto")
+ [  --enable-gui[=OPTS]     X11 GUI [default=auto] [OPTS=auto/no/gtk2/gnome2/motif/athena/neXtaw/photon/carbon/web]], , enable_gui="auto")
 
 dnl Canonicalize the --enable-gui= argument so that it can be easily compared.
 dnl Do not use character classes for portability with old tools.
@@ -2017,7 +2017,7 @@ SKIP_ATHENA=YES
 SKIP_NEXTAW=YES
 SKIP_PHOTON=YES
 SKIP_CARBON=YES
-SKIP_BROWSER=YES
+SKIP_WEB=YES
 GUITYPE=NONE
 
 if test "x$QNX" = "xyes" -a "x$with_x" = "xno" ; then
@@ -2067,8 +2067,8 @@ else
 		SKIP_ATHENA=;;
     nextaw)	AC_MSG_RESULT(neXtaw GUI support)
 		SKIP_NEXTAW=;;
-    browser) AC_MSG_RESULT(Browser GUI support)
-		SKIP_BROWSER=;;
+    web) AC_MSG_RESULT(Web GUI support)
+		SKIP_WEB=;;
     *)		AC_MSG_RESULT([Sorry, $enable_gui GUI is not supported]) ;;
   esac
 
@@ -2535,8 +2535,8 @@ if test -z "$SKIP_NEXTAW"; then
   GUITYPE=NEXTAW
 fi
 
-if test -z "$SKIP_BROWSER"; then
-  GUITYPE=BROWSER
+if test -z "$SKIP_WEB"; then
+  GUITYPE=WEB
 fi
 
 if test -z "$SKIP_ATHENA" -o -z "$SKIP_NEXTAW" -o -z "$SKIP_MOTIF"; then

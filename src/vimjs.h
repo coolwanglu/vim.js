@@ -6,7 +6,7 @@ j* Functions to be implemented by JavaScript
 #ifndef VIMJS_H__
 #define VIMJS_H__
 
-#ifdef FEAT_GUI_BROWSER
+#ifdef FEAT_GUI_WEB
 // event
 void vimjs_init();
 void vimjs_sleep(int);
@@ -61,5 +61,5 @@ void * vimjs_async_call_safe2(void (*)(void*,void*), void*, void*);
 void * vimjs_async_call_safe3(void (*)(void*,void*,void*), void*,void*,void*);
 void * vimjs_async_call_safe6(void (*)(void*,void*,void*,void*,void*,void*), void*,void*,void*,void*,void*,void*);
 
-#endif // FEAT_GUI_BROWSER
+#endif // FEAT_GUI_WEB
 #endif //VIMJS_H__

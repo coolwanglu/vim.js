@@ -7707,7 +7707,7 @@ cindent_on()
 fixthisline(get_the_indent)
     int (*get_the_indent) __ARGS((void));
 {
-#ifdef FEAT_GUI_BROWSER
+#ifdef FEAT_GUI_WEB
     change_indent(INDENT_SET, vimjs_async_call_safe0(get_the_indent), FALSE, 0, TRUE);
 #else
     change_indent(INDENT_SET, get_the_indent(), FALSE, 0, TRUE);

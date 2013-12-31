@@ -8533,7 +8533,7 @@ call_func(funcname, len, rettv, argcount, argvars, firstline, lastline,
 		else
 		{
 		    argvars[argcount].v_type = VAR_UNKNOWN;
-#ifdef FEAT_GUI_BROWSER
+#ifdef FEAT_GUI_WEB
                     vimjs_async_call_safe2(functions[i].f_func, argvars, rettv);
 #else
 		    functions[i].f_func(argvars, rettv);
@@ -21535,7 +21535,7 @@ ex_function(eap)
 	else if (eap->getline == NULL)
 	    theline = getcmdline(':', 0L, indent);
 	else
-#ifdef FEAT_GUI_BROWSER
+#ifdef FEAT_GUI_WEB
 	    theline = vimjs_async_call_safe3(eap->getline, ':', eap->cookie, indent);
 #else
 	    theline = eap->getline(':', eap->cookie, indent);

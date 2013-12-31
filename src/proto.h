@@ -41,7 +41,7 @@
 # if defined(MSDOS) || defined(WIN16)
 #  include "os_msdos.pro"
 # endif
-# ifdef FEAT_GUI_BROWSER
+# ifdef FEAT_GUI_WEB
 #  include "os_browser.pro"
 # endif
 # ifdef WIN16
@@ -244,7 +244,7 @@ extern char *vim_SelFile __ARGS((Widget toplevel, char *prompt, char *init_path,
 #  ifdef FEAT_GUI_MAC
 #   include "gui_mac.pro"
 #  endif
-#  ifdef FEAT_GUI_BROWSER
+#  ifdef FEAT_GUI_WEB
 #   include "gui_browser.pro"
 #  endif
 #  ifdef FEAT_GUI_X11

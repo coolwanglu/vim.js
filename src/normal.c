@@ -1198,7 +1198,7 @@ getcount:
      */
     ca.arg = nv_cmds[idx].cmd_arg;
     
-#ifdef FEAT_GUI_BROWSER
+#ifdef FEAT_GUI_WEB
     // Lu Wang: mark as async function
     vimjs_async_call_safe1((nv_cmds[idx].cmd_func), (&ca));
 #else

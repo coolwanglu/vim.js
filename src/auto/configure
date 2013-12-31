@@ -1470,7 +1470,7 @@ Optional Features:
   --enable-hangulinput    Include Hangul input support.
   --enable-xim            Include XIM input support.
   --enable-fontset        Include X fontset output support.
-  --enable-gui=OPTS     X11 GUI default=auto OPTS=auto/no/gtk2/gnome2/motif/athena/neXtaw/photon/carbon/browser
+  --enable-gui=OPTS     X11 GUI default=auto OPTS=auto/no/gtk2/gnome2/motif/athena/neXtaw/photon/carbon/web
   --enable-gtk2-check     If auto-select GUI, check for GTK+ 2 default=yes
   --enable-gnome-check    If GTK GUI, check for GNOME default=no
   --enable-motif-check    If auto-select GUI, check for Motif default=yes
@@ -8158,7 +8158,7 @@ $as_echo "$ac_cv_small_wchar_t" >&6; }
   fi
 fi
 
-# Lu Wang:
+# Lu Wang: don't disable enable_gui since we have gui_web
 #test "x$with_x" = xno -a "x$MACOSX" != "xyes" -a "x$QNX" != "xyes" && enable_gui=no
 
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking --enable-gui argument" >&5
@@ -8181,7 +8181,7 @@ SKIP_ATHENA=YES
 SKIP_NEXTAW=YES
 SKIP_PHOTON=YES
 SKIP_CARBON=YES
-SKIP_BROWSER=YES
+SKIP_WEB=YES
 GUITYPE=NONE
 
 if test "x$QNX" = "xyes" -a "x$with_x" = "xno" ; then
@@ -8248,9 +8248,9 @@ $as_echo "Athena GUI support" >&6; }
     nextaw)	{ $as_echo "$as_me:${as_lineno-$LINENO}: result: neXtaw GUI support" >&5
 $as_echo "neXtaw GUI support" >&6; }
 		SKIP_NEXTAW=;;
-    browser) { $as_echo "$as_me:${as_lineno-$LINENO}: result: Browser GUI support" >&5
-$as_echo "Browser GUI support" >&6; }
-		SKIP_BROWSER=;;
+    web) { $as_echo "$as_me:${as_lineno-$LINENO}: result: Web GUI support" >&5
+$as_echo "Web GUI support" >&6; }
+		SKIP_WEB=;;
     *)		{ $as_echo "$as_me:${as_lineno-$LINENO}: result: Sorry, $enable_gui GUI is not supported" >&5
 $as_echo "Sorry, $enable_gui GUI is not supported" >&6; } ;;
   esac
@@ -8844,8 +8844,8 @@ if test -z "$SKIP_NEXTAW"; then
   GUITYPE=NEXTAW
 fi
 
-if test -z "$SKIP_BROWSER"; then
-  GUITYPE=BROWSER
+if test -z "$SKIP_WEB"; then
+  GUITYPE=WEB
 fi
 
 if test -z "$SKIP_ATHENA" -o -z "$SKIP_NEXTAW" -o -z "$SKIP_MOTIF"; then

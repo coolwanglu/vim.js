@@ -691,7 +691,7 @@
 # define ESC_CHG_TO_ENG_MODE		/* if defined, when ESC pressed,
 					 * turn to english mode
 					 */
-# if !defined(FEAT_XFONTSET) && defined(HAVE_X11) && !defined(FEAT_GUI_GTK) && !defined(FEAT_GUI_BROWSER)
+# if !defined(FEAT_XFONTSET) && defined(HAVE_X11) && !defined(FEAT_GUI_GTK) && !defined(FEAT_GUI_WEB)
 #  define FEAT_XFONTSET			/* Hangul input requires xfontset */
 # endif
 # if defined(FEAT_XIM) && !defined(LINT)
@@ -708,7 +708,7 @@
  * +xfontset		X fontset support.  For outputting wide characters.
  */
 #ifndef FEAT_XFONTSET
-# if defined(FEAT_MBYTE) && defined(HAVE_X11) && !defined(FEAT_GUI_GTK) && !defined(FEAT_GUI_BROWSER)
+# if defined(FEAT_MBYTE) && defined(HAVE_X11) && !defined(FEAT_GUI_GTK) && !defined(FEAT_GUI_WEB)
 #  define FEAT_XFONTSET
 # else
 /* #  define FEAT_XFONTSET */
@@ -803,7 +803,7 @@
  * there is no terminal version, and on Windows we can't figure out how to
  * fork one off with :gui.
  */
-#if defined(FEAT_GUI_MSWIN) || (defined(FEAT_GUI_MAC) && !defined(MACOS_X_UNIX)) || defined(FEAT_GUI_BROWSER)
+#if defined(FEAT_GUI_MSWIN) || (defined(FEAT_GUI_MAC) && !defined(MACOS_X_UNIX)) || defined(FEAT_GUI_WEB)
 # define ALWAYS_USE_GUI
 #endif
 
@@ -1028,7 +1028,7 @@
  * +X11			Unix only.  Include code for xterm title saving and X
  *			clipboard.  Only works if HAVE_X11 is also defined.
  */
-#if (defined(FEAT_NORMAL) || defined(FEAT_GUI_MOTIF) || defined(FEAT_GUI_ATHENA)) && !defined(FEAT_GUI_BROWSER)
+#if (defined(FEAT_NORMAL) || defined(FEAT_GUI_MOTIF) || defined(FEAT_GUI_ATHENA)) && !defined(FEAT_GUI_WEB)
 # define WANT_X11
 #endif
 
@@ -1153,7 +1153,7 @@
 #if defined(FEAT_NORMAL) && defined(FEAT_VISUAL) \
 	&& (defined(UNIX) || defined(VMS)) \
 	&& defined(WANT_X11) && defined(HAVE_X11) \
-        && !defined(FEAT_GUI_BROWSER)
+        && !defined(FEAT_GUI_WEB)
 # define FEAT_XCLIPBOARD
 # ifndef FEAT_CLIPBOARD
 #  define FEAT_CLIPBOARD

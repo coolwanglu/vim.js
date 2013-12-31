@@ -38,7 +38,7 @@ function new_job {
 do_config() {
     echo config
 # something wrong with emcc + cproto, use gcc as CPP instead
-CPPFLAGS="-DFEAT_GUI_BROWSER" \
+CPPFLAGS="-DFEAT_GUI_WEB" \
 CPP="gcc -E" \
 $EM_DIR/emconfigure ./configure \
     --enable-gui=browser \

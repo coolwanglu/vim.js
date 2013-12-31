@@ -124,7 +124,7 @@
     || defined(FEAT_GUI_W32) \
     || defined(FEAT_GUI_W16) \
     || defined(FEAT_GUI_PHOTON) \
-    || defined(FEAT_GUI_BROWSER)
+    || defined(FEAT_GUI_WEB)
 # define FEAT_GUI_ENABLED  /* also defined with NO_X11_INCLUDES */
 # if !defined(FEAT_GUI) && !defined(NO_X11_INCLUDES)
 #  define FEAT_GUI
@@ -190,7 +190,7 @@
 # endif
 #endif
 
-#ifdef FEAT_GUI_BROWSER
+#ifdef FEAT_GUI_WEB
 /*
  * Basically it's a similar envrionment as UNIX
  * but there are things we don't have or we don't need
@@ -228,13 +228,13 @@
 #undef HAVE_SELINUX
 #undef HAVE_ICONV
 
-#endif // FEAT_GUI_BROWSER
+#endif // FEAT_GUI_WEB
 
 #include "feature.h"	/* #defines for optionals and features */
 
-#ifdef FEAT_GUI_BROWSER
+#ifdef FEAT_GUI_WEB
 /*
- * some features are not needed or supported by FEAT_GUI_BROWSER 
+ * some features are not needed or supported by FEAT_GUI_WEB 
  */
 
 #undef FEAT_NEATBEANS_INTG
@@ -394,7 +394,7 @@
  */
 #if !defined(__cplusplus) && defined(UNIX) \
   && !defined(MACOS_X) /* MACOS_X doesn't yet support osdef.h */ \
-  && !defined(FEAT_GUI_BROWSER)
+  && !defined(FEAT_GUI_WEB)
 # include "auto/osdef.h"	/* bring missing declarations in */
 #endif
 
@@ -2048,7 +2048,7 @@ typedef int VimClipboard;	/* This is required for the prototypes. */
  * is declared. */
 #if !defined(FEAT_GUI_W32) && !defined(FEAT_GUI_X11) \
 	&& !defined(FEAT_GUI_GTK) && !defined(FEAT_GUI_MAC) \
-         && !defined(FEAT_GUI_BROWSER)
+         && !defined(FEAT_GUI_WEB)
 # define mch_errmsg(str)	fprintf(stderr, "%s", (str))
 # define display_errors()	fflush(stderr)
 # define mch_msg(str)		printf("%s", (str))
@@ -2353,7 +2353,7 @@ typedef int VimClipboard;	/* This is required for the prototypes. */
 # define SET_NO_HLSEARCH(flag) no_hlsearch = (flag)
 #endif
 
-// have no effect if FEAT_GUI_BROWSER is not enabled
+// have no effect if FEAT_GUI_WEB is not enabled
 #include "vimjs.h"
 
 #endif /* VIM__H */

@@ -126,6 +126,7 @@ mergeInto(LibraryManager.library, {
           } catch(e) {
           }
           if((!vimjs.is_firefox) && (vimjs.ctrl_pressed)) {
+            vimjs.ctrl_pressed = false;
             return "^W is not working on non-Firefox browsers.";
           }
         });

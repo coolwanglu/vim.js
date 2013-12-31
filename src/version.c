@@ -250,7 +250,7 @@ static char *(features[]) =
 	"-footer",
 #endif
 	    /* only interesting on Unix systems */
-#if !defined(USE_SYSTEM) && defined(UNIX) && !defined(FEAT_GUI_BROWSER)
+#if !defined(USE_SYSTEM) && defined(UNIX) && !defined(FEAT_GUI_WEB)
 	"+fork()",
 #endif
 #ifdef FEAT_GETTEXT
@@ -1261,8 +1261,8 @@ list_version()
 #	  if defined(MACOS)
     MSG_PUTS(_("with (classic) GUI."));
 #         else
-#          ifdef FEAT_GUI_BROWSER
-    MSG_PUTS(_("with Browser GUI."));
+#          ifdef FEAT_GUI_WEB
+    MSG_PUTS(_("with Web GUI."));
 #          endif
 #	  endif
 #	 endif

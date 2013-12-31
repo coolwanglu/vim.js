@@ -3977,7 +3977,7 @@ ex_append(eap)
 	    eap->nextcmd = p;
 	}
 	else
-#ifdef FEAT_GUI_BROWSER
+#ifdef FEAT_GUI_WEB
             theline = vimjs_async_call_safe3(eap->getline,
 #else
 	    theline = eap->getline(

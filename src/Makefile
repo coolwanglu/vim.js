@@ -1289,24 +1289,24 @@ CARBONGUI_BUNDLE = gui_bundle
 APPDIR = $(VIMNAME).app
 CARBONGUI_TESTARG = VIMPROG=../$(APPDIR)/Contents/MacOS/$(VIMTARGET)
 
-# BROWSER GUI
-BROWSER_SRC	= gui.c gui_browser.c os_browser.c
-BROWSER_OBJ	= objects/gui.o objects/gui_browser.o objects/os_browser.o
-BROWSER_DEFS	= -DFEAT_GUI_BROWSER 
-BROWSER_IPATH	= -I. -Iproto
-BROWSER_LIBS_DIR =
-BROWSER_LIBS1	= 
-BROWSER_LIBS2	=
-BROWSER_INSTALL = 
-BROWSER_TARGETS =
-BROWSER_MAN_TARGETS =
-BROWSER_TESTTARGET = 
-BROWSER_BUNDLE = 
-BROWSER_TESTARG = 
+# WEB GUI
+WEB_SRC	= gui.c gui_web.c os_web.c
+WEB_OBJ	= objects/gui.o objects/gui_web.o objects/os_web.o
+WEB_DEFS	= -DFEAT_GUI_WEB 
+WEB_IPATH	= -I. -Iproto
+WEB_LIBS_DIR =
+WEB_LIBS1	= 
+WEB_LIBS2	=
+WEB_INSTALL = 
+WEB_TARGETS =
+WEB_MAN_TARGETS =
+WEB_TESTTARGET = 
+WEB_BUNDLE = 
+WEB_TESTARG = 
 
 # All GUI files
 ALL_GUI_SRC  = gui.c gui_gtk.c gui_gtk_f.c gui_motif.c gui_xmdlg.c gui_xmebw.c gui_athena.c gui_gtk_x11.c gui_x11.c gui_at_sb.c gui_at_fs.c pty.c
-ALL_GUI_PRO  = gui.pro gui_gtk.pro gui_motif.pro gui_xmdlg.pro gui_athena.pro gui_gtk_x11.pro gui_x11.pro gui_w16.pro gui_w32.pro gui_photon.pro gui_browser.pro
+ALL_GUI_PRO  = gui.pro gui_gtk.pro gui_motif.pro gui_xmdlg.pro gui_athena.pro gui_gtk_x11.pro gui_x11.pro gui_w16.pro gui_w32.pro gui_photon.pro gui_web.pro
 
 # }}}
 
@@ -1660,7 +1660,7 @@ RSRC_DIR = os_mac_rsrc
 
 PRO_MANUAL = os_amiga.pro os_msdos.pro os_win16.pro os_win32.pro \
 	os_mswin.pro winclip.pro os_beos.pro os_vms.pro $(PERL_PRO) \
-	os_browser.pro
+	os_web.pro
 
 # Default target is making the executable and tools
 all: $(VIMTARGET) $(TOOLS) languages $(GUI_BUNDLE)
@@ -1827,8 +1827,8 @@ os_beos.pro: os_beos.c
 	$(CPROTO) -D__BEOS__ -UHAVE_CONFIG_H $< > proto/$@
 	echo "/* vim: set ft=c : */" >> proto/$@
 
-os_browser.pro: os_browser.c
-	$(CPROTO) -DFEAT_GUI_BROWSER -UHAVE_CONFIG_H $< > proto/$@
+os_web.pro: os_web.c
+	$(CPROTO) -DFEAT_GUI_WEB -UHAVE_CONFIG_H $< > proto/$@
 	echo "/* vim: set ft=c : */" >> proto/$@
 
 os_vms.pro: os_vms.c
@@ -2598,8 +2598,8 @@ objects/gui_photon.o: gui_photon.c
 objects/gui_mac.o: gui_mac.c
 	$(CCC) -o $@ gui_mac.c
 
-objects/gui_browser.o: gui_browser.c
-	$(CCC) -o $@ gui_browser.c
+objects/gui_web.o: gui_web.c
+	$(CCC) -o $@ gui_web.c
 
 objects/hangulin.o: hangulin.c
 	$(CCC) -o $@ hangulin.c
@@ -2702,8 +2702,8 @@ objects/os_macosx.o: os_macosx.m
 objects/os_mac_conv.o: os_mac_conv.c
 	$(CCC) -o $@ os_mac_conv.c
 
-objects/os_browser.o: os_browser.c
-	$(CCC) -o $@ os_browser.c
+objects/os_web.o: os_web.c
+	$(CCC) -o $@ os_web.c
 
 objects/os_unix.o: os_unix.c
 	$(CCC) -o $@ os_unix.c

@@ -37,7 +37,7 @@ static void gui_set_fg_color __ARGS((char_u *name));
 static void gui_set_bg_color __ARGS((char_u *name));
 static win_T *xy2win __ARGS((int x, int y));
 
-#if defined(UNIX) && !defined(MACOS_X) && !defined(__APPLE__) && !defined(FEAT_GUI_BROWSER)
+#if defined(UNIX) && !defined(MACOS_X) && !defined(__APPLE__) && !defined(FEAT_GUI_WEB)
 # define MAY_FORK
 static void gui_do_fork __ARGS((void));
 
@@ -5058,7 +5058,7 @@ gui_find_iconfile(name, buffer, ext)
 # endif
 #endif
 
-#if defined(FEAT_GUI_GTK) || defined(FEAT_GUI_X11) || defined(FEAT_GUI_BROWSER) || defined(PROTO)
+#if defined(FEAT_GUI_GTK) || defined(FEAT_GUI_X11) || defined(FEAT_GUI_WEB) || defined(PROTO)
     void
 display_errors()
 {

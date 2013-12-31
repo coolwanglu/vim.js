@@ -20,7 +20,7 @@
 
 // Lu Wang: disable os_unix.c for the browser GUI
 // since it is linked with by default
-#ifndef FEAT_GUI_BROWSER
+#ifndef FEAT_GUI_WEB
 /*
  * Some systems have a prototype for select() that has (int *) instead of
  * (fd_set *), which is wrong. This define removes that prototype. We define
@@ -7376,4 +7376,4 @@ char CtrlCharTable[]=
 
 
 #endif
-#endif //FEAT_GUI_BROWSER
+#endif //FEAT_GUI_WEB
