@@ -1,15 +1,15 @@
 ## emscripten / async transformation
 streamline.js does not catch ExitStatus 
+optimizations (flatten streamlinejs runtime?)
 asm.js
 
 ## core
 
 ## UI stuffs
-prevent closing window by mistaken ^w
-special keys (ctrl etc)
+workaround for ctrl
 
 ## Web integration
-Load vim components (runtime)
+Load vim runtime
 
 
 

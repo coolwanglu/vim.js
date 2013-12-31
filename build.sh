@@ -114,7 +114,7 @@ node transform.js vim-1.js vim-2 $JOB_COUNT
 
 echo "Compiling with streamline.js..."
 
-_node -c vim-2._js &
+_node -li -c vim-2._js &
 
 for ((i=0; i < JOB_COUNT; i++))
 do

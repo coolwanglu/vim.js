@@ -30,6 +30,7 @@
 mergeInto(LibraryManager.library, {
   $vimjs__deps: ['mktemp'],
   $vimjs: {
+    is_firefox: false,
     is_chrome: false,
 
     // HTML elements
@@ -65,6 +66,9 @@ mergeInto(LibraryManager.library, {
     dropbox_callback: null,
     trigger_callback: null,
     keyevent_callback: null,
+
+    // workaround for ^W on non-firefox
+    ctrl_pressed: false,
 
     dropbox: null,
 
@@ -120,6 +124,9 @@ mergeInto(LibraryManager.library, {
           try {
             localStorage[vimrc_storage_id] = FS.readFile('/root/.vimrc', { encoding: 'utf8' });
           } catch(e) {
+          }
+          if((!vimjs.is_firefox) && (vimjs.ctrl_pressed)) {
+            return "^W is not working on non-Firefox browsers.";
           }
         });
       } 
@@ -304,6 +311,7 @@ mergeInto(LibraryManager.library, {
 
   vimjs_init__deps: ['$vimjs', 'vimjs_init_font'],
   vimjs_init: function () {
+    vimjs.is_firefox = typeof InstallTrigger !== 'undefined';
     vimjs.is_chrome = !!window.chrome;
     
     vimjs.gui_browser_handle_key = Module['cwrap']('gui_browser_handle_key', null, ['number', 'number', 'number', 'number']);
@@ -729,6 +737,17 @@ mergeInto(LibraryManager.library, {
         vimjs.handle_key(0, e.keyCode, e);
       }
     });
+
+    if(!vimjs.is_firefox) {
+      document.addEventListener('keydown', function(e) {
+        if(e.keyCode === KeyEvent.DOM_VK_CONTROL)
+          vimjs.ctrl_pressed = true;
+      });
+      document.addEventListener('keyup', function(e) {
+        if(e.keyCode === KeyEvent.DOM_VK_CONTROL)
+          vimjs.ctrl_pressed = false;
+      });
+    }
   },
 
   vimjs_sleep: function (_, ms) {
