@@ -251,4 +251,3 @@
 	///   at least once to enable sync stack traces.
 	exports.stackTraceEnabled = true;
 })(typeof exports !== 'undefined' ? exports : (Streamline.runtime = Streamline.runtime || {}));
-require && require("streamline/lib/callbacks/builtins");
