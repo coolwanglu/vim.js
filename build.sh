@@ -135,10 +135,12 @@ do_compress() {
 pushd web 
 
 echo "Optimizing with closure compiler"
-java -jar $EM_DIR/third_party/closure-compiler/compiler.jar \
-    --language_in ECMASCRIPT5 \
-    --js vim-2.js\
-    --js_output_file vim.js \
+#--compilation_level ADVANCED_OPTIMIZATIONS \
+java -Xmx2048m \
+     -jar $EM_DIR/third_party/closure-compiler/compiler.jar \
+     --language_in ECMASCRIPT5 \
+     --js vim-2.js\
+     --js_output_file vim.js \
 
 popd
 }
