@@ -9,7 +9,6 @@
     <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap-theme.min.css">
     <link rel="stylesheet" href='http://fonts.googleapis.com/css?family=Source+Code+Pro'>
     <link rel="stylesheet" href="vim.css">
-    <script src="streamline.min.js"></script>
     <script>
       (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
       (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
@@ -17,29 +16,6 @@
       })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
       ga('create', 'UA-46390065-1', 'coolwanglu.github.io');
       ga('send', 'pageview');
-
-      var Module = {
-        noInitialRun: false,
-        noExitRuntime: true,
-        arguments: ['/usr/local/share/vim/example.js'],
-        preRun: [ function() { vimjs.preRun(); } ],
-        postRun: [],
-        print: function() { 
-            console.group.apply(console, arguments); 
-            console.groupEnd();
-        },
-        printErr: function() { 
-            console.group.apply(console, arguments); 
-            console.log((new Error).stack);
-            console.groupEnd();
-        },
-        'vimjs-exit': function(crashed) {
-          var msg = crashed 
-            ? '<div style="text-align:center"><br><br><br><h3>Oops! Something went wrong.</h3><br><br><p>Plesae check out the messages in the browser console and file an issue at GitHub.</p></div>'
-            : '<div style="text-align:center"><br><br><br><h3>Did you enjoy Vim.js?</h3><br><br><p>You can refresh the page to start over.</p></p>Why not get involved and help developing Vim.js?</p></div>';
-          document.getElementById('vimjs-container').innerHTML = msg;
-        },
-      };
     </script>
   </head>
   <body>
@@ -88,7 +64,23 @@
     <script>
       var ele = document.getElementById('last-updated-time');
       ele.innerHTML = (new Date(ele.innerHTML)).toLocaleString();
+      var Module = {
+        noInitialRun: false,
+        noExitRuntime: true,
+        arguments: ['/usr/local/share/vim/example.js'],
+        preRun: [ function() { vimjs.preRun(); } ],
+        postRun: [],
+        print: function() { 
+            console.group.apply(console, arguments); 
+            console.groupEnd();
+        },
+        printErr: function() { 
+            console.group.apply(console, arguments); 
+            console.groupEnd();
+        },
+      };
     </script>
+    <script src="streamline.min.js"></script>
     <script src="vim.js"></script>
   </body>
 </html>
