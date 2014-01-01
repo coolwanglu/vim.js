@@ -108,9 +108,9 @@ mergeInto(LibraryManager.library, {
       return 'rgb('+bgr[2]+','+bgr[1]+','+bgr[0]+')';
     },//VIMJS_FOLD_END
 
-    // called before the program starts
+    // dirty works, called before the program starts
     pre_run: function () {//VIMJS_FOLD_START
-      // setup dir
+      // setup directories
       Module["FS_createPath"]("/", "root", true, true);
 
       // load .vimrc, use localStorage when possible
@@ -797,13 +797,15 @@ mergeInto(LibraryManager.library, {
   },
 
   vimjs_flash__deps: ['$vimjs'],
-  vimjs_flash: function(_, msec) {
+  vimjs_flash: function(cb, msec) {
     var canvas_node = vimjs.canvas_node;
     var w = canvas_node.width;
     var h = canvas_node.height;
     vimjs.invert_canvas(0, 0, w, h);
-    setTimeout(_, msec);
-    vimjs.invert_canvas(0, 0, w, h);
+    setTimeout(function() {
+      vimjs.invert_canvas(0, 0, w, h);
+      cb();
+    }, msec);
   },
 
   vimjs_get_window_width__deps: ['$vimjs'],
