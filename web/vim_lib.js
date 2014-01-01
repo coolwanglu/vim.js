@@ -109,7 +109,7 @@ mergeInto(LibraryManager.library, {
     },//VIMJS_FOLD_END
 
     // called before the program starts
-    preRun: function () {//VIMJS_FOLD_START
+    pre_run: function () {//VIMJS_FOLD_START
       // setup dir
       Module["FS_createPath"]("/", "root", true, true);
 
@@ -121,24 +121,35 @@ mergeInto(LibraryManager.library, {
           Module['FS_createDataFile']('/root', '.vimrc', stored_vimrc, true, true);
         }
         window.addEventListener('beforeunload', function() {
+          // save ~/.vimrc upon exit
           try {
             localStorage[vimrc_storage_id] = FS.readFile('/root/.vimrc', { encoding: 'utf8' });
           } catch(e) {
           }
+          // show message about ^W
           if((!vimjs.is_firefox) && (vimjs.ctrl_pressed)) {
             vimjs.ctrl_pressed = false;
             return "^W is not working on non-Firefox browsers.";
           }
         });
       } 
+
+      // Hijack exit, fire process event
+      var old_exit = Module['exit'];
+      Module['exit'] = Module.exit = function(status) {
+        setTimeout(function() {
+          if(Module['vimjs-exit'])
+            Module['vimjs-exit'](status);
+        }, 1);
+        if(old_exit)
+          old_exit(status);
+      };
       
       // Hijack callMain to call _main with callback
       // call _main with callback
       Module['callMain'] = Module.callMain = function(args) {
         // embed a function to be transformed by streamline.js
-        (function (_) {
-          assert(((runDependencies == 0)), "cannot call main when async dependencies remain! (listen on __ATMAIN__)");
-          assert(((__ATPRERUN__.length == 0)), "cannot call main when preRun functions remain to be called");
+        (function () {
           args = ((args || []));
           ensureInitRuntime();
 
@@ -161,28 +172,10 @@ mergeInto(LibraryManager.library, {
           argv.push(0);
           argv = allocate(argv, "i32", ALLOC_NORMAL);
           initialStackTop = STACKTOP;
-          try {
-            var crashed = false;
-            var ret = Module["_main"](_, argc, argv, 0);
-            if (!Module["noExitRuntime"]) {
-              exit(ret); 
-            } 
-          } catch (e) {
-            if (e instanceof ExitStatus) {
-            } else if (e == "SimulateInfiniteLoop") {
-              Module["noExitRuntime"] = true;
-            } else {
-              crashed = true;
 
-              if (e && (typeof e === "object") && e.stack) {
-                Module.printErr("exception thrown: " + [e,e.stack,]); 
-              }
-              throw e; 
-            }
-          } finally {
-            calledMain = true; 
-          }
-        })(function(){ console.log('Vim.js exited.'); });
+          calledMain = true;  // move it after _main ?
+          Module["_main"](function(){}, argc, argv, 0); // is the return value useful?
+        })();
       };
     },//VIMJS_FOLD_END
 
@@ -204,6 +197,8 @@ mergeInto(LibraryManager.library, {
       }
     },
     
+    // load file from different locations VIMJS_FOLD_START
+
     load_nothing: function (cb, buf) {
       {{{ makeSetValue('buf', 0, 0, 'i8') }}};
       setTimeout(cb, 1);
@@ -289,7 +284,7 @@ mergeInto(LibraryManager.library, {
           multiselect: false
         });
       });
-    },
+    }, // VIMJS_FOLD_END
 
     invert_canvas: function(x, y, w, h) {
       var ctx = vimjs.canvas_ctx;
@@ -350,7 +345,6 @@ mergeInto(LibraryManager.library, {
     vimjs.window_height = container_node.clientHeight;
 
     _vimjs_init_font('');
-    // TODO: determine rows?
 
     /* initialize special_keys VIMJS_FOLD_START*/
     vimjs.special_keys = [];
@@ -739,6 +733,8 @@ mergeInto(LibraryManager.library, {
     });
 
     if(!vimjs.is_firefox) {
+      // monitor ctrl for non-firefox
+      // display dialog if ^W is pressed
       document.addEventListener('keydown', function(e) {
         if(e.keyCode === KeyEvent.DOM_VK_CONTROL)
           vimjs.ctrl_pressed = true;
@@ -750,8 +746,8 @@ mergeInto(LibraryManager.library, {
     }
   },
 
-  vimjs_sleep: function (_, ms) {
-    setTimeout(_, ms);
+  vimjs_sleep: function (cb, ms) {
+    setTimeout(cb, ms);
   },
   
   vimjs_wait_for_chars__deps: ['$vimjs'],
@@ -783,8 +779,8 @@ mergeInto(LibraryManager.library, {
   },
 
   /* process pending events */
-  vimjs_update: function(_) {
-    setTimeout(_, 1);
+  vimjs_update: function(cb) {
+    setTimeout(cb, 1);
   },
 
   vimjs_beep__deps: ['$vimjs'],
@@ -1090,8 +1086,7 @@ mergeInto(LibraryManager.library, {
     default_name = Pointer_stringify(default_name);
     if(default_name === 'local' && window.FileReader) { 
       if(saving) {
-        // save to local 
-        // TODO
+        // TODO: save to local 
       } else {
         vimjs.load_local_file(cb, buf);
       }
