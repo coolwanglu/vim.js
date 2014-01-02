@@ -868,6 +868,7 @@ var async_func_names_to_check = [
     '_vimjs_update',
     '_vimjs_flash',
     '_vimjs_browse',
+    '_vimjs_async_call_safe0', 
     '_vimjs_async_call_safe1', 
     '_vimjs_async_call_safe2', 
     '_vimjs_async_call_safe3', 
