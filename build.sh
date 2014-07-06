@@ -15,7 +15,7 @@ $EM_DIR/emconfigure ./configure \
     --with-features=small \
     --disable-selinux \
     --disable-xsmp \
-    --disable-xmp-interact \
+    --disable-xsmp-interact \
     --disable-luainterp \
     --disable-mzschemeinterp \
     --disable-perlinterp \
@@ -27,7 +27,7 @@ $EM_DIR/emconfigure ./configure \
     --disable-workshop \
     --disable-netbeans \
     --disable-sniff \
-    --disable-multibye \
+    --disable-multibyte \
     --disable-hangulinput \
     --disable-xim \
     --disable-fontset \
