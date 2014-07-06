@@ -18,7 +18,6 @@
 
 #include "os_unixx.h"	    /* unix includes for os_unix.c only */
 
-
 /*
  * end of autoconf section. To be extended...
  */

@@ -42,7 +42,7 @@
 #  include "os_msdos.pro"
 # endif
 # ifdef FEAT_GUI_WEB
-#  include "os_browser.pro"
+#  include "os_web.pro"
 # endif
 # ifdef WIN16
    typedef LPSTR LPWSTR;
@@ -212,7 +212,7 @@ void qsort __ARGS((void *base, size_t elm_count, size_t elm_size, int (*cmp)(con
 
 # ifdef FEAT_GUI
 #  include "gui.pro"
-#  if defined(UNIX) || defined(MACOS)
+#  if (defined(UNIX) || defined(MACOS)) && !defined(FEAT_GUI_WEB)
 #   include "pty.pro"
 #  endif
 #  if !defined(HAVE_SETENV) && !defined(HAVE_PUTENV) && !defined(VMS)
@@ -245,7 +245,7 @@ extern char *vim_SelFile __ARGS((Widget toplevel, char *prompt, char *init_path,
 #   include "gui_mac.pro"
 #  endif
 #  ifdef FEAT_GUI_WEB
-#   include "gui_browser.pro"
+#   include "gui_web.pro"
 #  endif
 #  ifdef FEAT_GUI_X11
 #   include "gui_x11.pro"

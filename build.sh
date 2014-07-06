@@ -1,9 +1,6 @@
 #!/bin/bash
 set -e
-: ${EM_DIR:?"EM_DIR is not set!"}
-
-# must be > 1
-JOB_COUNT=6
+[ -z $EM_DIR] && EM_DIR=~/src/emscripten
 
 do_config() {
     echo config
@@ -49,7 +46,7 @@ $EM_DIR/emconfigure ./configure \
 }
 
 do_make() {
-$EM_DIR/emmake make
+$EM_DIR/emmake make -j8
 }
 
 do_link() {
@@ -61,62 +58,15 @@ cat vim_lib.js | sed -e "1 s/\(foldmethod\|foldmarker\)[^ ]\+//g" > usr/local/sh
 # Use vim.js as filename to generate vim.js.mem
 $EM_DIR/emcc vim.bc \
     -o vim.js \
-    -O0 \
-    --closure 0 \
+    -O2 \
     --memory-init-file 1 \
     --js-library vim_lib.js \
     -s EXPORTED_FUNCTIONS="['_main', '_input_available', '_gui_web_handle_key', '_gui_resize_shell']" \
     --embed-file usr \
 
-mv vim.js vim-1.js
-
 popd
 }
 
-do_transform() {
-pushd web
-
-# vim-2._js is counted as a job
-JOB_COUNT=$((JOB_COUNT-1))
-
-echo "Transfoming..."
-node transform.js vim-1.js vim-2 $JOB_COUNT
-
-echo "Compiling with streamline.js..."
-
-_node -li -c vim-2._js &
-
-for ((i=0; i < JOB_COUNT; i++))
-do
-    _node -li -c vim-2.$i._js &
-done
-
-wait
-
-for ((i=0; i < JOB_COUNT; i++))
-do
-    cat vim-2.$i.js >> vim-2.js
-done
-
-popd
-}
-
-do_compress() {
-pushd web 
-
-echo "Optimizing with closure compiler"
-#--compilation_level ADVANCED_OPTIMIZATIONS \
-java -Xmx2048m \
-     -jar $EM_DIR/third_party/closure-compiler/compiler.jar \
-     --language_in ECMASCRIPT5 \
-     --js vim-2.js\
-     --js_output_file vim.js \
-
-popd
-}
-
-do_config
+#do_config
 do_make
 do_link
-do_transform
-do_compress

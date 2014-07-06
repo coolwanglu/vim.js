@@ -1634,6 +1634,7 @@ PRO_AUTO = \
 	ops.pro \
 	option.pro \
 	os_unix.pro \
+	os_web.pro \
 	popupmnu.pro \
 	quickfix.pro \
 	regexp.pro \
@@ -1825,10 +1826,6 @@ winclip.pro: winclip.c
 
 os_beos.pro: os_beos.c
 	$(CPROTO) -D__BEOS__ -UHAVE_CONFIG_H $< > proto/$@
-	echo "/* vim: set ft=c : */" >> proto/$@
-
-os_web.pro: os_web.c
-	$(CPROTO) -DFEAT_GUI_WEB -UHAVE_CONFIG_H $< > proto/$@
 	echo "/* vim: set ft=c : */" >> proto/$@
 
 os_vms.pro: os_vms.c
