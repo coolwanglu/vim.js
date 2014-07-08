@@ -309,13 +309,13 @@ gui_mch_haskey(char_u *name)
     void
 gui_mch_beep(void)
 {
-    vimjs_beep();
+    //vimjs_beep();
 }
 
     void
 gui_mch_flash(int msec)
 {
-    vimjs_flash(msec);
+    //vimjs_flash(msec);
 }
 
 /*
@@ -377,7 +377,7 @@ gui_mch_draw_part_cursor(int w, int h, guicolor_T color)
     void
 gui_mch_update(void)
 {
-    vimjs_update();
+    emscripten_sleep(1);
 }
 
 /*
@@ -392,7 +392,20 @@ gui_mch_update(void)
     int
 gui_mch_wait_for_chars(int wtime)
 {
-    return vimjs_wait_for_chars(wtime);
+    if(input_available())
+        return OK;
+    
+    int t = 0;
+    int step = 10;
+    while(1)
+    {
+        emscripten_sleep(step);
+        if(input_available())
+            return OK;
+        t += step;
+        if((wtime > -1) && (t >= wtime))
+            return FAIL;
+    }
 }
 
 

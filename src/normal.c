@@ -1198,12 +1198,7 @@ getcount:
      */
     ca.arg = nv_cmds[idx].cmd_arg;
     
-#ifdef FEAT_GUI_WEB
-    // Lu Wang: mark as async function
-    vimjs_async_call_safe1((nv_cmds[idx].cmd_func), (&ca));
-#else
     (nv_cmds[idx].cmd_func)(&ca);
-#endif
 
     /*
      * If we didn't start or finish an operator, reset oap->regname, unless we

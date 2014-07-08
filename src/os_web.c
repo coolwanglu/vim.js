@@ -211,7 +211,7 @@ mch_delay(msec, ignoreinput)
     if (curr_tmode == TMODE_RAW)
         settmode(TMODE_SLEEP);
 
-    vimjs_sleep(msec);
+    emscripten_sleep(msec);
 
     settmode(old_tmode);
 }

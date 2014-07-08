@@ -5,7 +5,7 @@ set -e
 do_config() {
     echo config
 # something wrong with emcc + cproto, use gcc as CPP instead
-CPPFLAGS="-DFEAT_GUI_WEB" \
+CPPFLAGS="-Os -DFEAT_GUI_WEB" \
 CPP="gcc -E" \
 $EM_DIR/emconfigure ./configure \
     --enable-gui=web \
@@ -58,7 +58,7 @@ cat vim_lib.js | sed -e "1 s/\(foldmethod\|foldmarker\)[^ ]\+//g" > usr/local/sh
 # Use vim.js as filename to generate vim.js.mem
 $EM_DIR/emcc vim.bc \
     -o vim.js \
-    -O2 \
+    -Oz \
     --memory-init-file 1 \
     --js-library vim_lib.js \
     -s EXPORTED_FUNCTIONS="['_main', '_input_available', '_gui_web_handle_key', '_gui_resize_shell']" \
@@ -68,5 +68,5 @@ popd
 }
 
 #do_config
-do_make
+#do_make
 do_link

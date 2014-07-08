@@ -65,7 +65,6 @@ mergeInto(LibraryManager.library, {
     file_callback: null,
     dropbox_callback: null,
     trigger_callback: null,
-    keyevent_callback: null,
 
     // workaround for ^W on non-firefox
     ctrl_pressed: false,
@@ -93,9 +92,6 @@ mergeInto(LibraryManager.library, {
 
       if(!handled)
         vimjs.gui_web_handle_key(charCode || keyCode, modifiers, 0, 0);
-
-      if(vimjs.keyevent_callback)
-        vimjs.keyevent_callback();
 
     },//VIMJS_FOLD_END
 
@@ -744,43 +740,6 @@ mergeInto(LibraryManager.library, {
           vimjs.ctrl_pressed = false;
       });
     }
-  },
-
-  vimjs_sleep: function (cb, ms) {
-    setTimeout(cb, ms);
-  },
-  
-  vimjs_wait_for_chars__deps: ['$vimjs'],
-  vimjs_wait_for_chars: function(cb, wtime) {
-    // TODO: use macros of OK/FAIL
-    if(vimjs.input_available()) {
-      cb(null,1); // OK
-    } else if(wtime == -1) {
-      vimjs.keyevent_callback = function() {
-        if(!vimjs.input_available())
-          return;
-        vimjs.keyevent_callback = null;
-        cb(null, 1); // OK
-      };
-    } else {
-      var timer = setTimeout(function(){
-        vimjs.keyevent_callback = null;
-        cb(null, 0); // FAIL
-      }, wtime);
-
-      vimjs.keyevent_callback = function() {
-        if(!vimjs.input_available())
-          return;
-        clearTimeout(timer);
-        vimjs.keyevent_callback = null;
-        cb(null, 1); // OK
-      };
-    }
-  },
-
-  /* process pending events */
-  vimjs_update: function(cb) {
-    setTimeout(cb, 1);
   },
 
   vimjs_beep__deps: ['$vimjs'],

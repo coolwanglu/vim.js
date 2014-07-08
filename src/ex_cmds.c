@@ -3977,11 +3977,7 @@ ex_append(eap)
 	    eap->nextcmd = p;
 	}
 	else
-#ifdef FEAT_GUI_WEB
-            theline = vimjs_async_call_safe3(eap->getline,
-#else
 	    theline = eap->getline(
-#endif
 #ifdef FEAT_EVAL
 		    eap->cstack->cs_looplevel > 0 ? -1 :
 #endif

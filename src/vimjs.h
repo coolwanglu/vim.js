@@ -7,11 +7,11 @@ j* Functions to be implemented by JavaScript
 #define VIMJS_H__
 
 #ifdef FEAT_GUI_WEB
+void emscripten_sleep(int);
 // event
 void vimjs_init();
-void vimjs_sleep(int);
-int vimjs_wait_for_chars(int);
-void vimjs_update();
+//int vimjs_wait_for_chars(int);
+//void vimjs_update();
 void vimjs_beep();
 void vimjs_flash(int);
 
@@ -49,17 +49,6 @@ void vimjs_print_stacktrace();
 int vimjs_call_shell(char *, int);
 void vimjs_browse(char *, int, int, char*, char*);
 int vimjs_haskey(char*);
-
-/*
- * some function pointers may point to async functions, which cannot be automatically detected
- * Instead, use these functions to mark the call
- * `safe` means that #args is checked, both sync and async functions can be called correctly
- */
-void * vimjs_async_call_safe0(void (*)());
-void * vimjs_async_call_safe1(void (*)(void*), void*);
-void * vimjs_async_call_safe2(void (*)(void*,void*), void*, void*);
-void * vimjs_async_call_safe3(void (*)(void*,void*,void*), void*,void*,void*);
-void * vimjs_async_call_safe6(void (*)(void*,void*,void*,void*,void*,void*), void*,void*,void*,void*,void*,void*);
 
 #endif // FEAT_GUI_WEB
 #endif //VIMJS_H__

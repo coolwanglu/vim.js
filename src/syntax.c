@@ -6270,11 +6270,7 @@ ex_syntax(eap)
 	    if (STRCMP(subcmd_name, (char_u *)subcommands[i].name) == 0)
 	    {
 		eap->arg = skipwhite(subcmd_end);
-#ifdef FEAT_GUI_WEB
-                vimjs_async_call_safe2(subcommands[i].func, eap, FALSE);
-#else
 		(subcommands[i].func)(eap, FALSE);
-#endif
 		break;
 	    }
 	}
