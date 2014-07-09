@@ -44,6 +44,7 @@ mergeInto(LibraryManager.library, {
     canvas_ctx: null,
 
     // dimensions
+    devicePixelRatio: 0,
     char_width: 1,
     char_height: 1,
     window_width: 0,
@@ -337,8 +338,9 @@ mergeInto(LibraryManager.library, {
     container_node.appendChild(canvas_node);
     container_node.style.backgroundColor = 'black';
 
-    vimjs.window_width = container_node.clientWidth;
-    vimjs.window_height = container_node.clientHeight;
+    vimjs.devicePixelRatio = window.devicePixelRatio || 1;
+    vimjs.window_width = container_node.clientWidth * vimjs.devicePixelRatio;
+    vimjs.window_height = container_node.clientHeight * vimjs.devicePixelRatio;
 
     _vimjs_init_font('');
 
@@ -777,11 +779,11 @@ mergeInto(LibraryManager.library, {
     return vimjs.window_height;
   },
 
-  vimjs_resize__deps: ['$vimjs', 'vimjs_get_window_width', 'vimjs_get_window_height'],
+  vimjs_resize__deps: ['$vimjs'],
   vimjs_resize: function(width, height) {
     var container_node = vimjs.container_node;
-    container_node.style.width = width + container_node.offsetWidth - container_node.clientWidth + 'px';
-    container_node.style.height = height + container_node.offsetHeight - container_node.clientHeight + 'px';
+    container_node.style.width = width / vimjs.devicePixelRatio + container_node.offsetWidth - container_node.clientWidth + 'px';
+    container_node.style.height = height / vimjs.devicePixelRatio + container_node.offsetHeight - container_node.clientHeight + 'px';
     var canvas_node = vimjs.canvas_node;
     canvas_node.width = width;
     canvas_node.height = height;
@@ -920,13 +922,18 @@ mergeInto(LibraryManager.library, {
     font_test_node.innerHTML = 'm';
 
     /* clientWidth/Height won't work */
-    vimjs.char_height = Math.max(1, font_test_node.clientHeight);
-    vimjs.char_width = Math.max(1, font_test_node.clientWidth);
+    vimjs.char_height = Math.max(1, font_test_node.clientHeight * vimjs.devicePixelRatio);
+    vimjs.char_width = Math.max(1, font_test_node.clientWidth * vimjs.devicePixelRatio);
   },
 
   vimjs_set_font__deps: ['$vimjs'],
   vimjs_set_font: function(font) {
     vimjs.font = Pointer_stringify(font);
+    try {
+      var l = vimjs.font.split(/([\d]+)(?=in|[cem]m|ex|p[ctx])/);
+      l[1] = parseFloat(l[1]) * vimjs.devicePixelRatio;
+      vimjs.font = l.join('');
+    } catch (e) { }
   },
 
   vimjs_check_font__deps: ['$vimjs'],
