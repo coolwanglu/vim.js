@@ -1263,49 +1263,6 @@ exit_scroll()
 mch_exit(r)
     int r;
 {
-    exiting = TRUE;
-
-    if (!gui.in_use)
-    {
-	settmode(TMODE_COOK);
-#ifdef FEAT_TITLE
-	mch_restore_title(3);	/* restore xterm title and icon name */
-#endif
-	/*
-	 * When t_ti is not empty but it doesn't cause swapping terminal
-	 * pages, need to output a newline when msg_didout is set.  But when
-	 * t_ti does swap pages it should not go to the shell page.  Do this
-	 * before stoptermcap().
-	 */
-	if (swapping_screen() && !newline_on_exit)
-	    exit_scroll();
-
-	/* Stop termcap: May need to check for T_CRV response, which
-	 * requires RAW mode. */
-	stoptermcap();
-
-	/*
-	 * A newline is only required after a message in the alternate screen.
-	 * This is set to TRUE by wait_return().
-	 */
-	if (!swapping_screen() || newline_on_exit)
-	    exit_scroll();
-
-	/* Cursor may have been switched off without calling starttermcap()
-	 * when doing "vim -u vimrc" and vimrc contains ":q". */
-	if (full_screen)
-	    cursor_on();
-    }
-    out_flush();
-    ml_close_all(TRUE);		/* remove all memfiles */
-    if (gui.in_use)
-        gui_exit(r);
-
-#ifdef EXITFREE
-    free_all_mem();
-#endif
-
-    exit(r);
 }
 
     void

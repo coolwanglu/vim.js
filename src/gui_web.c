@@ -146,14 +146,12 @@ gui_mch_set_shellsize(
 
 /*
  * Get the screen dimensions.
- *
- * Lu Wang: fake large enough values
  */
     void
 gui_mch_get_screen_dimensions(int *screen_w, int *screen_h)
 {
-    *screen_w = vimjs_get_window_width() * 2;
-    *screen_h = vimjs_get_window_height() * 2;
+    *screen_w = vimjs_get_window_width();
+    *screen_h = vimjs_get_window_height();
 }
 
 /*

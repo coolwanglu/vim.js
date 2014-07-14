@@ -2,7 +2,7 @@
 /*
  * vim_lib.js: connect DOM and user inputs to Vim.js
  *
- * Copyright (c) 2013 Lu Wang <coolwanglu@gmail.com>
+ * Copyright (c) 2013,2014 Lu Wang <coolwanglu@gmail.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -27,7 +27,7 @@
  * $vimjs holds the common states and functions
  * vimjs_* functions are exposed to C
  */
-mergeInto(LibraryManager.library, {
+var LibraryVIM = {
   $vimjs__deps: ['mktemp'],
   $vimjs: {
     is_firefox: false,
@@ -107,8 +107,14 @@ mergeInto(LibraryManager.library, {
 
     // dirty works, called before the program starts
     pre_run: function () {//VIMJS_FOLD_START
-      // setup directories
+      // setup directories & environment
+      ENV['USER'] = 'root';
+      ENV['HOME'] = '/root'; 
+      ENV['PWD'] = '/root';
+      ENV['_'] = '/bin/vim';
+
       Module["FS_createPath"]("/", "root", true, true);
+      FS.currentPath = '/root';
 
       // load .vimrc, use localStorage when possible
       var vimrc_storage_id = 'vimjs/root/.vimrc';
@@ -130,50 +136,6 @@ mergeInto(LibraryManager.library, {
           }
         });
       } 
-
-      // Hijack exit, fire process event
-      var old_exit = Module['exit'];
-      Module['exit'] = Module.exit = function(status) {
-        setTimeout(function() {
-          if(Module['vimjs-exit'])
-            Module['vimjs-exit'](status);
-        }, 1);
-        if(old_exit)
-          old_exit(status);
-      };
-      
-      // Hijack callMain to call _main with callback
-      // call _main with callback
-      Module['callMain'] = Module.callMain = function(args) {
-        // embed a function to be transformed by streamline.js
-        (function () {
-          args = ((args || []));
-          ensureInitRuntime();
-
-          // setup environment
-          ENV['USER'] = 'root';
-          ENV['HOME'] = '/root'; 
-          ENV['PWD'] = '/root';
-          ENV['_'] = '/bin/vim';
-
-          FS.currentPath = '/root';
-
-          var argc = ((args.length + 1));
-          var argv = [allocate(intArrayFromString("/bin/vim"), "i8", ALLOC_NORMAL), 0, 0, 0];
-          for (var i = 0; i < argc - 1; ++i) {
-            argv.push(allocate(intArrayFromString(args[i]), "i8", ALLOC_NORMAL));
-            argv.push(0);
-            argv.push(0);
-            argv.push(0);
-          }
-          argv.push(0);
-          argv = allocate(argv, "i32", ALLOC_NORMAL);
-          initialStackTop = STACKTOP;
-
-          calledMain = true;  // move it after _main ?
-          Module["_main"](function(){}, argc, argv, 0); // is the return value useful?
-        })();
-      };
     },//VIMJS_FOLD_END
 
     // load external resources
@@ -301,7 +263,7 @@ mergeInto(LibraryManager.library, {
     __dummy__: null
   },
 
-  vimjs_init__deps: ['$vimjs', 'vimjs_init_font'],
+  vimjs_init__deps: ['vimjs_init_font'],
   vimjs_init: function () {
     vimjs.is_firefox = typeof InstallTrigger !== 'undefined';
     vimjs.is_chrome = !!window.chrome;
@@ -744,7 +706,6 @@ mergeInto(LibraryManager.library, {
     }
   },
 
-  vimjs_beep__deps: ['$vimjs'],
   vimjs_beep: function() {
     var beep_node = vimjs.beep_node;
     /* sometimes this is called before vimjs.beep is initialized */
@@ -757,7 +718,6 @@ mergeInto(LibraryManager.library, {
     }
   },
 
-  vimjs_flash__deps: ['$vimjs'],
   vimjs_flash: function(cb, msec) {
     var canvas_node = vimjs.canvas_node;
     var w = canvas_node.width;
@@ -769,17 +729,14 @@ mergeInto(LibraryManager.library, {
     }, msec);
   },
 
-  vimjs_get_window_width__deps: ['$vimjs'],
   vimjs_get_window_width: function() {
     return vimjs.window_width;
   },
 
-  vimjs_get_window_height__deps: ['$vimjs'],
   vimjs_get_window_height: function() {
     return vimjs.window_height;
   },
 
-  vimjs_resize__deps: ['$vimjs'],
   vimjs_resize: function(width, height) {
     var container_node = vimjs.container_node;
     container_node.style.width = width / vimjs.devicePixelRatio + container_node.offsetWidth - container_node.clientWidth + 'px';
@@ -789,7 +746,7 @@ mergeInto(LibraryManager.library, {
     canvas_node.height = height;
   },
 
-  vimjs_draw_string__deps: ['$vimjs', 'vimjs_clear_block'],
+  vimjs_draw_string__deps: ['vimjs_clear_block'],
   vimjs_draw_string: function(row, col, s, len, flags) {
 
     // TODO: use macros for flag constants
@@ -834,7 +791,6 @@ mergeInto(LibraryManager.library, {
     }
   },
 
-  vimjs_clear_block__deps: ['$vimjs'],
   vimjs_clear_block: function(row1, col1, row2, col2) {
     var ctx = vimjs.canvas_ctx;
     ctx.fillStyle = vimjs.bg_color;
@@ -846,7 +802,6 @@ mergeInto(LibraryManager.library, {
                  (row2-row1+1) * ch);
   },   
 
-  vimjs_clear_all__deps: ['$vimjs'],
   vimjs_clear_all: function() {
     var canvas_node = vimjs.canvas_node;
     var ctx = vimjs.canvas_ctx;
@@ -854,7 +809,7 @@ mergeInto(LibraryManager.library, {
     ctx.fillRect(0, 0, canvas_node.width, canvas_node.height);
   },
 
-  vimjs_delete_lines__deps: ['$vimjs', 'vimjs_clear_block'],
+  vimjs_delete_lines__deps: ['vimjs_clear_block'],
   vimjs_delete_lines: function(num_lines, row1, row2, col1, col2) {
     var ctx = vimjs.canvas_ctx;
     var cw = vimjs.char_width;
@@ -870,7 +825,7 @@ mergeInto(LibraryManager.library, {
     _vimjs_clear_block(row2 - num_lines + 1, col1, row2, col2);
   },
 
-  vimjs_insert_lines__deps: ['$vimjs', 'vimjs_clear_block'],
+  vimjs_insert_lines__deps: ['vimjs_clear_block'],
   vimjs_insert_lines: function(num_lines, row1, row2, col1, col2) {
     var ctx = vimjs.canvas_ctx;
     var cw = vimjs.char_width;
@@ -885,7 +840,6 @@ mergeInto(LibraryManager.library, {
     _vimjs_clear_block(row1, col1, row1 + num_lines - 1, col2);
   },
 
-  vimjs_draw_hollow_cursor__deps: ['$vimjs'],
   vimjs_draw_hollow_cursor: function(row, col) {
     var ctx = vimjs.canvas_ctx;
     ctx.strokeStyle = vimjs.fg_color;
@@ -894,7 +848,6 @@ mergeInto(LibraryManager.library, {
     ctx.strokeRect(col * cw + 0.5, row * ch + 0.5, cw - 1, ch - 1);
   },
 
-  vimjs_draw_part_cursor__deps: ['$vimjs'],
   vimjs_draw_part_cursor: function(row, col, width, height) {
     var ctx = vimjs.canvas_ctx;
     ctx.fillStyle = vimjs.fg_color;
@@ -903,14 +856,12 @@ mergeInto(LibraryManager.library, {
     ctx.fillRect(col * cw, (row + 1) * ch - height, width, height);
   },
 
-  vimjs_invert_rectangle__deps: ['$vimjs'],
   vimjs_invert_rectangle: function(row, col, row_count, col_count) {
     var cw = vimjs.char_width;
     var ch = vimjs.char_height;
     vimjs.invert_canvas(col * cw, row * ch, col_count *cw, row_count * ch);
   },
 
-  vimjs_init_font__deps: ['$vimjs'],
   vimjs_init_font: function(font) {
     if(typeof font !== 'string')
       font = Pointer_stringify(font);
@@ -926,7 +877,6 @@ mergeInto(LibraryManager.library, {
     vimjs.char_width = Math.max(1, font_test_node.clientWidth * vimjs.devicePixelRatio);
   },
 
-  vimjs_set_font__deps: ['$vimjs'],
   vimjs_set_font: function(font) {
     vimjs.font = Pointer_stringify(font);
     try {
@@ -936,7 +886,6 @@ mergeInto(LibraryManager.library, {
     } catch (e) { }
   },
 
-  vimjs_check_font__deps: ['$vimjs'],
   vimjs_check_font: function(font) {
     // check if font exists
     font = Pointer_stringify(font);
@@ -955,22 +904,18 @@ mergeInto(LibraryManager.library, {
     });
   },
 
-  vimjs_get_char_width__deps: ['$vimjs'], 
   vimjs_get_char_width: function() {
     return vimjs.char_width;
   },
-  vimjs_get_char_height__deps: ['$vimjs'], 
   vimjs_get_char_height: function() {
     return vimjs.char_height;
   },
 
-  vimjs_is_valid_color__deps: ['$vimjs'],
   vimjs_is_valid_color: function(colorp) {
     var color = Pointer_stringify(colorp);
     return /(^#[0-9A-F]{6}$)|(^#[0-9A-F]{3}$)/i.test(color)
       || (color.toLowerCase() in vimjs.color_map);
   },
-  vimjs_get_rgb__deps: ['$vimjs'],
   vimjs_get_rgb: function (string) {
     string = Pointer_stringify(string);
     string = string.toLowerCase();
@@ -1002,15 +947,12 @@ mergeInto(LibraryManager.library, {
     }
     return ret;
   },
-  vimjs_set_fg_color__deps: ['$vimjs'],
   vimjs_set_fg_color: function(color) {
     vimjs.fg_color = vimjs.get_color_string(color);
   },
-  vimjs_set_bg_color__deps: ['$vimjs'],
   vimjs_set_bg_color: function(color) {
     vimjs.bg_color = vimjs.get_color_string(color);
   },
-  vimjs_set_sp_color__deps: ['$vimjs'],
   vimjs_set_sp_color: function(color) {
     vimjs.sp_color = vimjs.get_color_string(color);
   },
@@ -1073,71 +1015,12 @@ mergeInto(LibraryManager.library, {
     }
   },
 
-  vimjs_haskey__deps: ['$vimjs'],
   vimjs_haskey: function(name) {
     name = Pointer_stringify(name, 2);
     return (name in vimjs.special_keys_namemap);
   },
 
-  /* func is a function pointer */
-  vimjs_async_call_safe0: function(_, func) {
-    func = FUNCTION_TABLE[func];
-    if(func.length == 0) {
-      return func();
-    } else if (func.length == 1) {
-      return func(_);
-    } else {
-      throw new Error('Cannot make async call');
-    }
-  },
-
-  /* func is a function pointer */
-  vimjs_async_call_safe1: function(_, func, arg1) {
-    func = FUNCTION_TABLE[func];
-    if(func.length == 1) {
-      return func(arg1);
-    } else if (func.length == 2) {
-      return func(_, arg1);
-    } else {
-      throw new Error('Cannot make async call');
-    }
-  },
-
-  /* func is a function pointer */
-  vimjs_async_call_safe2: function(_, func, arg1, arg2) {
-    func = FUNCTION_TABLE[func];
-    if(func.length == 2) {
-      return func(arg1, arg2);
-    } else if (func.length == 3) {
-      return func(_, arg1, arg2);
-    } else {
-      throw new Error('Cannot make async call');
-    }
-  },
-
-  /* func is a function pointer */
-  vimjs_async_call_safe3: function(_, func, arg1, arg2, arg3) {
-    func = FUNCTION_TABLE[func];
-    if(func.length == 3) {
-      return func(arg1, arg2, arg3);
-    } else if (func.length == 4) {
-      return func(_, arg1, arg2, arg3);
-    } else {
-      throw new Error('Cannot make async call');
-    }
-  },
-
-  /* func is a function pointer */
-  vimjs_async_call_safe6: function(_, func, arg1, arg2, arg3, arg4, arg5, arg6) {
-    func = FUNCTION_TABLE[func];
-    if(func.length == 6) {
-      return func(arg1, arg2, arg3, arg4, arg5, arg6);
-    } else if (func.length == 7) {
-      return func(_, arg1, arg2, arg3, arg4, arg5, arg6);
-    } else {
-      throw new Error('Cannot make async call');
-    }
-  },
-
   vimjs_dummy__: null 
-});
+};
+autoAddDeps(LibraryVIM, '$vimjs');
+mergeInto(LibraryManager.library, LibraryVIM);

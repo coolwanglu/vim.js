@@ -8,18 +8,6 @@ by Lu Wang
 
 
 
-### Status
-
-        | Firefox | Chrome | IE
---------|---------|--------|--------
-Speed   | Normal  | Best   | Good
-Feature | Best    | Normal | Good
-
-Usable and almost stable, but be careful and do `:w` a lot!
-In case it crashes, files can still be accessible through the emscripten FS API, e.g. `FS.readFile`
-
-
-
 ### Vim.js Features
 
 - Persistent `~/.vimrc`
