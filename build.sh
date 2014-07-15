@@ -59,7 +59,6 @@ cat vim_lib.js | sed -e "1 s/\(foldmethod\|foldmarker\)[^ ]\+//g" > usr/local/sh
 $EM_DIR/emcc vim.bc \
     -o vim.js \
     -Oz \
-    -profiling \
     --memory-init-file 1 \
     --js-library vim_lib.js \
     -s EXPORTED_FUNCTIONS="['_main', '_input_available', '_gui_web_handle_key']" \
@@ -69,5 +68,5 @@ popd
 }
 
 #do_config
-#do_make
+do_make
 do_link
