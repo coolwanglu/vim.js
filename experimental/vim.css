@@ -54,7 +54,7 @@ body {
 /* overrides some bootstrap styles */
 .jumbotron { 
   padding-top: 32px;
-  padding-bottom: 32px;
+  padding-bottom: 16px;
   margin-bottom: 0px;
   background-color: transparent;
   text-align: center;
