@@ -8,6 +8,7 @@ by Lu Wang
 
 [The old version](http://coolwanglu.github.io/vim.js/web/vim.html)
 
+Recommended browsers: Firefox, Chrome, IE
 
 
 ### Vim.js Features
