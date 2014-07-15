@@ -6,14 +6,18 @@ by Lu Wang
 
 ### [Try it online](http://coolwanglu.github.io/vim.js/web/vim.html)
 
+### [The old version](http://coolwanglu.github.io/vim.js/web/vim.html)
+
 
 
 ### Vim.js Features
 
+- ASM.js enabled
 - Persistent `~/.vimrc`
 - Execute JavaScript from Vim.js 
-- Read local files 
-- Read files from Dropbox
+- Planned, but not working yet
+  - Read local files 
+  - Read files from Dropbox
 
 Run `:e $VIM/vimrc` for more detail.
 
