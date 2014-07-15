@@ -4,9 +4,9 @@ A Tool/Toy for Non-Beginners
 
 by Lu Wang
 
-### [Try it online](http://coolwanglu.github.io/vim.js/web/vim.html)
+### [Try it online](http://coolwanglu.github.io/vim.js/experimental/vim.html)
 
-### [The old version](http://coolwanglu.github.io/vim.js/web/vim.html)
+[The old version](http://coolwanglu.github.io/vim.js/web/vim.html)
 
 
 
