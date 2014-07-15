@@ -27,7 +27,7 @@
       <div class="jumbotron">
         <h1>Vim.js</h1>
         <h2>JavaScript port of Vim</h2>
-        <code>:e $VIM/vimrc</code>
+        <code>Try the <a href="../experimental/vim.html">new version</a>!</code>
       </div>
       <div id="vimjs-container" class="container">
         <canvas id="vimjs-canvas"></canvas>
@@ -42,8 +42,10 @@
       <br>
       <br>
       <div class="footer">
-        <p>© <a target="_blank" href="http://coolwanglu.github.io/">Lu Wang</a> 2013</p>
-        <p class="text-muted">Last updated: <span id="last-updated-time">Tue Dec 31 15:00:34 UTC 2013</span></p>
+        <p>© <a target="_blank" href="http://coolwanglu.github.io/">Lu Wang</a> 2013-2014</p>
+        <!--
+        <p class="text-muted">Last updated: <span id="last-updated-time"></span></p>
+        -->
       </div>
     </div>
     <audio id="vimjs-beep" src="drip.ogg"></audio>
@@ -62,8 +64,10 @@
       </div>
     </div>
     <script>
-      var ele = document.getElementById('last-updated-time');
-      ele.innerHTML = (new Date(ele.innerHTML)).toLocaleString();
+      try {
+        var ele = document.getElementById('last-updated-time');
+        ele.innerHTML = (new Date(ele.innerHTML)).toLocaleString();
+      } catch(e) { }
       var Module = {
         noInitialRun: false,
         noExitRuntime: true,

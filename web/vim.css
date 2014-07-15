@@ -4,6 +4,10 @@
  * Copyright (c) 2013 Lu Wang <coolwanglu@gmail.com>
  */
 
+body {
+  background-color: #f5f0eb;
+}
+
 #github-star {
   position:absolute;
   top: 32px;
@@ -54,6 +58,7 @@
   margin-bottom: 0px;
   background-color: transparent;
   text-align: center;
+  text-shadow: 0px 2px 2px rgb(210, 225, 235);
 }
 .jumbotron h1 {
   margin-top: 0px;
