@@ -718,14 +718,16 @@ var LibraryVIM = {
     }
   },
 
-  vimjs_flash: function(cb, msec) {
+  vimjs_flash__deps: ['emscripten_async_resume'],
+  vimjs_flash: function(msec) {
     var canvas_node = vimjs.canvas_node;
     var w = canvas_node.width;
     var h = canvas_node.height;
     vimjs.invert_canvas(0, 0, w, h);
     setTimeout(function() {
       vimjs.invert_canvas(0, 0, w, h);
-      cb();
+      asm['setAsync']();
+      _emscripten_async_resume();
     }, msec);
   },
 
@@ -991,27 +993,29 @@ var LibraryVIM = {
     }
   }, 
 
-  vimjs_browse__dep: ['$vimjs'],
-  vimjs_browse: function(cb, buf, buf_size, saving, default_name, init_dir) {
+  vimjs_browse__dep: ['$vimjs', 'emscripten_async_resume'],
+  vimjs_browse: function(buf, buf_size, saving, default_name, init_dir) {
+    asm['setAsync']();
     default_name = Pointer_stringify(default_name);
     if(default_name === 'local' && window.FileReader) { 
       if(saving) {
         // TODO: save to local 
+        setTimeout(_emscripten_async_resume, 1);
       } else {
-        vimjs.load_local_file(cb, buf);
+        vimjs.load_local_file(_emscripten_async_resume, buf);
       }
     } else if (default_name === 'dropbox') {
       if(saving) {
         vimjs.ensure_dropbox(function() {
-          vimjs.save_dropbox_file(cb, buf);
+          vimjs.save_dropbox_file(_emscripten_async_resume, buf);
         });
       } else {
         vimjs.ensure_dropbox(function() {
-          vimjs.load_dropbox_file(cb, buf);
+          vimjs.load_dropbox_file(_emscripten_async_resume, buf);
         });
       }
     } else {
-      vimjs.load_nothing(cb, buf);
+      vimjs.load_nothing(_emscripten_async_resume, buf);
     }
   },
 

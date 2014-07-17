@@ -307,13 +307,13 @@ gui_mch_haskey(char_u *name)
     void
 gui_mch_beep(void)
 {
-    //vimjs_beep();
+    vimjs_beep();
 }
 
     void
 gui_mch_flash(int msec)
 {
-    //vimjs_flash(msec);
+    vimjs_flash(msec);
 }
 
 /*

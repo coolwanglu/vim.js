@@ -16,9 +16,8 @@ Recommended browsers: Firefox, Chrome, IE
 - ASM.js enabled
 - Persistent `~/.vimrc`
 - Execute JavaScript from Vim.js 
-- Planned, but not working yet
-  - Read local files 
-  - Read files from Dropbox
+- Read local files 
+- Read files from Dropbox
 
 Run `:e $VIM/vimrc` for more detail.
 
