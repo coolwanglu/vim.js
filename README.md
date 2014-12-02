@@ -37,10 +37,10 @@ Please discuss with me first before you work on a PR.
 
 ### Tips for hackers
 
-- Need emscripten with async transformation (the `async` branch in my fork of emscripten)
+- Need emscripten with ASYNCIFY enabled
 - Need GCC & cproto (maybe) &mdash; Sometimes you need to run `make proto` when you see errors about 'undeclared variables/functions/structs'
 - Read `build.sh`
-- The building process might take more than 3GB memory.
+- The building process might take lots of memory
 
 
 
