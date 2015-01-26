@@ -6,7 +6,8 @@ by Lu Wang
 
 ### [Try it online](http://coolwanglu.github.io/vim.js/experimental/vim.html)
 
-[The old version](http://coolwanglu.github.io/vim.js/web/vim.html)
+- [node-webkit version](https://github.com/coolwanglu/vim.js/tree/master/node-webkit)
+- [old version using streamlinejs](http://coolwanglu.github.io/vim.js/web/vim.html)
 
 Recommended browsers: Firefox, Chrome, IE
 
