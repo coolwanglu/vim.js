@@ -705,6 +705,17 @@ var LibraryVIM = {
       });
     }
   },
+  
+  vimjs_prepare_exit: function() {
+    if(!!Module['VIMJS_ALLOW_EXIT']) {
+      // This is likely to be set by async jobs
+      // hack it to exit normally
+      Module['noExitRuntime'] = false;
+      return 1;
+    } else {
+      return 0;
+    }
+  },
 
   vimjs_beep: function() {
     var beep_node = vimjs.beep_node;

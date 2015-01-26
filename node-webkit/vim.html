@@ -1,0 +1,59 @@
+<!doctype html>
+<!--  vim: set sw=2 ts=2 et : --> 
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>coolwanglu/Vim.js-NW @GitHub</title>
+    <link rel="stylesheet" href='http://fonts.googleapis.com/css?family=Source+Code+Pro'>
+    <link rel="stylesheet" href="vim.css">
+  </head>
+  <body>
+    <div id="vimjs-container">
+      <canvas id="vimjs-canvas"></canvas>
+      <div style="text-align:center">
+        <h3>Brought to you by <em>Lu Wang</em></h3>
+        <div class="vimjs-loading-container">
+          <div class="vimjs-loading"></div>
+          <div id="vimjs-loading-text">loading...</div>
+        </div>
+      </div>
+    </div>
+    <audio id="vimjs-beep" src="drip.ogg"></audio>
+    <input id="vimjs-file" class="vimjs-invisible" type="file">
+    <div id="vimjs-font-test" class="vimjs-invisible"></div>
+    <div id="vimjs-trigger-dialog" class="modal">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h4 class="modal-title">Ugly workaround for Chrome</h4>
+          </div>
+          <div class="modal-body">
+            <button id="vimjs-trigger-button" type="button" class="btn btn-primary">Click Me</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script>
+      var Module = {
+        VIMJS_ALLOW_EXIT: true,
+        noInitialRun: false,
+        //noExitRuntime: true,
+        arguments: ['/usr/local/share/vim/example.js'],
+        preRun: [ function() { 
+          try {
+            FS.mkdir('/Users');
+            FS.mount(NODEFS, { root: '/Users' }, '/Users');
+          } catch(e) { }
+          try {
+            FS.mkdir('/home');
+            FS.mount(NODEFS, { root: '/home' }, '/home');
+          } catch(e) { }
+          vimjs.pre_run(); 
+        } ],
+        postRun: [],
+      };
+    </script>
+    <script src="vim.js"></script>
+  </body>
+</html>

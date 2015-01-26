@@ -10,6 +10,7 @@ j* Functions to be implemented by JavaScript
 void emscripten_sleep(int);
 // event
 void vimjs_init();
+int vimjs_prepare_exit();
 //int vimjs_wait_for_chars(int);
 //void vimjs_update();
 void vimjs_beep();

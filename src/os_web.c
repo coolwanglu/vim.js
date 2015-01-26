@@ -1263,6 +1263,8 @@ exit_scroll()
 mch_exit(r)
     int r;
 {
+    if (vimjs_prepare_exit())
+        exit(r);
 }
 
     void

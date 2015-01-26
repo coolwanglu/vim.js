@@ -107,7 +107,6 @@ gui_mch_open(void)
     void
 gui_mch_exit(int rc)
 {
-    // Nothing to do
 }
 
 /*

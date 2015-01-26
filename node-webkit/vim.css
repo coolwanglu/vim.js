@@ -1,0 +1,156 @@
+/*  vim: set sw=2 ts=2 et : */
+/*
+ * vim.css
+ * Copyright (c) 2013 Lu Wang <coolwanglu@gmail.com>
+ */
+
+body {
+  background-color: #f5f0eb;
+}
+
+#vimjs-container { 
+  border:0;
+  padding:0;
+  overflow:hidden;
+  line-height:1;
+  font: 12px monospace;
+  /* from bootstrap */
+  border-color: rgb(102, 175, 233);
+  box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.075) inset, 0px 0px 8px rgba(102, 175, 233, 0.6);
+  position:absolute;
+  left:0;
+  right:0;
+  top:0;
+  bottom:0;
+  /* from Darkside */
+  background-color:#222324;
+  color:#bababa;
+}
+/* from Darkside */
+#vimjs-container em {
+  color:#1cc3e8;
+}
+
+#vimjs-container h3 {
+  font-family: "Source Code Pro", monospace !important;
+  margin-top:170px;
+}
+
+#vimjs-canvas {
+  width:100%;
+  height:100%;
+  display:none;
+}
+.vimjs-invisible {
+  position:absolute;
+  right:100%;
+  bottom:100%;
+}
+
+.modal-dialog {
+  display:block;
+}
+#vimjs-font-test {
+  padding:0;
+}
+#vimjs-trigger-dialog {
+  position:absolute;
+  display:none;
+  opacity:1;
+  background-color:rgba(0, 0, 0, 0.5);
+}
+#vimjs-trigger_dialog .modal-header {
+  text-align:center;
+}
+#vimjs-trigger-dialog .modal-dialog {
+  position:relative;
+  margin:auto;
+  width:300px;
+  top:200px;
+}
+#vimjs-trigger-button {
+  display:block;
+  margin-left:auto;
+  margin-right:auto;
+}
+/*
+ * CSS Loading indicator
+ * Originally by Dom Sammut | https://www.domsammut.com/projects/pure-css-loading-animation
+ * Modified by Lu Wang
+ */
+@keyframes rotate-loading {
+  0%  {transform: rotate(0deg);}
+  100% {transform: rotate(360deg);}
+}
+@-moz-keyframes rotate-loading {
+  0%  {-moz-transform: rotate(0deg);}
+  100% {-moz-transform: rotate(360deg);}
+}
+@-webkit-keyframes rotate-loading {
+  0%  {-webkit-transform: rotate(0deg);}
+  100% {-webkit-transform: rotate(360deg);}
+}
+@keyframes loading-text-opacity {
+  0%  {opacity: 0}
+  20% {opacity: 0}
+  50% {opacity: 1}
+  100%{opacity: 0}
+}
+@-moz-keyframes loading-text-opacity {
+  0%  {opacity: 0}
+  20% {opacity: 0}
+  50% {opacity: 1}
+  100%{opacity: 0}
+}
+@-webkit-keyframes loading-text-opacity {
+  0%  {opacity: 0}
+  20% {opacity: 0}
+  50% {opacity: 1}
+  100%{opacity: 0}
+}
+.vimjs-loading-container,
+.vimjs-loading {
+  height: 100px;
+  position: relative;
+  width: 100px;
+  border-radius: 100%;
+}
+.vimjs-loading-container { margin: 70px auto }
+.vimjs-loading {
+  border: 2px solid transparent;
+  border-color: transparent #bababa transparent #bababa;
+  -moz-animation: rotate-loading 1.5s linear 0s infinite normal;
+  -moz-transform-origin: 50% 50%;
+  -webkit-animation: rotate-loading 1.5s linear 0s infinite normal;
+  -webkit-transform-origin: 50% 50%;
+  animation: rotate-loading 1.5s linear 0s infinite normal;
+  transform-origin: 50% 50%;
+}
+
+.vimjs-loading-container:hover .vimjs-loading {
+  border-color: transparent #1cc3e8 transparent #1cc3e8;
+}
+.vimjs-loading-container:hover .vimjs-loading,
+.vimjs-loading-container .vimjs-loading {
+  -webkit-transition: all 0.5s ease-in-out;
+  -moz-transition: all 0.5s ease-in-out;
+  -ms-transition: all 0.5s ease-in-out;
+  transition: all 0.5s ease-in-out;
+}
+
+#vimjs-loading-text {
+  -moz-animation: loading-text-opacity 2s linear 0s infinite normal;
+  -webkit-animation: loading-text-opacity 2s linear 0s infinite normal;
+  animation: loading-text-opacity 2s linear 0s infinite normal;
+  color: #bababa;
+  font-family: "Source Code Pro", monospace;
+  font-size: 10px;
+  font-weight: bold;
+  margin-top: 45px;
+  opacity: 0;
+  position: absolute;
+  text-align: center;
+  text-transform: uppercase;
+  top: 0;
+  width: 100px;
+}
