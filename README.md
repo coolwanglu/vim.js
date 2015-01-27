@@ -39,7 +39,7 @@ Please discuss with me first before you work on a PR.
 ### Tips for hackers
 
 - Need emscripten with ASYNCIFY enabled
-- Need GCC & cproto (maybe) &mdash; Sometimes you need to run `make proto` when you see errors about 'undeclared variables/functions/structs'
+- Need GCC & cproto (maybe) &mdash; Sometimes you need to run `make proto` when you see errors about 'undeclared variables/functions/structs' or '***.pro' file not found
 - Read `build.sh`
 - The building process might take lots of memory
 
