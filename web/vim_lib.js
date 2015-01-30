@@ -86,9 +86,12 @@ var LibraryVIM = {
       if(charCode == 0) {
         var special = vimjs.special_keys[keyCode];
         if(special !== undefined) {
-          vimjs.gui_web_handle_key(charCode || keyCode, modifiers, special.charCodeAt(0), special.charCodeAt(1));
+          vimjs.gui_web_handle_key(keyCode, modifiers, special.charCodeAt(0), special.charCodeAt(1));
           handled = true;
-        } 
+        } else {
+          vimjs.gui_web_handle_key(keyCode, modifiers, 0, 0);
+          handled = true;
+        }
       }
 
       if(!handled) {
@@ -96,7 +99,7 @@ var LibraryVIM = {
         var chars = new Uint8Array(MAX_UTF8_BYTES + 1); // null-terminated
         var charLen = stringToUTF8Array(String.fromCharCode(charCode), chars, 0, MAX_UTF8_BYTES);
         if (charLen == 1) {
-          vimjs.gui_web_handle_key(chars[0], modifiers, 0, 0);
+          vimjs.gui_web_handle_key(chars[0], 0, 0, 0);
         } else {
           // no modifers for UTF-8, should be handled in chars already
           for (var i = 0; i < charLen; i++) {
@@ -696,6 +699,7 @@ var LibraryVIM = {
      * C means "needed for Chrome"
      */
     var keys_to_intercept_upon_keydown = {};
+    var ctrl_keys_to_intercept_upon_keydown = {};
     [ KeyEvent.DOM_VK_ESCAPE, // CF
       KeyEvent.DOM_VK_TAB, // C
       KeyEvent.DOM_VK_BACK_SPACE, // C 
@@ -706,14 +710,24 @@ var LibraryVIM = {
       KeyEvent.DOM_VK_DELETE, // C
       KeyEvent.DOM_VK_PAGE_UP, // C
       KeyEvent.DOM_VK_PAGE_DOWN, // C
+      KeyEvent.DOM_VK_HOME, // C
+      KeyEvent.DOM_VK_END, // C
     ].forEach(function(k) {
       keys_to_intercept_upon_keydown[k] = 1;
     });
+    [
+      KeyEvent.DOM_VK_F,
+      KeyEvent.DOM_VK_B,
+    ].forEach(function(k) {
+      ctrl_keys_to_intercept_upon_keydown[k] = 1;
+    });
+                                
 
     /* capture some special keys that won't trigger 'keypress' */
     document.addEventListener('keydown', function(e) {
       if (ignoreKeys()) return true;
-      if(e.keyCode in keys_to_intercept_upon_keydown)  {
+      if((e.keyCode in keys_to_intercept_upon_keydown) ||
+        (e.ctrlKey && (e.keyCode in ctrl_keys_to_intercept_upon_keydown)))  {
         e.preventDefault();
         vimjs.handle_key(0, e.keyCode, e);
       }
