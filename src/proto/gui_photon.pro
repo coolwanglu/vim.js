@@ -1,4 +1,5 @@
 /* gui_photon.c */
+void gui_ph_encoding_changed __ARGS((int new_encoding));
 void gui_mch_prepare __ARGS((int *argc, char **argv));
 int gui_mch_init __ARGS((void));
 int gui_mch_init_check __ARGS((void));

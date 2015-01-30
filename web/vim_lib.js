@@ -656,27 +656,20 @@ var LibraryVIM = {
       yellowgreen: [154,205,50]
     };
     /* VIMJS_FOLD_END */
-
     vimjs.lastMouseDownTarget = vimjs.canvas_node; // set focus on start
-
     var ignoreKeys = function() {
-      var retval = (vimjs.lastMouseDownTarget !== vimjs.canvas_node);
-      if (retval === undefined) {
-        retval = true;
-      }
-      return retval;
+      return (vimjs.lastMouseDownTarget !== vimjs.canvas_node);
     }
 
-    var recordTarget = function(event) {
-      if (vimjs.canvas_node.contains(event.target)) {
-        vimjs.lastMouseDownTarget = vimjs.canvas_node;
-      } else {
-        vimjs.lastMouseDownTarget = event.target;
-      }
-      //console.log("lastmousedown", vimjs.lastMouseDownTarget);
-    }
-    
-    document.addEventListener('mousedown', recordTarget, false);   
+    document.addEventListener('mousedown', function(event) {
+        if (vimjs.canvas_node.contains(event.target)) {
+          vimjs.lastMouseDownTarget = vimjs.canvas_node;
+        } else {
+          vimjs.lastMouseDownTarget = event.target;
+        }
+        //console.log("lastmousedown", vimjs.lastMouseDownTarget);
+      },
+      false);
 
     document.addEventListener('keypress', function(e) {
       if (ignoreKeys()) return true;
