@@ -1,6 +1,6 @@
 #!/bin/bash
 set -e
-[ -z $EM_DIR ] && EM_DIR=~/src/emscripten
+[ -z $EM_DIR] && EM_DIR=~/src/emscripten
 
 do_config() {
     echo config
@@ -24,7 +24,7 @@ $EM_DIR/emconfigure ./configure \
     --disable-workshop \
     --disable-netbeans \
     --disable-sniff \
-    --enable-multibyte \
+    --disable-multibyte \
     --disable-hangulinput \
     --disable-xim \
     --disable-fontset \
@@ -76,5 +76,5 @@ cp web/vim.js.mem node-webkit/
 
 #do_config
 #do_make
-do_link
+#do_link
 do_copy
