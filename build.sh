@@ -61,7 +61,8 @@ $EM_DIR/emcc vim.bc \
     -Oz \
     --memory-init-file 1 \
     --js-library vim_lib.js \
-    -s ASYNCIFY=1 \
+    -s EMTERPRETIFY=1 \
+    -s EMTERPRETIFY_ASYNC=1 \
     -s EXPORTED_FUNCTIONS="['_main', '_input_available', '_gui_web_handle_key']" \
     -s ASYNCIFY_FUNCTIONS="['emscripten_sleep', 'vimjs_flash', 'vimjs_browse']" \
     --embed-file usr \
