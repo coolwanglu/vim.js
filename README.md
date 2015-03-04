@@ -4,10 +4,12 @@ A Tool/Toy for Non-Beginners
 
 by Lu Wang
 
-### [Try it online](http://coolwanglu.github.io/vim.js/experimental/vim.html)
+### [Try it online](http://coolwanglu.github.io/vim.js/emterpreter/vim.html)
 
-- [NW.js version](https://github.com/coolwanglu/vim.js/tree/master/NW.js)
-- [old version using streamlinejs](http://coolwanglu.github.io/vim.js/web/vim.html)
+### Variations
+- [NW.js](https://github.com/coolwanglu/vim.js/tree/master/NW.js)
+- [ASM.js](http://coolwanglu.github.io/vim.js/asmjs/vim.html)
+- [Streamline.js](http://coolwanglu.github.io/vim.js/streamlinejs/vim.html)
 
 Recommended browsers: Firefox, Chrome, IE
 
