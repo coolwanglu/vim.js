@@ -1,0 +1,98 @@
+<!doctype html>
+<!--  vim: set sw=2 ts=2 et : --> 
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>Vim.js</title>
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap-theme.min.css">
+    <link rel="stylesheet" href='http://fonts.googleapis.com/css?family=Source+Code+Pro'>
+    <link rel="stylesheet" href="vim.css">
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+      ga('create', 'UA-46390065-1', 'coolwanglu.github.io');
+      ga('send', 'pageview');
+    </script>
+  </head>
+  <body>
+    <a href="https://github.com/coolwanglu/vim.js"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_orange_ff7600.png" alt="Fork me on GitHub"></a>
+    <div id="github-star">
+      <iframe src="http://ghbtns.com/github-btn.html?user=coolwanglu&repo=vim.js&type=watch&count=true&size=large" allowtransparency="true" frameborder="0" scrolling="0" width="170" height="30"></iframe>
+    </div>
+    <div class="container">
+      <div class="jumbotron">
+        <h1>Vim.js</h1>
+        <code>:e $VIM/vimrc</code>
+      </div>
+      <div id="vimjs-container" class="container">
+        <canvas id="vimjs-canvas"></canvas>
+        <div style="text-align:center">
+          <h3>Brought to you by <em>Lu Wang</em></h3>
+          <div class="vimjs-loading-container">
+            <div class="vimjs-loading"></div>
+            <div id="vimjs-loading-text">loading...</div>
+          </div>
+        </div>
+      </div>
+      <br>
+      <br>
+      <div class="footer">
+        <p>© <a target="_blank" href="http://coolwanglu.github.io/">Lu Wang</a> 2013-2014</p>
+        <!--
+        <p class="text-muted">Last updated: <span id="last-updated-time"></span></p>
+        -->
+      </div>
+    </div>
+    <audio id="vimjs-beep" src="drip.ogg"></audio>
+    <input id="vimjs-file" class="vimjs-invisible" type="file">
+    <div id="vimjs-font-test" class="vimjs-invisible"></div>
+    <div id="vimjs-trigger-dialog" class="modal">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h4 class="modal-title">Ugly workaround for Chrome</h4>
+          </div>
+          <div class="modal-body">
+            <button id="vimjs-trigger-button" type="button" class="btn btn-primary">Click Me</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script>
+      try {
+        var ele = document.getElementById('last-updated-time');
+        ele.innerHTML = (new Date(ele.innerHTML)).toLocaleString();
+      } catch(e) { }
+      var Module = {
+        noInitialRun: false,
+        noExitRuntime: true,
+        arguments: ['/usr/local/share/vim/example.js'],
+        preRun: [ function() { vimjs.pre_run(); } ],
+        postRun: [],
+        print: function() { 
+          if (console.group !== undefined) {
+            console.group.apply(console, arguments); 
+            console.groupEnd();
+          } else {
+            // IE
+            console.log(arguments);
+          }
+        },
+        printErr: function() { 
+          if (console.group !== undefined) {
+            console.group.apply(console, arguments); 
+            console.groupEnd();
+          } else {
+            // IE
+            console.log(arguments);
+          }
+        },
+      };
+    </script>
+    <script src="vim.js"></script>
+  </body>
+</html>

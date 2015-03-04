@@ -1,0 +1,64 @@
+" Default vimrc for vim.js
+" Copyright (c) 2013 Lu Wang <coolwanglu@gmail.com>
+
+
+
+" You can edit your own ~/.vimrc
+" which will be saved into localStorage and loaded next time
+
+
+
+"========== APPEARANCE ==========
+
+" GUI elements (tabline, scrollbar, menu etc) are not implemented
+set guioptions=
+
+" Use CSS font format
+" Use monospace fonts only!
+set guifont=12px\ \"Source\ Code\ Pro\"\\,monospace
+
+" Only Darkside is available right now
+colorscheme Darkside
+
+" blink is not supported right now
+set guicursor=a:blinkon0
+
+" may be very slow on Firefox
+syntax on
+" you need to set filetype yourself, e.g. :set ft=vim
+
+
+
+"========== EXPERIMENTAL (not in Vim) ==========
+" Read local files
+" :bro e local
+
+" Read files from Dropbox
+" :bro e dropbox
+
+" Call JavaScript (Note the escape of !)
+!console.log('Hello from vimrc\!');
+
+" If you are editing a JavaScript file:
+" :!%
+
+" emscripten API works:
+" :!FS.mkdir('/foo')
+
+
+
+"========== OTHERS ==========
+" Some are actually not yet supported
+set ruler
+set number
+set wildmenu
+set tabstop=4
+set expandtab
+set nocompatible
+set fileencodings=utf8
+set backspace=indent,eol,start
+set wildmode=longest,list,full
+set mouse=
+"set smartindent
+"set cindent 
+set shiftwidth=4
