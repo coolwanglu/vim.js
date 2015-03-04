@@ -59,7 +59,6 @@ cat vim_lib.js | sed -e "1 s/\(foldmethod\|foldmarker\)[^ ]\+//g" > usr/local/sh
 $EM_DIR/emcc vim.bc \
     -o vim.js \
     -Oz \
-    -O0 \
     --memory-init-file 1 \
     --js-library vim_lib.js \
     -s ASYNCIFY=1 \
@@ -71,11 +70,11 @@ popd
 }
 
 do_copy() {
-cp web/vim.js node-webkit/
-cp web/vim.js.mem node-webkit/
+cp web/vim.js NW.js/
+cp web/vim.js.mem NW.js/
 }
 
 #do_config
 #do_make
-#do_link
-do_copy
+do_link
+#do_copy
