@@ -74,12 +74,22 @@
         preRun: [ function() { vimjs.pre_run(); } ],
         postRun: [],
         print: function() { 
+          if (console.group !== undefined) {
             console.group.apply(console, arguments); 
             console.groupEnd();
+          } else {
+            // IE
+            console.log(arguments);
+          }
         },
         printErr: function() { 
+          if (console.group !== undefined) {
             console.group.apply(console, arguments); 
             console.groupEnd();
+          } else {
+            // IE
+            console.log(arguments);
+          }
         },
       };
     </script>

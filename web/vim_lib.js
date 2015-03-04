@@ -656,8 +656,23 @@ var LibraryVIM = {
       yellowgreen: [154,205,50]
     };
     /* VIMJS_FOLD_END */
+    vimjs.lastMouseDownTarget = vimjs.canvas_node; // set focus on start
+    var ignoreKeys = function() {
+      return (vimjs.lastMouseDownTarget !== vimjs.canvas_node);
+    }
+
+    document.addEventListener('mousedown', function(event) {
+        if (vimjs.canvas_node.contains(event.target)) {
+          vimjs.lastMouseDownTarget = vimjs.canvas_node;
+        } else {
+          vimjs.lastMouseDownTarget = event.target;
+        }
+        //console.log("lastmousedown", vimjs.lastMouseDownTarget);
+      },
+      false);
 
     document.addEventListener('keypress', function(e) {
+      if (ignoreKeys()) return true;
       e.preventDefault();
       vimjs.handle_key(e.charCode, e.keyCode, e);
     });
@@ -686,6 +701,7 @@ var LibraryVIM = {
 
     /* capture some special keys that won't trigger 'keypress' */
     document.addEventListener('keydown', function(e) {
+      if (ignoreKeys()) return true;
       if(e.keyCode in keys_to_intercept_upon_keydown)  {
         e.preventDefault();
         vimjs.handle_key(0, e.keyCode, e);
@@ -696,10 +712,12 @@ var LibraryVIM = {
       // monitor ctrl for non-firefox
       // display dialog if ^W is pressed
       document.addEventListener('keydown', function(e) {
+        if (ignoreKeys()) return true;
         if(e.keyCode === KeyEvent.DOM_VK_CONTROL)
           vimjs.ctrl_pressed = true;
       });
       document.addEventListener('keyup', function(e) {
+        if (ignoreKeys()) return true;
         if(e.keyCode === KeyEvent.DOM_VK_CONTROL)
           vimjs.ctrl_pressed = false;
       });
