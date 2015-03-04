@@ -27,7 +27,7 @@ $EM_DIR/emconfigure ./configure \
     --disable-workshop \
     --disable-netbeans \
     --disable-sniff \
-    --disable-multibyte \
+    --enable-multibyte \
     --disable-hangulinput \
     --disable-xim \
     --disable-fontset \
