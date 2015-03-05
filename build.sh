@@ -55,15 +55,20 @@ cp ../src/vim vim.bc
 #cp vim_lib.js usr/local/share/vim/example.js
 cat vim_lib.js | sed -e "1 s/\(foldmethod\|foldmarker\)[^ ]\+//g" > usr/local/share/vim/example.js
 
+OPT_ASYNCIFY="-s ASYNCIFY=1 \
+    -s EXPORTED_FUNCTIONS=\"['_main', '_input_available', '_gui_web_handle_key']\" \
+    -s ASYNCIFY_FUNCTIONS=\"['emscripten_sleep', 'vimjs_flash', 'vimjs_browse']\" "
+
+OPT_EMTERPRETER="-s EMTERPRETIFY=1 -s EMTERPRETIFY_ASYNC=1"
+
+
 # Use vim.js as filename to generate vim.js.mem
 $EM_DIR/emcc vim.bc \
     -o vim.js \
     -Oz \
+    $OPT_EMTERPRETER \
     --memory-init-file 1 \
     --js-library vim_lib.js \
-    -s ASYNCIFY=1 \
-    -s EXPORTED_FUNCTIONS="['_main', '_input_available', '_gui_web_handle_key']" \
-    -s ASYNCIFY_FUNCTIONS="['emscripten_sleep', 'vimjs_flash', 'vimjs_browse']" \
     --embed-file usr \
 
 popd
