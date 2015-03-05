@@ -1,12 +1,15 @@
 #!/bin/bash
 set -e
-[ -z $EM_DIR] && EM_DIR=~/src/emscripten
+[ -z "$EM_DIR" ] && EM_DIR=~/src/emscripten
+
+OPTZ="-Oz -O3"
 
 do_config() {
     echo config
 # something wrong with emcc + cproto, use gcc as CPP instead
-CPPFLAGS="-Os -DFEAT_GUI_WEB" \
-CPP="gcc -E" \
+CPPFLAGS="$OPTZ -DFEAT_GUI_WEB" \
+CFLAGS="$OPTZ" \
+CPP="emcc -E" \
 $EM_DIR/emconfigure ./configure \
     --enable-gui=web \
     --with-features=small \
@@ -46,7 +49,7 @@ $EM_DIR/emconfigure ./configure \
 }
 
 do_make() {
-$EM_DIR/emmake make -j8
+$EM_DIR/emmake make CFLAGS="$OPTZ" -j8
 }
 
 do_link() {
@@ -58,7 +61,7 @@ cat vim_lib.js | sed -e "1 s/\(foldmethod\|foldmarker\)[^ ]\+//g" > usr/local/sh
 # Use vim.js as filename to generate vim.js.mem
 $EM_DIR/emcc vim.bc \
     -o vim.js \
-    -Oz \
+    $OPTZ \
     --memory-init-file 1 \
     --js-library vim_lib.js \
     -s ASYNCIFY=1 \
