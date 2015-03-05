@@ -8,7 +8,8 @@ by Lu Wang
 
 ### Variations
 - [NW.js](https://github.com/coolwanglu/vim.js/tree/master/NW.js)
-- [ASM.js](http://coolwanglu.github.io/vim.js/asmjs/vim.html)
+- [Firefox extension](https://addons.mozilla.org/en-US/firefox/addon/vimjs-extension/)
+- [Asyncify](http://coolwanglu.github.io/vim.js/asyncify/vim.html)
 - [Streamline.js](http://coolwanglu.github.io/vim.js/streamlinejs/vim.html)
 
 Recommended browsers: Firefox, Chrome, IE
