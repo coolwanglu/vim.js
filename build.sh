@@ -1,6 +1,6 @@
 #!/bin/bash
 set -e
-[ -z $EM_DIR] && EM_DIR=~/src/emscripten
+[ -z "$EM_DIR" ] && EM_DIR=~/src/emscripten
 
 do_config() {
     echo config

@@ -55,6 +55,8 @@ set wildmenu
 set tabstop=4
 set expandtab
 set nocompatible
+set encoding=utf8
+set termencoding=utf8
 set fileencodings=utf8
 set backspace=indent,eol,start
 set wildmode=longest,list,full
