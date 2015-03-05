@@ -91,8 +91,19 @@ var LibraryVIM = {
         } 
       }
 
-      if(!handled)
-        vimjs.gui_web_handle_key(charCode || keyCode, modifiers, 0, 0);
+      if(!handled) {
+        var MAX_UTF8_BYTES = 6;
+        var chars = new Uint8Array(MAX_UTF8_BYTES + 1); // null-terminated
+        var charLen = stringToUTF8Array(String.fromCharCode(charCode), chars, 0, MAX_UTF8_BYTES);
+        if (charLen == 1) {
+          vimjs.gui_web_handle_key(chars[0], modifiers, 0, 0);
+        } else {
+          // no modifers for UTF-8, should be handled in chars already
+          for (var i = 0; i < charLen; i++) {
+            vimjs.gui_web_handle_key(chars[i], 0, 0, 0);
+          }
+        }
+      }
 
     },//VIMJS_FOLD_END
 
@@ -778,7 +789,15 @@ var LibraryVIM = {
   },
 
   vimjs_draw_string__deps: ['vimjs_clear_block'],
-  vimjs_draw_string: function(row, col, s, len, flags) {
+  vimjs_draw_string: function(row, col, s_ptr, len, flags) {
+    var byteArray = [];
+    for (var i = 0; i < len; i++) {
+      c = getValue(s_ptr + i, 'i8', true);
+      byteArray.push(c);
+    }
+    byteArray.push(0);
+    var s = UTF8ArrayToString(byteArray, 0);
+    len = s.length;
 
     // TODO: use macros for flag constants
     if(!(flags & 0x01)) {
@@ -787,8 +806,6 @@ var LibraryVIM = {
 
     var font = vimjs.font;
     if(flags & 0x02) font = 'bold ' + font;
-
-    s = Pointer_stringify(s, len);
 
     var ctx = vimjs.canvas_ctx;
 
