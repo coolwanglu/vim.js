@@ -1,8 +1,9 @@
-### Vim.js : JavaScript port of Vim
+Vim.js : JavaScript port of Vim
+-------------------------------
 
 A Tool/Toy for Non-Beginners
 
-by Lu Wang
+by [Lu Wang](https://github.com/coolwanglu)
 
 ### [Try it online](http://coolwanglu.github.io/vim.js/emterpreter/vim.html)
 
