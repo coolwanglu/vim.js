@@ -1,11 +1,16 @@
 #!/bin/bash
 set -e
-[ -z $EM_DIR] && EM_DIR=~/src/emscripten
+[ -z "$EM_DIR" ] && EM_DIR=~/src/emscripten
+
+OPTZ="-Oz"
+# for gcc, which doesn't support -z
+OPTS="-Os"
 
 do_config() {
     echo config
 # something wrong with emcc + cproto, use gcc as CPP instead
-CPPFLAGS="-Os -DFEAT_GUI_WEB" \
+CPPFLAGS="$OPTS -DFEAT_GUI_WEB" \
+CFLAGS="$OPTS" \
 CPP="gcc -E" \
 $EM_DIR/emconfigure ./configure \
     --enable-gui=web \
@@ -46,7 +51,7 @@ $EM_DIR/emconfigure ./configure \
 }
 
 do_make() {
-$EM_DIR/emmake make -j8
+$EM_DIR/emmake make CFLAGS="$OPTZ" -j8
 }
 
 do_link() {
@@ -59,13 +64,14 @@ OPT_ASYNCIFY="-s ASYNCIFY=1 \
     -s EXPORTED_FUNCTIONS=\"['_main', '_input_available', '_gui_web_handle_key']\" \
     -s ASYNCIFY_FUNCTIONS=\"['emscripten_sleep', 'vimjs_flash', 'vimjs_browse']\" "
 
-OPT_EMTERPRETER="-s EMTERPRETIFY=1 -s EMTERPRETIFY_ASYNC=1"
-
+OPT_EMTERPRETER="-s EMTERPRETIFY=1 -s EMTERPRETIFY_ASYNC=1 \
+    -s EXPORTED_FUNCTIONS=['_main','_input_available','_gui_web_handle_key']"
 
 # Use vim.js as filename to generate vim.js.mem
-$EM_DIR/emcc vim.bc \
+$EM_DIR/emcc \
+    vim.bc \
     -o vim.js \
-    -Oz \
+    $OPTZ \
     $OPT_EMTERPRETER \
     --memory-init-file 1 \
     --js-library vim_lib.js \
